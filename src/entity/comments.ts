@@ -1,14 +1,10 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, JoinTable, ManyToOne} from "typeorm";
 import { Users } from "./users";
 import { Posts } from "./posts";
+import { Activity } from "./activity";
 
 @Entity()
-export class Comments{
-    @PrimaryGeneratedColumn()
-    id: number;
-
-    @Column()
-    content: string
+export class Comments extends Activity{
 
     @Column()
     commentDate: string;

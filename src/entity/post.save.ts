@@ -1,14 +1,10 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, JoinTable, ManyToOne} from "typeorm";
 import { Users } from "./users";
 import { Posts } from "./posts";
+import { Activity } from "./activity";
 
 @Entity()
-export class PostSave{
-    @PrimaryGeneratedColumn()
-    id: number;
-
-    @Column()
-    savedDate: string;
+export class PostSave extends Activity{
 
     @ManyToOne(() => Users, (user) => user.savedPosts)
     user: Users
