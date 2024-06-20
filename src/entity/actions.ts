@@ -1,5 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany} from "typeorm";
 import { Notifications } from "./notifications";
+import { Activity } from "./activity";
 
 @Entity()
 export class Actions{
@@ -11,4 +12,7 @@ export class Actions{
 
     @OneToMany(() => Notifications, (notification) => notification.action)
     notifications: Notifications[];
+
+    @OneToMany(() => Activity, (activity) => activity.action)
+    activities: Activity[]
 }

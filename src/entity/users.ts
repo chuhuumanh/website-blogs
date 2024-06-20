@@ -2,10 +2,8 @@ import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany} from "typ
 import { Roles } from "./roles";
 import { Friends } from "./friends";
 import { Notifications } from "./notifications";
-import { PostShare } from "./post.share";
-import { PostLike } from "./post.like";
-import { PostSave } from "./post.save";
 import { Comments } from "./comments";
+import { Activity } from "./activity";
 
 @Entity()
 export class Users{
@@ -48,17 +46,11 @@ export class Users{
     @OneToMany(() => Notifications, (notification) => notification.user)
     notifications: Notifications[]
 
-    @OneToMany(() => Comments, (commentPost) => commentPost.user)
-    commentPosts: PostSave[];
+    @OneToMany(() => Comments, (comment) => comment.post)
+    comments: Comments[]
 
-    @OneToMany(() => PostLike, (savedPost) => savedPost.user)
-    savedPosts: PostSave[];
-
-    @OneToMany(() => PostLike, (likedPost) => likedPost.user)
-    likedPosts: PostShare[];
-
-    @OneToMany(() => PostShare, (sharedPost) => sharedPost.user)
-    sharedPosts: PostShare[];
+    @OneToMany(() => Activity, (activity) => activity.user)
+    activities: Activity[];
 
     @ManyToOne(() => Roles, (role) => role.users)
     role: Roles;

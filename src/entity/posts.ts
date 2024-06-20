@@ -4,10 +4,8 @@ import { Category } from "./category";
 import { Images } from "./images";
 import { Tags } from "./tags";
 import { Notifications } from "./notifications";
-import { PostShare } from "./post.share";
-import { PostLike } from "./post.like";
-import { PostSave } from "./post.save";
 import { Comments } from "./comments";
+import { Activity } from "./activity";
 
 @Entity()
 export class Posts{
@@ -41,17 +39,11 @@ export class Posts{
     @OneToMany(() => Notifications, (notification) => notification.post)
     notifications: Notifications[];
 
-    @OneToMany(() => Comments, (commentPost) => commentPost.post)
-    commentPosts: Comments[]
+    @OneToMany(() => Activity, (activity) => activity.post)
+    activities: Activity[]
 
-    @OneToMany(() => PostSave, (savedPost) => savedPost.post)
-    savedPosts: PostSave[]
-
-    @OneToMany(() => PostLike, (likedPost) => likedPost.post)
-    likedPosts: PostLike[]
-
-    @OneToMany(() => PostShare, (sharedPost) => sharedPost.post)
-    sharedPosts: PostShare[]
+    @OneToMany(() => Comments, (comment) => comment.post)
+    comments: Comments[]
 
     @ManyToOne(() => Access, (access) => access.posts)
     access: Access
