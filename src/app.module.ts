@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { EntityModule } from './entity/entity.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Config } from './entity/db.config';
+import { AuthModule } from './auth/auth.module';
 @Module({
-  imports: [EntityModule, 
+  imports: [ 
     TypeOrmModule.forRoot({
       type: 'mssql',
       host: Config.host,
@@ -19,7 +19,7 @@ import { Config } from './entity/db.config';
         trustServerCertificate: Config.options.trustServerCertificate
       },
       synchronize: Config.synchronize
-    })],
+    }), AuthModule],
   controllers: [AppController],
   providers: [AppService],
 })

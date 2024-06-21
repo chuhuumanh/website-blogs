@@ -20,7 +20,7 @@ export class Users{
     phoneNum: string;
 
     @Column()
-    fistName: string;
+    firstName: string;
 
     @Column()
     lastName: string;
@@ -28,19 +28,19 @@ export class Users{
     @Column()
     email: string;
 
-    @Column()
+    @Column({nullable: true})
     bio: string;
 
-    @Column()
+    @Column({nullable: true})
     postPublishedCount: number;
 
     @Column()
     gender: boolean;
 
-    @Column()
+    @Column({nullable: true})
     friendCount: number;
 
-    @Column()
+    @Column({nullable: true})
     profilePicturePath: string;
 
     @OneToMany(() => Notifications, (notification) => notification.user)
@@ -57,5 +57,4 @@ export class Users{
 
     @ManyToOne(() => Friends, (friend) => friend.currentUsers)
     friend: Friends
-
 }

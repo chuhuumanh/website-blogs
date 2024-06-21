@@ -6,10 +6,10 @@ export class Friends{
     @PrimaryGeneratedColumn()
     friendId: number;
 
-    @Column()
-    addedDate: Date;
+    @Column({nullable: true})
+    addedDate?: Date;
 
-    @Column()
+    @Column({nullable: true})
     isAccept: boolean;
 
     @OneToMany(() => Users, (user) => user.friend)
