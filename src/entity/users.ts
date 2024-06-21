@@ -7,6 +7,7 @@ import { Activity } from "./activity";
 
 @Entity()
 export class Users{
+    
     @PrimaryGeneratedColumn()
     id: number;
 

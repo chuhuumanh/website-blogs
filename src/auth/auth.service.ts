@@ -16,27 +16,27 @@ export class AuthService {
             throw new NotAcceptableException("Incorect username or passowrd !");
         const payload = {profile: JSON.stringify(user)}
         return {
-            access_token: await this.jwtService.signAsync(payload),
+            access_token: await this.jwtService.signAsync(payload)
         };
     }
 
     async SignUp(newUser: createSignUpDto): Promise<any>{
-        const isUsernameExist = await this.userSerivce.FindOne(newUser.username, undefined)?null:false;
+        const isUsernameExist = await this.userSerivce.FindOne(newUser.username, undefined)?true:false;
         const isPasswordMatch = newUser.password === newUser.confirmPassword;
-        console.log(isUsernameExist);
         if(isUsernameExist)
             throw new NotAcceptableException("Username has been taken already !");
         if(!isPasswordMatch)
             throw new NotAcceptableException("Password and confirm password doesn't match !");
         try{
             await this.userRepository.save(newUser);
-            return "OK";
+            const payload = {profile: JSON.stringify(await this.userSerivce.FindOne(newUser.username, newUser.password))}
+            return {
+                access_token: await this.jwtService.signAsync(payload)
+            };
         }
         catch(error){
             console.log(error)
             throw new BadRequestException();
         }
-        
     }
-
 }
