@@ -56,6 +56,6 @@ export class Users{
     @ManyToOne(() => Roles, (role) => role.users)
     role: Roles;
 
-    @ManyToOne(() => Friends, (friend) => friend.currentUsers)
-    friend: Friends
+    @OneToMany(() => Friends, (friend) => friend.currentUser)
+    friends: Friends[]
 }

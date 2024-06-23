@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, JoinTable, OneToMany} from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, JoinTable, OneToMany, ManyToOne} from "typeorm";
 import { Users } from "./users";
 
 @Entity()
@@ -12,6 +12,6 @@ export class Friends{
     @Column({nullable: true})
     isAccept: boolean;
 
-    @OneToMany(() => Users, (user) => user.friend)
-    currentUsers?: Users[]
+    @ManyToOne(() => Users, (user) => user.friends)
+    currentUser: Users
 }
