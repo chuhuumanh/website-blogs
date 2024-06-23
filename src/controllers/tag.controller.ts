@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { Role, Roles } from 'src/auth/role.decorator';
 import { TagService } from 'src/services/tag.service';
@@ -16,9 +16,18 @@ export class TagController {
     }
 
     @Get()
-    getAllTag(@Query() keyword: {name?:string} ){
+    getTag(@Query() keyword: {name?:string} ){
         return this.tagService.FindTag(keyword.name);
     }
 
+    @Patch(':id')
+    updateTag(@Body(new ValidationPipe(undefined)) tag: TagDto, @Param('id', ParseIntPipe) tagId: number){
+        return this.tagService.UpdateTag(tagId, tag)
+    }
+
+    @Delete(':id')
+    deleteTag(@Param('id', ParseIntPipe) tagId: number){
+        return this.tagService.deleteTag(tagId);
+    }
     
 }

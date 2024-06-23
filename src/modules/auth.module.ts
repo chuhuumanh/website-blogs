@@ -7,6 +7,7 @@ import { jwtConstants } from 'src/auth/jwt.constant';
 import { AuthService } from 'src/services/auth.service';
 import { UserModule } from './user.module';
 import { TagModule } from './tag.module';
+import { CategoryModule } from './category.module';
 
 @Module({
     imports: [TypeOrmModule.forFeature([Users]), UserModule,
@@ -14,7 +15,8 @@ import { TagModule } from './tag.module';
                 global: true,
                 secret: jwtConstants.secret
     }),
-              TagModule],
+              TagModule,
+              CategoryModule],
     providers: [AuthService],
     controllers: [AuthController],
     exports: [AuthService]

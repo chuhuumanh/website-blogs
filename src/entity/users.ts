@@ -26,6 +26,9 @@ export class Users{
     @Column()
     lastName: string;
 
+    @Column({nullable: true})
+    dateOfBirth: Date
+
     @Column()
     email: string;
 
