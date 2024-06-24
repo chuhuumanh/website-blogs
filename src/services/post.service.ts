@@ -20,7 +20,10 @@ export class PostService {
     }
 
     async FindOne(id: number): Promise<Posts>{
-        return await this.postRepository.findOne({where: {id}, relations:['user', 'access']});
+        const post = await this.postRepository.findOne({where: {id}, relations:['user', 'access']});
+        if(!post)
+            throw new NotFoundException("Post not found !");
+        return post;
     }
 
     async FindPost(keyword?: string): Promise<[Posts[], number] | undefined>{

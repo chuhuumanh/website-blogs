@@ -44,6 +44,7 @@ export class UserDto{
     gender: boolean
 
     @IsNotEmpty({groups: ['registration']})
+    @IsNumber()
     roleId: number
 }
 

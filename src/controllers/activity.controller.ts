@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Post, Query } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Post, Query, Delete, ParseIntPipe, Param } from '@nestjs/common';
 import { ActionService } from 'src/services/action.service';
 import { ActivityService } from 'src/services/activity.service';
 import { ActivityDto } from 'src/validation/activity.dto';
@@ -13,6 +13,13 @@ export class ActivityController {
         const actionPerformed = await this.actionService.FindOne(action);
         if(!actionPerformed)
             throw new BadRequestException('Action invalid');
+        if(actionPerformed.name === "comment")
+            return await this.activityService.Comment(actionPerformed, activityDto);
         return await this.activityService.PerformAction(actionPerformed, activityDto);
+    }
+
+    @Delete('comment/:id')
+    async deleteComent(@Param('id', ParseIntPipe) postId: number ,@Body('userId', ParseIntPipe) userId: number){
+        return await this.activityService.DeleteComment(postId, userId);
     }
 }

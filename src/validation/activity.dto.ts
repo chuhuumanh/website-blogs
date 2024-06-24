@@ -1,4 +1,5 @@
-import { IsNumber } from "@nestjs/class-validator";
+import { IsNotEmpty, IsNumber, IsOptional } from "@nestjs/class-validator";
+import { IsString } from "class-validator";
 
 export class ActivityDto{
     @IsNumber()
@@ -6,4 +7,5 @@ export class ActivityDto{
 
     @IsNumber()
     postId: number
+
 }

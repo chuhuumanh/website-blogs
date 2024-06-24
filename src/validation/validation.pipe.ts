@@ -5,17 +5,18 @@ import { plainToInstance } from 'class-transformer';
 @Injectable()
 export class ValidationPipe implements PipeTransform<any> {
   
-  constructor(private group?: string){this.group = group}
+  constructor(private group?: string[]){this.group = group}
   async transform(value: any, { metatype }: ArgumentMetadata) {
     if (!metatype || !this.toValidate(metatype)) {
       return value;
     }
     const object = plainToInstance(metatype, value);
-    const errors = await validate(object, {groups: this.group})
+    const errors = await validate(object, {groups: this.group});
     console.log(object)
+    let allErrorMessages = [];
+    errors.forEach(error => {allErrorMessages.push(error.constraints)})
     if (errors.length > 0) {
-      console.log(errors)
-      throw new BadRequestException('Validation failed');
+      throw new BadRequestException(allErrorMessages);
     }
     return value;
   }

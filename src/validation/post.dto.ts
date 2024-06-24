@@ -1,6 +1,5 @@
-import { IsString, ValidateNested } from "@nestjs/class-validator";
+import { IsString} from "@nestjs/class-validator";
 import { IsNotEmpty, IsNumber } from "class-validator";
-
 
 class Image{
     id: number
@@ -12,23 +11,23 @@ class Image{
 
 export class PostDto{
     @IsString()
-    title: string
+    title?: string
 
     @IsString()
-    content: string
+    content?: string
     
 
     @IsNotEmpty()
     @IsNumber()
-    userId: number
+    userId?: number
 
     @IsNotEmpty()
     @IsNumber()
-    accessId: number
+    accessId?: number
 
-    images: Image[]
-    likeCount:number
-    shareCount: number
-    saveCount: number
-    commentCount: number
+    images?: Image[]
+    likeCount?:number
+    shareCount?: number
+    saveCount?: number
+    commentCount?: number
 }

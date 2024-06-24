@@ -17,7 +17,7 @@ export class UserController {
     }
 
     @Patch(':id')
-    updateUserFullName(@Body(new ValidationPipe('update')) updateInfor: UserDto, @Param('id', ParseIntPipe) userId: number): Promise<any>{
+    updateUserFullName(@Body(new ValidationPipe(['update'])) updateInfor: UserDto, @Param('id', ParseIntPipe) userId: number): Promise<any>{
         return this.userService.UpdateUserInfor(userId, updateInfor)
     }
 

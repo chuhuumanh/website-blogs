@@ -5,6 +5,7 @@ import { Users } from 'src/entity/users';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserDto } from 'src/validation/user.dto';
+import { number } from 'zod';
 @Injectable()
 export class AuthService {
     constructor(@InjectRepository(Users) private userRepository: Repository<Users> ,private userSerivce: UserService, private jwtService: JwtService){}
@@ -22,6 +23,8 @@ export class AuthService {
     async SignUp(newUser: UserDto): Promise<any>{
         const isUsernameExist = await this.userSerivce.FindOne(newUser.username, undefined)?true:false;
         const isPasswordMatch = newUser.password === newUser.confirmPassword;
+        if(typeof newUser.roleId !== 'number')
+            throw new BadRequestException('roleId must be a number !');
         if(isUsernameExist)
             throw new NotAcceptableException("Username has been taken already !");
         if(!isPasswordMatch)

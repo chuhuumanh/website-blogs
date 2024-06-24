@@ -7,12 +7,12 @@ import { UserDto } from 'src/validation/user.dto';
 export class AuthController {
     constructor(private authService: AuthService){}
     @Post('login')
-    login(@Body(new ValidationPipe("signin")) signInDto: UserDto){
+    login(@Body(new ValidationPipe(["signin"])) signInDto: UserDto){
         return this.authService.SignIn(signInDto);
     }
 
     @Post('signup')
-    signup(@Body(new ValidationPipe("registration")) signUpDto: UserDto){
+    signup(@Body(new ValidationPipe(["registration", undefined])) signUpDto: UserDto){
         return this.authService.SignUp(signUpDto)
     }
 }
