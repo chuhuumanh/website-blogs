@@ -6,6 +6,7 @@ import { Tags } from "./tags";
 import { Notifications } from "./notifications";
 import { Comments } from "./comments";
 import { Activity } from "./activity";
+import { Users } from "./users";
 
 @Entity()
 export class Posts{
@@ -33,9 +34,6 @@ export class Posts{
     @Column()
     savedCount: number;
 
-    @Column()
-    imagePath: string;
-
     @OneToMany(() => Notifications, (notification) => notification.post)
     notifications: Notifications[];
 
@@ -47,6 +45,9 @@ export class Posts{
 
     @ManyToOne(() => Access, (access) => access.posts)
     access: Access
+
+    @ManyToOne(() => Users, (user) => user.posts)
+    user: Users
 
     @ManyToMany(() => Category, (category) => category.posts)
     @JoinTable({name: 'PostCategory'})

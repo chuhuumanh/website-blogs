@@ -1,7 +1,8 @@
-import { IsString } from "@nestjs/class-validator";
+import { IsEmpty, IsString } from "@nestjs/class-validator";
 
 export class CategoryDto{
     @IsString()
+    @IsEmpty()
     name: string;
 
     @IsString()

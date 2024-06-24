@@ -7,7 +7,7 @@ import { ValidationPipe } from 'src/validation/validation.pipe';
 import { UserDto } from 'src/validation/user.dto';
 
 @UseGuards(AuthGuard)
-@Roles(Role.User, Role.Admin)
+@Roles(Role.User)
 @Controller('user')
 export class UserController {
     constructor(private userService: UserService){}

@@ -4,6 +4,7 @@ import { Friends } from "./friends";
 import { Notifications } from "./notifications";
 import { Comments } from "./comments";
 import { Activity } from "./activity";
+import { Posts } from "./posts";
 
 @Entity()
 export class Users{
@@ -61,4 +62,7 @@ export class Users{
 
     @OneToMany(() => Friends, (friend) => friend.currentUser)
     friends: Friends[]
+
+    @OneToMany(() => Posts, (post) => post.user)
+    posts: Posts[]
 }

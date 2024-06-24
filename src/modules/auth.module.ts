@@ -8,6 +8,8 @@ import { AuthService } from 'src/services/auth.service';
 import { UserModule } from './user.module';
 import { TagModule } from './tag.module';
 import { CategoryModule } from './category.module';
+import { PostModule } from './post.module';
+import { ActivityModule } from './activity.module';
 
 @Module({
     imports: [TypeOrmModule.forFeature([Users]), UserModule,
@@ -16,7 +18,9 @@ import { CategoryModule } from './category.module';
                 secret: jwtConstants.secret
     }),
               TagModule,
-              CategoryModule],
+              CategoryModule,
+              PostModule,
+              ActivityModule],
     providers: [AuthService],
     controllers: [AuthController],
     exports: [AuthService]

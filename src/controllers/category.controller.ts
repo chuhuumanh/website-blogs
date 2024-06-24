@@ -6,7 +6,7 @@ import { AuthGuard } from 'src/auth/auth.guard';
 import { Role, Roles } from 'src/auth/role.decorator';
 
 @UseGuards(AuthGuard)
-@Roles(Role.Admin)
+@Roles(Role.User)
 @Controller('category')
 export class CategoryController {
     constructor(private categoryService: CategoryService){}
