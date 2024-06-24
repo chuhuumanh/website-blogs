@@ -6,7 +6,4 @@ export class ActivityDto{
 
     @IsNumber()
     postId: number
-
-    @IsNumber()
-    actionId: number
 }

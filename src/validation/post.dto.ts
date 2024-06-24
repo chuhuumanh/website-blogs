@@ -1,7 +1,6 @@
-import { IsDate, IsString, ValidateNested } from "@nestjs/class-validator";
-import { ImageDto } from "./image.dto";
-import { Type } from "class-transformer";
+import { IsString, ValidateNested } from "@nestjs/class-validator";
 import { IsNotEmpty, IsNumber } from "class-validator";
+
 
 class Image{
     id: number
@@ -10,7 +9,6 @@ class Image{
     fileType: string
     size: number
 }
-
 
 export class PostDto{
     @IsString()
@@ -29,4 +27,8 @@ export class PostDto{
     accessId: number
 
     images: Image[]
+    likeCount:number
+    shareCount: number
+    saveCount: number
+    commentCount: number
 }

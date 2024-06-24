@@ -19,6 +19,9 @@ export class PostService {
         return {message: "Successful !"};
     }
 
+    async FindOne(id: number): Promise<Posts>{
+        return await this.postRepository.findOne({where: {id}, relations:['user', 'access']});
+    }
 
     async FindPost(keyword?: string): Promise<[Posts[], number] | undefined>{
         return await this.postRepository.findAndCount({where: {title: Like('%' + keyword + '%'), content: Like('%' + keyword + '%')}});
@@ -28,7 +31,10 @@ export class PostService {
         const isCategoryExist = await this.postRepository.findOne({where:{id}});
         if(!isCategoryExist)
             throw new NotFoundException("This post is not exist!");
-        const action =  await this.postRepository.update({id}, {title: updatePost.title, content: updatePost.content, images: updatePost.images});
+        const action =  await this.postRepository.update({id}, {title: updatePost.title, content: updatePost.content, images: updatePost.images,
+                                                                likedCount: updatePost.likeCount, sharedCount: updatePost.shareCount,
+                                                                savedCount: updatePost.saveCount, commentCount: updatePost.commentCount
+        });
         if(action.affected === 0)
             return {message: "Update failed !"};
         return {message: "Update successfully !"};
