@@ -11,12 +11,11 @@ export class PostService {
     async Add(post: PostDto): Promise<any>{
         
         const publishedDate = this.dateTime.GetDateTimeString();
-        console.log(publishedDate);
-        await this.postRepository.insert({title: post.title, content: post.content, 
-                                          likedCount: 0, sharedCount: 0, savedCount: 0, 
-                                          commentCount: 0, images: post.images, publishedDate:publishedDate, 
-                                          user:{id: post.userId}, access: {id: post.accessId}});
-        return {message: "Successful !"};
+        const newPost = await this.postRepository.save({title: post.title, content: post.content, 
+                                        likedCount: 0, sharedCount: 0, savedCount: 0, 
+                                        commentCount: 0, publishedDate:publishedDate, 
+                                        user:{id: post.userId}, access: {id: post.accessId}});
+        return newPost;
     }
 
     async FindOne(id: number): Promise<Posts>{
@@ -34,7 +33,7 @@ export class PostService {
         const isCategoryExist = await this.postRepository.findOne({where:{id}});
         if(!isCategoryExist)
             throw new NotFoundException("This post is not exist!");
-        const action =  await this.postRepository.update({id}, {title: updatePost.title, content: updatePost.content, images: updatePost.images,
+        const action =  await this.postRepository.update({id}, {title: updatePost.title, content: updatePost.content,
                                                                 likedCount: updatePost.likeCount, sharedCount: updatePost.shareCount,
                                                                 savedCount: updatePost.saveCount, commentCount: updatePost.commentCount
         });

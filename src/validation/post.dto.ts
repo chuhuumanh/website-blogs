@@ -19,7 +19,6 @@ export class PostDto{
     @IsNumber()
     accessId?: number
 
-    images?: Images[]
     likeCount?:number
     shareCount?: number
     saveCount?: number
