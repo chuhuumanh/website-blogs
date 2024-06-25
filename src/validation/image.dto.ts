@@ -2,15 +2,16 @@ import { IsDate, IsNumber, IsString} from "class-validator";
 
 export class ImageDto{
 
+    @IsNumber()
+    postId: number
+
     @IsString()
     imgPath: string
-
-    @IsDate()
-    uploadedDate: Date
 
     @IsString()
     fileType: string
 
     @IsNumber()
     size: number
+
 }

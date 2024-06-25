@@ -16,9 +16,16 @@ export class CategoryService {
         return {message: "Successful !"};
     }
 
+    async AddPostCategory(){
+        
+    }
 
     async FindCategory(name?: string): Promise<[Category[], number] | undefined>{
         return await this.categoryRepository.findAndCount({where: {name: Like('%' + name + '%')}});
+    }
+
+    async getPostCategory(postId: number): Promise<[Category[], number]| any>{
+        return await this.categoryRepository.findAndCount({where: {posts: {id: postId}}});
     }
 
     async UpdateCategory(id: number, updateCategory: CategoryDto): Promise<any>{

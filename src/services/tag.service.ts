@@ -18,9 +18,15 @@ export class TagService {
         return {message: "Successful !"};
     }
 
-
     async FindTag(name?: string): Promise<[Tags[], number] | undefined>{
         return await this.tagRepository.findAndCount({where: {name: Like('%' + name + '%')}});
+    }
+
+    async GetPostTag(postId: number): Promise<[Tags[], number] | any>{
+        const postTags = await this.tagRepository.findAndCount({where: {posts: {id: postId}}});
+        if(!postTags)
+            throw new NotFoundException("Post not found !");
+        return postTags;
     }
 
     async UpdateTag(id: number, updateTag: TagDto): Promise<any>{

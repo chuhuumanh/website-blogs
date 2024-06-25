@@ -10,6 +10,7 @@ import { TagModule } from './tag.module';
 import { CategoryModule } from './category.module';
 import { PostModule } from './post.module';
 import { ActivityModule } from './activity.module';
+import { ImageModule } from './image.module';
 
 @Module({
     imports: [TypeOrmModule.forFeature([Users]), UserModule,
@@ -20,7 +21,8 @@ import { ActivityModule } from './activity.module';
               TagModule,
               CategoryModule,
               PostModule,
-              ActivityModule],
+              ActivityModule,
+             ImageModule],
     providers: [AuthService],
     controllers: [AuthController],
     exports: [AuthService]

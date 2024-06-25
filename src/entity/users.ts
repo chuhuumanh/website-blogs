@@ -5,6 +5,7 @@ import { Notifications } from "./notifications";
 import { Comments } from "./comments";
 import { Activity } from "./activity";
 import { Posts } from "./posts";
+import { Images } from "./images";
 
 @Entity()
 export class Users{
@@ -65,4 +66,5 @@ export class Users{
 
     @OneToMany(() => Posts, (post) => post.user)
     posts: Posts[]
+
 }

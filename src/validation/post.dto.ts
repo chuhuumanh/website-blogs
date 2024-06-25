@@ -1,13 +1,8 @@
 import { IsString} from "@nestjs/class-validator";
+import { ApiProperty } from "@nestjs/swagger";
 import { IsNotEmpty, IsNumber } from "class-validator";
-
-class Image{
-    id: number
-    imgPath: string
-    uploadedDate: Date
-    fileType: string
-    size: number
-}
+import { Images } from "src/entity/images";
+import { Tags } from "src/entity/tags";
 
 export class PostDto{
     @IsString()
@@ -15,7 +10,6 @@ export class PostDto{
 
     @IsString()
     content?: string
-    
 
     @IsNotEmpty()
     @IsNumber()
@@ -25,9 +19,10 @@ export class PostDto{
     @IsNumber()
     accessId?: number
 
-    images?: Image[]
+    images?: Images[]
     likeCount?:number
     shareCount?: number
     saveCount?: number
     commentCount?: number
+    tags?: Tags[]
 }

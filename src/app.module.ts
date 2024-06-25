@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Config } from './entity/db.config';
 import { AuthModule } from './modules/auth.module';
+import { ImageController } from './controllers/image.controller';
 @Module({
   imports: [ 
     TypeOrmModule.forRoot({

@@ -53,8 +53,7 @@ export class Posts{
     @JoinTable({name: 'PostCategory'})
     categories?: Category[]
 
-    @ManyToMany(() => Images, (image) => image.posts)
-    @JoinTable({name: 'PostImage'})
+    @OneToMany(() => Images, (image) => image.post)
     images?: Images[]
 
     @ManyToMany(() => Tags, (tag) => tag.posts)
