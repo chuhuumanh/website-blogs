@@ -16,15 +16,15 @@ export class CategoryService {
         return {message: "Successful !"};
     }
 
-    async AddPostCategory(){
-        
+    async FindCategoryById(id: number): Promise<Category | any>{
+        return await this.categoryRepository.findOneBy({id});
     }
 
     async FindCategory(name?: string): Promise<[Category[], number] | undefined>{
         return await this.categoryRepository.findAndCount({where: {name: Like('%' + name + '%')}});
     }
 
-    async getPostCategory(postId: number): Promise<[Category[], number]| any>{
+    async GetPostCategory(postId: number): Promise<[Category[], number]| any>{
         return await this.categoryRepository.findAndCount({where: {posts: {id: postId}}});
     }
 
@@ -38,7 +38,7 @@ export class CategoryService {
         return {message: "Update successfully !"};
     }
 
-    async deleteCategory(id: number){
+    async DeleteCategory(id: number){
         const action = await this.categoryRepository.delete({id});
         if(action.affected === 0)
             throw new NotFoundException("Category Not Found !");

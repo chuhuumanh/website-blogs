@@ -9,10 +9,14 @@ import { Actions } from 'src/entity/actions';
 import { Posts } from 'src/entity/posts';
 import { PostService } from 'src/services/post.service';
 import { Comments } from 'src/entity/comments';
+import { Category } from 'src/entity/category';
+import { CategoryService } from 'src/services/category.service';
+import { Tags } from 'src/entity/tags';
+import { TagService } from 'src/services/tag.service';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Activity, Actions, Posts, Comments])],
-    providers: [ActivityService, DatetimeService, ActionService, PostService],
+    imports: [TypeOrmModule.forFeature([Activity, Actions, Posts, Comments, Category, Tags])],
+    providers: [ActivityService, DatetimeService, ActionService, PostService, CategoryService, TagService],
     controllers: [ActivityController]
 })
 export class ActivityModule {}

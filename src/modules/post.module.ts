@@ -16,9 +16,11 @@ import { Images } from 'src/entity/images';
 import { Tags } from 'src/entity/tags';
 import { Category } from 'src/entity/category';
 import { MulterModule } from '@nestjs/platform-express';
+import { ActionService } from 'src/services/action.service';
+import { Actions } from 'src/entity/actions';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Posts, Comments, Activity, Images, Tags, Category]),
+    imports: [TypeOrmModule.forFeature([Posts, Comments, Activity, Images, Tags, Category, Actions, Category]),
               MulterModule.register({
                 dest:'./src/images/posts/',
                 fileFilter: (req, file, callback) => {
@@ -29,7 +31,8 @@ import { MulterModule } from '@nestjs/platform-express';
                   }
               })],
     providers: [PostService, DatetimeService, ActivityService, ImageService, 
-                TagService, CategoryService, ImageService, {provide:APP_GUARD, useClass: RoleGuard}],
+                TagService, CategoryService, ImageService, ActionService,
+                CategoryService, TagService, {provide:APP_GUARD, useClass: RoleGuard}],
     controllers: [PostController]
 })
 export class PostModule {}

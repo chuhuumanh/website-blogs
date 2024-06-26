@@ -22,6 +22,10 @@ export class TagService {
         return await this.tagRepository.findAndCount({where: {name: Like('%' + name + '%')}});
     }
 
+    async FindTagById(id: number): Promise<Tags| any>{
+        return await this.tagRepository.findOneBy({id})
+    }
+
     async GetPostTag(postId: number): Promise<[Tags[], number] | any>{
         const postTags = await this.tagRepository.findAndCount({where: {posts: {id: postId}}});
         if(!postTags)

@@ -7,7 +7,7 @@ import { ValidationPipe } from 'src/validation/validation.pipe';
 
 @Controller('tag')
 @UseGuards(AuthGuard)
-@Roles(Role.Admin)
+@Roles(Role.Admin, Role.User)
 export class TagController {
     constructor(private tagService: TagService){}
     @Post()

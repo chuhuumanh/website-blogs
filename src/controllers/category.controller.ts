@@ -6,7 +6,7 @@ import { AuthGuard } from 'src/auth/auth.guard';
 import { Role, Roles } from 'src/auth/role.decorator';
 
 @UseGuards(AuthGuard)
-@Roles(Role.User)
+@Roles(Role.Admin)
 @Controller('category')
 export class CategoryController {
     constructor(private categoryService: CategoryService){}
@@ -27,6 +27,6 @@ export class CategoryController {
 
     @Delete(':id')
     deleteTag(@Param('id', ParseIntPipe) categoryId: number){
-        return this.categoryService.deleteCategory(categoryId);
+        return this.categoryService.DeleteCategory(categoryId);
     }
 }

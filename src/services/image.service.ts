@@ -26,10 +26,12 @@ export class ImageService {
         return await this.ImagesRepository.findAndCount({where: {post: {id: postId}}});
     }
 
-    async DeleteImagesFromPost(id: number, postId: number){
-        const action = await this.ImagesRepository.delete({id, post: {id: postId}});
-        if(action.affected === 0)
-            throw new NotFoundException("Images Not Found !");
+    async UpdatePostImages(postId: number){
+        await this.ImagesRepository.delete({post: {id: postId}});
+    }
+
+    async DeleteImagesPost(postId: number){
+        await this.ImagesRepository.delete({post: {id: postId}});
         return {message: "Deleted !"};
     }
 }

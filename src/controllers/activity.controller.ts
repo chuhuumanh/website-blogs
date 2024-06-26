@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Post, Query, Delete, ParseIntPipe, Param, Patch } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Post, Query, Delete, ParseIntPipe, Param, Patch, Get } from '@nestjs/common';
 import { ActionService } from 'src/services/action.service';
 import { ActivityService } from 'src/services/activity.service';
 import { ActivityDto } from 'src/validation/activity.dto';
@@ -15,7 +15,7 @@ export class ActivityController {
         if(!actionPerformed)
             throw new BadRequestException('Action invalid');
         if(actionPerformed.name === "comment")
-            return await this.activityService.Comment(actionPerformed, activityDto);
+            return await this.activityService.Comment(activityDto);
         return await this.activityService.PerformAction(actionPerformed, activityDto);
     }
 
