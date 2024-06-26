@@ -8,7 +8,7 @@ import { PostService } from './post.service';
 import { Actions } from 'src/entity/actions';
 import { PostDto } from 'src/validation/post.dto';
 import { Comments } from 'src/entity/comments';
-import { CommentDto } from 'src/validation/comment.dto';
+import { UpdateCommentDto } from 'src/validation/update-comment.dto';
 
 @Injectable()
 export class ActivityService {
@@ -22,7 +22,6 @@ export class ActivityService {
                                                                            post: {id: activity.postId},
                                                                            action: {id: action.id}
         }});
-
         if(!isActionPerformed){
             await this.activityRepository.insert({user: {id: activity.userId},
                                                   post: {id: activity.postId},
@@ -49,11 +48,34 @@ export class ActivityService {
                 shareCount: performedPost.sharedCount
             };
             await this.postService.UpdatePost(activity.postId, updatedPost)
-            return {message: action.name + "ed this post !"}
+            return {message: action.name + " post successful !"}
         }
-        return{message: "Already " + action.name + " this post !"}
+        else{
+            await this.activityRepository.delete({user: {id: activity.userId}, post: {id: activity.postId}, action: {id: action.id}});
+            const performedPost = await this.postService.FindOne(activity.postId);
+            switch(action.name){
+                case "like":
+                    performedPost.likedCount -= 1;
+                    break;
+                case "share":
+                    performedPost.sharedCount -= 1;
+                    break;
+                case "save":
+                    performedPost.savedCount -= 1;
+                    break;
+                default:
+                    throw new BadRequestException("Action invalid !");
+            }
+            const updatedPost: PostDto = {
+                likeCount: performedPost.likedCount,
+                saveCount: performedPost.savedCount,
+                shareCount: performedPost.sharedCount
+            };
+            await this.postService.UpdatePost(activity.postId, updatedPost)
+            return {message: "un" + action.name + " successful !"}
+        }
     }
-    async Comment(action: Actions, comment: CommentDto):Promise<object| any>{
+    async Comment(action: Actions, comment: ActivityDto):Promise<object| any>{
         const performedPost = await this.postService.FindOne(comment.postId);
         console.log(performedPost)
         const performedDate = this.dateTime.GetDateTimeString();
@@ -66,7 +88,7 @@ export class ActivityService {
             activedDate: performedDate
         });
         await this.postService.UpdatePost(comment.postId, updatedPost);
-        await this.commentRepository.insert({content: comment.comment, postedDate: performedDate, 
+        await this.commentRepository.insert({content: comment.content, postedDate: performedDate, 
                                             user: {id: comment.userId}, post: {id: comment.postId}});
     }
 
@@ -91,9 +113,11 @@ export class ActivityService {
         return {message: "Deleted !"};
     }
 
-    async UpdateComment(id: number, userId: number):Promise<object | any>{
+    async UpdateComment(id: number, updatedComment: UpdateCommentDto):Promise<object | any>{
         const comment = await this.commentRepository.findOne({where: {id}, relations: ['post', 'user']});
-        if(comment.user.id !== userId)
+        if(comment.user.id !== updatedComment.userId)
             throw new ForbiddenException("Cannot edit other's comment !");
+        await this.commentRepository.update({id}, {content: updatedComment.content});
+        return{message: "Update comment Sucessful !"};
     }
 }

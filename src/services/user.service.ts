@@ -13,8 +13,8 @@ export class UserService {
         return await this.userRepository.findAndCount({relations: ['role']})
     }
 
-    async FindOne(username: string, password?: string): Promise<Users | undefined>{
-        return await this.userRepository.findOne({where: {username: username, password: password,}, relations:["role"]});
+    async FindOne(username?: string, password?: string, userId?: number): Promise<Users | undefined>{
+        return await this.userRepository.findOne({where: {username: username, password: password, id: userId}, relations:["role"]});
     }
 
     async UpdateUserInfor(id: number, updateInfor: UserDto): Promise<any>{

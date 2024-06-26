@@ -13,18 +13,18 @@ import { ActivityModule } from './activity.module';
 import { ImageModule } from './image.module';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Users]), UserModule,
-              JwtModule.register({
-                global: true,
-                secret: jwtConstants.secret
+  imports: [TypeOrmModule.forFeature([Users]), UserModule,
+            JwtModule.register({
+              global: true,
+              secret: jwtConstants.secret
     }),
-              TagModule,
-              CategoryModule,
-              PostModule,
-              ActivityModule,
-             ImageModule],
-    providers: [AuthService],
-    controllers: [AuthController],
-    exports: [AuthService]
+            TagModule,
+            CategoryModule,
+            PostModule,
+            ActivityModule,
+            ImageModule],
+  providers: [AuthService],
+  controllers: [AuthController],
+  exports: [AuthService]
 })
 export class AuthModule {}

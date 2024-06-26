@@ -40,8 +40,8 @@ export class PostController {
         return await this.activityService.GetPostComment(postId);
     }
 
-    @Patch(':id')
-    updatePost(@Body(new ValidationPipe(undefined)) post: PostDto, @Param('id', ParseIntPipe) postId: number){
+    @Patch(':id/')
+    updatePost(@Body(new ValidationPipe()) post: PostDto, @Param('id', ParseIntPipe) postId: number){
         return this.postService.UpdatePost(postId, post)
     }
 

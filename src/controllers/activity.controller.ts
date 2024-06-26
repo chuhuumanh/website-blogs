@@ -1,7 +1,8 @@
-import { BadRequestException, Body, Controller, Post, Query, Delete, ParseIntPipe, Param } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Post, Query, Delete, ParseIntPipe, Param, Patch } from '@nestjs/common';
 import { ActionService } from 'src/services/action.service';
 import { ActivityService } from 'src/services/activity.service';
 import { ActivityDto } from 'src/validation/activity.dto';
+import { UpdateCommentDto } from 'src/validation/update-comment.dto';
 import { ValidationPipe } from 'src/validation/validation.pipe';
 
 @Controller('activity')
@@ -16,6 +17,11 @@ export class ActivityController {
         if(actionPerformed.name === "comment")
             return await this.activityService.Comment(actionPerformed, activityDto);
         return await this.activityService.PerformAction(actionPerformed, activityDto);
+    }
+
+    @Patch('comment/:id/')
+    async updateComment(@Param('id', ParseIntPipe)postId, @Body(new ValidationPipe())updatedComment : UpdateCommentDto){
+        return await this.activityService.UpdateComment(postId, updatedComment)
     }
 
     @Delete('comment/:id')

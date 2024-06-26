@@ -25,6 +25,10 @@ export class PostService {
         return post;
     }
 
+    async GetUserPost(id: number): Promise<[Posts[], number] | any>{
+        return await this.postRepository.findAndCount({where: {user: {id}}});
+    }
+
     async FindPost(keyword?: string): Promise<[Posts[], number] | undefined>{
         return await this.postRepository.findAndCount({where: {title: Like('%' + keyword + '%'), content: Like('%' + keyword + '%')}});
     }
