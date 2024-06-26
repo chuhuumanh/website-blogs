@@ -5,7 +5,7 @@ import { TagService } from 'src/services/tag.service';
 import { TagDto } from 'src/validation/tag.dto';
 import { ValidationPipe } from 'src/validation/validation.pipe';
 
-@Controller('tag')
+@Controller('tags')
 @UseGuards(AuthGuard)
 @Roles(Role.Admin, Role.User)
 export class TagController {

@@ -7,7 +7,7 @@ import { Role, Roles } from 'src/auth/role.decorator';
 
 @UseGuards(AuthGuard)
 @Roles(Role.Admin)
-@Controller('category')
+@Controller('categories')
 export class CategoryController {
     constructor(private categoryService: CategoryService){}
     @Post()
@@ -17,7 +17,7 @@ export class CategoryController {
 
     @Get()
     getCategory(@Query() keyword: {name?:string} ){
-        return this.categoryService.FindCategory(keyword.name);
+        return this.categoryService.FindCategoryByName(keyword.name);
     }
 
     @Patch(':id')

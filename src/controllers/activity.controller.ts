@@ -4,26 +4,24 @@ import { ActivityService } from 'src/services/activity.service';
 import { ActivityDto } from 'src/validation/activity.dto';
 import { ValidationPipe } from 'src/validation/validation.pipe';
 
-@Controller('activity')
+@Controller('activities')
 export class ActivityController {
     constructor(private activityService: ActivityService, private actionService: ActionService){}
 
     @Post()
-    async actionPerform(@Query('action') action: string, @Body(new ValidationPipe(['insert'])) activityDto: ActivityDto){
-        const actionPerformed = await this.actionService.FindOne(action);
-        if(!actionPerformed)
-            throw new BadRequestException('Action invalid');
+    async actionPerform(@Body(new ValidationPipe(['insert'])) activityDto: ActivityDto){
+        const actionPerformed = await this.actionService.FindOneByName(activityDto.action);
         if(actionPerformed.name === "comment")
-            return await this.activityService.Comment(activityDto);
+            return await this.activityService.PublishComment(activityDto);
         return await this.activityService.PerformAction(actionPerformed, activityDto);
     }
 
-    @Patch('comment/:id/')
+    @Patch('comments/:id/')
     async updateComment(@Param('id', ParseIntPipe)postId, @Body(new ValidationPipe(['update']))updatedComment : ActivityDto){
         return await this.activityService.UpdateComment(postId, updatedComment)
     }
 
-    @Delete('comment/:id')
+    @Delete('comments/:id')
     async deleteComent(@Param('id', ParseIntPipe) postId: number ,@Body('userId', ParseIntPipe) userId: number){
         return await this.activityService.DeleteComment(postId, userId);
     }

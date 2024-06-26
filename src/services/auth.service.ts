@@ -5,7 +5,6 @@ import { Users } from 'src/entity/users';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserDto } from 'src/validation/user.dto';
-import { number } from 'zod';
 @Injectable()
 export class AuthService {
     constructor(@InjectRepository(Users) private userRepository: Repository<Users> ,private userSerivce: UserService, private jwtService: JwtService){}

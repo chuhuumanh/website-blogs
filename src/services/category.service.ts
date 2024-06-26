@@ -17,14 +17,20 @@ export class CategoryService {
     }
 
     async FindCategoryById(id: number): Promise<Category | any>{
-        return await this.categoryRepository.findOneBy({id});
+        const category = await this.categoryRepository.findOneBy({id});
+        if(!category)
+            throw new NotFoundException('Category not found');
+        return category;
     }
 
-    async FindCategory(name?: string): Promise<[Category[], number] | undefined>{
-        return await this.categoryRepository.findAndCount({where: {name: Like('%' + name + '%')}});
+    async FindCategoryByName(name?: string): Promise<[Category[], number] | undefined>{
+        const category = await this.categoryRepository.findAndCount({where: {name: Like('%' + name + '%')}});
+        if(!category)
+            throw new NotFoundException('Category not found !');
+        return category;
     }
 
-    async GetPostCategory(postId: number): Promise<[Category[], number]| any>{
+    async GetPostCategories(postId: number): Promise<[Category[], number]| any>{
         return await this.categoryRepository.findAndCount({where: {posts: {id: postId}}});
     }
 

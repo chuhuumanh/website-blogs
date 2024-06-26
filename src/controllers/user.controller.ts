@@ -9,7 +9,7 @@ import { PostService } from 'src/services/post.service';
 
 @UseGuards(AuthGuard)
 @Roles(Role.User, Role.Admin)
-@Controller('user')
+@Controller('users')
 export class UserController {
     constructor(private userService: UserService, private postService: PostService){}
     @Get('profile')

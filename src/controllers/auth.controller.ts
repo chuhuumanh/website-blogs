@@ -12,7 +12,7 @@ export class AuthController {
     }
 
     @Post('signup')
-    signup(@Body(new ValidationPipe(["registration", undefined])) signUpDto: UserDto){
+    signup(@Body(new ValidationPipe(["registration"])) signUpDto: UserDto){
         return this.authService.SignUp(signUpDto)
     }
 }

@@ -16,4 +16,8 @@ export class ActivityDto{
     @IsNotEmpty({groups: ['insert', 'update']})
     @IsString({groups: ['insert', 'update']})
     content: string
+
+    @IsNotEmpty({groups: ['insert', 'update']})
+    @IsString({groups: ['insert', 'update']})
+    action: string
 }

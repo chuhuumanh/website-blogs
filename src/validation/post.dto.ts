@@ -29,6 +29,7 @@ export class PostDto{
     @IsNumber({}, {each: true})
     categoriesId?: number[]
 
+    @IsOptional()
     @IsNotEmpty()
     @IsArray()
     @IsNumber({}, {each: true})
@@ -39,5 +40,4 @@ export class PostDto{
     shareCount?: number
     saveCount?: number
     commentCount?: number
-    tags?: Tags[]
 }

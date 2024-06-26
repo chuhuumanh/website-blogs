@@ -1,3 +1,4 @@
+use WebBlog
 select * from users;
 select * from posts
 select * from images;
@@ -6,6 +7,5 @@ select * from activity;
 select * from actions;
 select * from category
 select * from PostCategory;
-delete from tags where id = 7
-select * from tags
-select * from PostTag
+select * from tags;
+select * from PostTag;

@@ -35,7 +35,7 @@ export class PostService {
         return newPost;
     }
 
-    async FindOne(id: number): Promise<Posts>{
+    async FindOneById(id: number): Promise<Posts>{
         const post = await this.postRepository.findOne({where: {id}, relations:['user', 'access']});
         if(!post)
             throw new NotFoundException("Post not found !");
@@ -43,15 +43,40 @@ export class PostService {
     }
 
     async GetUserPost(id: number): Promise<[Posts[], number] | any>{
-        return await this.postRepository.findAndCount({where: {user: {id}}});
+        const post = await this.postRepository
+            .findAndCount({
+                where: {
+                    user: {id}
+                }
+            }
+        );
+        if(!post)
+            throw new NotFoundException('Post not found !');
+        return post;
     }
 
     async SearchPosts(keyword?: string, id?: number): Promise<[Posts[], number] | Posts | any>{
-        return await this.postRepository.findAndCount({where: {title: Like('%' + keyword + '%'), content: Like('%' + keyword + '%')}, relations: ['user', 'access']});
+        const post = await this.postRepository
+            .findAndCount({
+                where: {
+                    title: Like('%' + keyword + '%'), 
+                    content: Like('%' + keyword + '%')
+                }, 
+                relations: ['user', 'access']
+            }
+        );
+        if(!post)
+            throw new NotFoundException('Post not found !');
+        return post;
     }
 
     async UpdatePost(id: number, updatePost: PostDto): Promise<object|any>{
-        const isPostExist = await this.postRepository.findOne({where:{id}, relations: ['user']});
+        const isPostExist = await this.postRepository
+            .findOne({
+                where:{id}, 
+                relations: ['user']
+            }
+        );
         if(!isPostExist)
             throw new NotFoundException("This post is not exist!");
         if(updatePost.userId && undefined && updatePost.userId !== isPostExist.user.id)
@@ -72,7 +97,7 @@ export class PostService {
             }
         }
         
-        const action =  await this.postRepository.save({id, title: updatePost.title, content: updatePost.content,
+        await this.postRepository.save({id, title: updatePost.title, content: updatePost.content,
             likedCount: updatePost.likeCount, sharedCount: updatePost.shareCount,
             savedCount: updatePost.saveCount, commentCount: updatePost.commentCount,
             categories: categories, tags: tags});
