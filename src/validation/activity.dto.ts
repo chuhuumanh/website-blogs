@@ -1,16 +1,19 @@
 import { IsNotEmpty, IsNumber, IsOptional } from "@nestjs/class-validator";
+import { Type } from "class-transformer";
 import { IsString } from "class-validator";
+import { number } from "zod";
 
 export class ActivityDto{
-    @IsNotEmpty()
-    @IsNumber()
+    @IsNotEmpty({groups: ['insert', 'update']})
+    @IsNumber({}, {groups: ['insert', 'update']})
     userId: number
 
-    @IsNotEmpty()
-    @IsNumber()
+    @IsNotEmpty({groups: ['insert']})
+    @IsNumber({}, {groups: ['insert']})
     postId: number
 
-    @IsNotEmpty()
-    @IsString()
+    @IsOptional({groups: ['insert', 'update']})
+    @IsNotEmpty({groups: ['insert', 'update']})
+    @IsString({groups: ['insert', 'update']})
     content: string
 }

@@ -6,6 +6,7 @@ export class ParseFormDataPipe implements PipeTransform {
     try {
         return JSON.parse(value.request);
     } catch (err) {
+      console.log(err)
         throw new BadRequestException('Invalid JSON data in form-data');
       }
   }

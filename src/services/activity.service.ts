@@ -8,7 +8,6 @@ import { PostService } from './post.service';
 import { Actions } from 'src/entity/actions';
 import { PostDto } from 'src/validation/post.dto';
 import { Comments } from 'src/entity/comments';
-import { UpdateCommentDto } from 'src/validation/update-comment.dto';
 
 @Injectable()
 export class ActivityService {
@@ -66,10 +65,11 @@ export class ActivityService {
                 default:
                     throw new BadRequestException("Action invalid !");
             }
+            
             const updatedPost: PostDto = {
                 likeCount: performedPost.likedCount,
                 saveCount: performedPost.savedCount,
-                shareCount: performedPost.sharedCount
+                shareCount: performedPost.sharedCount,
             };
             await this.postService.UpdatePost(activity.postId, updatedPost)
             return {message: "un" + action.name + " successful !"}
@@ -77,7 +77,8 @@ export class ActivityService {
     }
     async Comment(comment: ActivityDto):Promise<object| any>{
         const performedPost = await this.postService.FindOne(comment.postId);
-        console.log(performedPost)
+        if(!performedPost)
+            throw new NotFoundException('Post not found !');
         const performedDate = this.dateTime.GetDateTimeString();
         const updatedPost: PostDto = {
             commentCount: performedPost.commentCount += 1
@@ -85,6 +86,7 @@ export class ActivityService {
         await this.postService.UpdatePost(comment.postId, updatedPost);
         await this.commentRepository.insert({content: comment.content, postedDate: performedDate, 
                                             user: {id: comment.userId}, post: {id: comment.postId}});
+        return {message: "Comment successful !"};
     }
 
     async GetPostComment(postId: number):Promise<[Comments[], number] | any>{
@@ -108,7 +110,7 @@ export class ActivityService {
         return {message: "Deleted !"};
     }
 
-    async UpdateComment(id: number, updatedComment: UpdateCommentDto):Promise<object | any>{
+    async UpdateComment(id: number, updatedComment: ActivityDto):Promise<object | any>{
         const comment = await this.commentRepository.findOne({where: {id}, relations: ['post', 'user']});
         if(comment.user.id !== updatedComment.userId)
             throw new ForbiddenException("Cannot edit other's comment !");

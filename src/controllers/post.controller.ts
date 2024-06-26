@@ -58,6 +58,7 @@ export class PostController {
             files.forEach(async (file) =>{
                 await this.imgService.AddPostImage(postId, file);
             });
+            console.table(files);
         return message;
     }
 

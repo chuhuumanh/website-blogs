@@ -1,4 +1,4 @@
-import { IsArray, IsOptional, IsString} from "@nestjs/class-validator";
+import { ArrayMinSize, IsArray, IsOptional, IsString, ValidateNested, arrayMinSize} from "@nestjs/class-validator";
 import { ApiProperty } from "@nestjs/swagger";
 import { Type } from "class-transformer";
 import { IsNotEmpty, IsNumber } from "class-validator";
@@ -25,15 +25,16 @@ export class PostDto{
 
     @IsNotEmpty()
     @IsArray()
-    @Type(() => number)
+    @ArrayMinSize(1)
+    @IsNumber({}, {each: true})
     categoriesId?: number[]
 
-    @IsOptional()
+    @IsNotEmpty()
     @IsArray()
-    @Type(() => number)
+    @IsNumber({}, {each: true})
     tagsId?: number[]
 
-    
+
     likeCount?:number
     shareCount?: number
     saveCount?: number

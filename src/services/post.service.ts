@@ -54,13 +54,15 @@ export class PostService {
         const isPostExist = await this.postRepository.findOne({where:{id}, relations: ['user']});
         if(!isPostExist)
             throw new NotFoundException("This post is not exist!");
-        if(updatePost.userId !== isPostExist.user.id)
+        if(updatePost.userId && undefined && updatePost.userId !== isPostExist.user.id)
             throw new ForbiddenException("Cannot edit other's post")
 
         const categories = [];
-        for (const id of updatePost.categoriesId) {
-            const category = await this.categoryService.FindCategoryById(id);
-            categories.push(category);
+        if(updatePost.categoriesId){
+            for (const id of updatePost.categoriesId) {
+                const category = await this.categoryService.FindCategoryById(id);
+                categories.push(category);
+            }
         }
         const tags = []
         if(updatePost.tagsId){
@@ -83,5 +85,4 @@ export class PostService {
             throw new NotFoundException("Post Not Found !");
         return {message: "Deleted !"};
     }
-
 }

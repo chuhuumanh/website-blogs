@@ -1,4 +1,4 @@
-import { BadRequestException, Module, NotAcceptableException } from '@nestjs/common';
+import { BadRequestException, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PostController } from 'src/controllers/post.controller';
 import { Posts } from 'src/entity/posts';
@@ -21,15 +21,17 @@ import { Actions } from 'src/entity/actions';
 
 @Module({
     imports: [TypeOrmModule.forFeature([Posts, Comments, Activity, Images, Tags, Category, Actions, Category]),
-              MulterModule.register({
-                dest:'./src/images/posts/',
-                fileFilter: (req, file, callback) => {
-                    if (!file.mimetype.match(/^(image\/jpeg|image\/png|image\/gif|image\/bmp)$/i)) {
+                MulterModule.register({
+                    dest:'./src/images/posts/',
+                    fileFilter: (req, file, callback) => {
+                        if (!file.mimetype.match(/^(image\/jpeg|image\/png|image\/gif|image\/bmp)$/i)) {
                         callback(new BadRequestException("Only jpeg, jpg, gif, bmp files are allow"), false);
+                        }
+                        else callback(null, true)
                     }
-                    else callback(null, true)
-                  }
-              })],
+                }
+            )
+    ],
     providers: [PostService, DatetimeService, ActivityService, ImageService, 
                 TagService, CategoryService, ImageService, ActionService,
                 CategoryService, TagService, {provide:APP_GUARD, useClass: RoleGuard}],
