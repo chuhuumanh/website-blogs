@@ -1,0 +1,8 @@
+,
+                    storage: diskStorage({
+                        filename: (req, file, cb) =>{
+                            const encodeName = Date.now();
+                            const fileName = `${encodeName}.${file.mimetype.split('/')[1]}`
+                            cb(null, fileName);
+                        }
+                    })

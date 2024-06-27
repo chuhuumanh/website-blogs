@@ -20,12 +20,12 @@ export class PostController {
                 private imgService: ImageService, private actionService: ActionService){}
     @Post()
     @UseInterceptors(FilesInterceptor('files'))
-    async addPost(@UploadedFiles(new ParseFilePipeBuilder().build({fileIsRequired: false})) files: Array<Express.Multer.File>,
+    async addPost(@UploadedFiles(new ParseFilePipeBuilder().addMaxSizeValidator(null).build({fileIsRequired: false})) files: Array<Express.Multer.File>,
                   @Body(new ParseFormDataPipe, new ValidationPipe) postDto: PostDto){
         const newPost = await this.postService.Add(postDto);
         if(files)
             await this.imgService.AddPostImage(newPost.id, files)
-        return newPost;
+        return {message: 'Post uploaded'};
     }
 
     @Get()
@@ -65,8 +65,10 @@ export class PostController {
 
 
     @Delete(':id')
-    deletePost(@Param('id', ParseIntPipe) postId: number){
-        return this.postService.DeletePost(postId);
+    async deletePost(@Param('id', ParseIntPipe) postId: number, @Query('userId', ParseIntPipe)userId: number){
+        await this.imgService.DeletePostImages(postId);
+        await this.activityService.DeletePostComments(postId);
+        await this.activityService.DeletePostActivities(postId);
+        return await this.postService.DeletePost(postId, userId);
     }
-    
 }

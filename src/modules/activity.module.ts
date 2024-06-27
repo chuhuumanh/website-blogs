@@ -13,10 +13,12 @@ import { Category } from 'src/entity/category';
 import { CategoryService } from 'src/services/category.service';
 import { Tags } from 'src/entity/tags';
 import { TagService } from 'src/services/tag.service';
+import { UserService } from 'src/services/user.service';
+import { Users } from 'src/entity/users';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Activity, Actions, Posts, Comments, Category, Tags])],
-    providers: [ActivityService, DatetimeService, ActionService, PostService, CategoryService, TagService],
+    imports: [TypeOrmModule.forFeature([Activity, Actions, Posts, Comments, Category, Tags, Users])],
+    providers: [ActivityService, DatetimeService, ActionService, PostService, CategoryService, TagService, UserService],
     controllers: [ActivityController]
 })
 export class ActivityModule {}

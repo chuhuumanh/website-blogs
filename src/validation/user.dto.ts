@@ -50,5 +50,9 @@ export class UserDto{
     @IsNotEmpty({groups: ['registration']})
     @IsNumber()
     roleId: number
+
+    @IsOptional()
+    @IsNumber()
+    publishedPostCount: number
 }
 

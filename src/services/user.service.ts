@@ -27,14 +27,14 @@ export class UserService {
     }
 
     async UpdateUserInfor(id: number, updateInfor: UserDto): Promise<any>{
-        console.table(updateInfor);
         const action = await this.userRepository.update({id}, 
                         {firstName: updateInfor.firstName, lastName: updateInfor.lastName, 
                         phoneNum: updateInfor.phoneNum, password: updateInfor.password,
                         email: updateInfor.email, bio: updateInfor.bio,
                         profilePicturePath: updateInfor.profilePicturePath,
-                        dateOfBirth: updateInfor.dateOfBirth
+                        dateOfBirth: updateInfor.dateOfBirth, postPublishedCount: updateInfor.publishedPostCount
                         });
+        
         if(action.affected === 0)
             throw new NotFoundException("User Not Found !");
         return {message: "Updated !"};

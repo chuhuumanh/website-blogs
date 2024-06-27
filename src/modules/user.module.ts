@@ -15,9 +15,14 @@ import { TagService } from 'src/services/tag.service';
 import { BadRequestException } from '@nestjs/common';
 import { MulterModule } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
+import { Images } from 'src/entity/images';
+import { ImageService } from 'src/services/image.service';
+import { Activity } from 'src/entity/activity';
+import { ActivityService } from 'src/services/activity.service';
+import { Comments } from 'src/entity/comments';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Users, Posts, Category, Tags]), MulterModule.register({
+    imports: [TypeOrmModule.forFeature([Users, Posts, Category, Tags, Images, Activity, Comments]), MulterModule.register({
         fileFilter: (req, file, callback) => {
             if (!file.mimetype.match(/^(image\/jpeg|image\/png|image\/gif|image\/bmp)$/i)) {
                 callback(new BadRequestException("Only jpeg, jpg, gif, bmp files are allow"), false);
@@ -35,7 +40,7 @@ import { diskStorage } from 'multer';
     }
 )],
     exports: [UserService],
-    providers: [UserService, PostService, DatetimeService, CategoryService, TagService, {provide:APP_GUARD, useClass: RoleGuard}],
+    providers: [UserService, ImageService, ActivityService, PostService, DatetimeService, CategoryService, TagService, {provide:APP_GUARD, useClass: RoleGuard}],
     controllers: [UserController]
 })
 export class UserModule {}

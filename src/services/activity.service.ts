@@ -178,6 +178,22 @@ export class ActivityService {
         return {message: "Deleted !"};
     }
 
+    async DeletePostComments(postId: number){
+        await this.commentRepository.delete({post :{id: postId}});
+    }
+
+    async DeletePostActivities(postId: number){
+        await this.activityRepository.delete({post: {id: postId}});
+    }
+
+    async DeleteUserComments(userId: number){
+        await this.commentRepository.delete({user: {id: userId}});
+    }
+
+    async DeleteUserActivities(userId: number){
+        await this.activityRepository.delete({user: {id: userId}});
+    }
+
     async UpdateComment(id: number, updatedComment: ActivityDto):Promise<object | any>{
         const comment = await this.commentRepository
             .findOne({

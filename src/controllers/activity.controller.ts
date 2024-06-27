@@ -22,7 +22,7 @@ export class ActivityController {
     }
 
     @Delete('comments/:id')
-    async deleteComent(@Param('id', ParseIntPipe) postId: number ,@Body('userId', ParseIntPipe) userId: number){
+    async deleteComent(@Param('id', ParseIntPipe) postId: number ,@Query('userId', ParseIntPipe) userId: number){
         return await this.activityService.DeleteComment(postId, userId);
     }
 }

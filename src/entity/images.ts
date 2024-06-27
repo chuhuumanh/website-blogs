@@ -22,4 +22,7 @@ export class Images{
     @ManyToOne(() => Posts, (post) => post.images)
     post: Posts
 
+    @ManyToOne(() => Users, (user) => user.images)
+    user: Users
+
 }
