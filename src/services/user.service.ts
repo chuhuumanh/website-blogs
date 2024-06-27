@@ -17,12 +17,23 @@ export class UserService {
         return await this.userRepository.findOne({where: {username: username, password: password, id: userId}, relations:["role"]});
     }
 
+    async FindUserProfilePicture(id: number, path: string){
+        const user = await this.userRepository.findOneBy({id});
+        if(!user)
+            throw new NotFoundException('User not found !');
+        if(user.profilePicturePath !== path)
+            throw new NotFoundException('Profile image not found !');
+        return user;
+    }
+
     async UpdateUserInfor(id: number, updateInfor: UserDto): Promise<any>{
+        console.table(updateInfor);
         const action = await this.userRepository.update({id}, 
                         {firstName: updateInfor.firstName, lastName: updateInfor.lastName, 
                         phoneNum: updateInfor.phoneNum, password: updateInfor.password,
                         email: updateInfor.email, bio: updateInfor.bio,
-                        profilePicturePath: updateInfor.profilePicturePath
+                        profilePicturePath: updateInfor.profilePicturePath,
+                        dateOfBirth: updateInfor.dateOfBirth
                         });
         if(action.affected === 0)
             throw new NotFoundException("User Not Found !");

@@ -4,6 +4,8 @@ import { Repository } from 'typeorm';
 import { Images } from 'src/entity/images';
 import { DatetimeService } from './datetime.service';
 import { PostService } from './post.service';
+import { createReadStream } from 'fs';
+import { join } from 'path';
 
 @Injectable()
 export class ImageService {
@@ -20,9 +22,17 @@ export class ImageService {
         return {message: "Successful !"};
     }
 
+    async GetPostImagesByPath(imgPath: string): Promise<Images| any>{
+        const img = await this.ImagesRepository.findOneBy({imgPath});
+        if(!img)
+            throw new NotFoundException('Image not found !');
+        return img;
+    }
+
     async GetPostImages(postId: number): Promise<[Images[], number]>{
         await this.postService.FindOneById(postId);
-        return await this.ImagesRepository.findAndCount({where: {post: {id: postId}}});
+        const files = await this.ImagesRepository.findAndCount({where: {post: {id: postId}}});
+        return files;
     }
 
     async UpdatePostImages(postId: number){

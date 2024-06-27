@@ -1,4 +1,4 @@
-import { ValidateNested, IsAlpha, IsBoolean, IsEmail, IsPhoneNumber, IsString, IsNotEmpty, IsNumber } from "@nestjs/class-validator";
+import { ValidateNested, IsAlpha, IsBoolean, IsEmail, IsPhoneNumber, IsString, IsNotEmpty, IsNumber, IsOptional, IsDate, IsDateString } from "@nestjs/class-validator";
 
 export class UserDto{
 
@@ -37,6 +37,10 @@ export class UserDto{
     @IsString({groups: ['update']})
     bio: string
 
+    @IsDateString({groups: ['registration', 'update']})
+    dateOfBirth: Date
+
+    @IsOptional({groups: ['update']})
     @IsString({groups: ['update']})
     profilePicturePath: string
 

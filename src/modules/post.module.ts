@@ -30,7 +30,7 @@ import { diskStorage, memoryStorage } from 'multer';
                         else callback(null, true)
                     },
                     storage: diskStorage({
-                        destination: './src/images/posts',
+                        destination: 'images/postsImg',
                         filename: (req, file, cb) =>{
                             const encodeName = Date.now();
                             const fileName = `${encodeName}.${file.mimetype.split('/')[1]}`

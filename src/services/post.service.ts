@@ -13,7 +13,6 @@ export class PostService {
                 private categoryService: CategoryService, private tagService: TagService){}
 
     async Add(post: PostDto): Promise<any>{
-        
         const publishedDate = this.dateTime.GetDateTimeString();
         const categories = [];
         for (const id of post.categoriesId) {
@@ -27,12 +26,12 @@ export class PostService {
                 tags.push(tag);
             }
         }
-        const newPost = await this.postRepository.save({title: post.title, content: post.content, 
+        await this.postRepository.save({title: post.title, content: post.content, 
                                         likedCount: 0, sharedCount: 0, savedCount: 0, 
                                         commentCount: 0, publishedDate:publishedDate,
                                         user:{id: post.userId}, access: {id: post.accessId}, 
                                         categories: categories, tags: tags});
-        return newPost;
+        return{message: "Post successfully !"};
     }
 
     async FindOneById(id: number): Promise<Posts>{

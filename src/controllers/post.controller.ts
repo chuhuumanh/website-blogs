@@ -10,9 +10,7 @@ import { PostService } from 'src/services/post.service';
 import { ParseFormDataPipe } from 'src/validation/parse.formdata.pipe';
 import { PostDto } from 'src/validation/post.dto';
 import { ValidationPipe } from 'src/validation/validation.pipe';
-import { createReadStream } from 'fs';
-import { join } from 'path';
-import { Response } from 'express';
+
 
 @UseGuards(AuthGuard)
 @Roles(Role.User, Role.Admin)
@@ -27,7 +25,7 @@ export class PostController {
         const newPost = await this.postService.Add(postDto);
         if(files)
             await this.imgService.AddPostImage(newPost.id, files)
-        return{message: "Post uploaded !"};
+        return newPost;
     }
 
     @Get()
@@ -48,20 +46,10 @@ export class PostController {
         return await this.activityService.GetPostActivities(postId, actionPerformed);
     }
 
-    /*@Get(':id/images')
-    async getPostImages(@Res({ passthrough: true }) res: Response, @Param('id', ParseIntPipe) postId: number){
-        const files = await this.imgService.GetPostImages(postId);
-        const stream = Buffer[a];
-        files[0].forEach((file) => {
-            const str = createReadStream(join(process.cwd(), './src/images/posts/1719425959320.jpeg'));
-            stream.
-        })
-        res.set({
-            'Content-Type': `image/jpeg`,
-            'Content-Disposition': 'attachment;',
-          });
-        return new StreamableFile(stream);
-    }*/
+    @Get(':id/images/path')
+    async getPostImagesPath(@Param('id', ParseIntPipe) postId : number){
+        return this.imgService.GetPostImages(postId);
+    }
     
     @Patch(':id')
     @UseInterceptors(FilesInterceptor('files'))
