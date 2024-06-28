@@ -9,3 +9,4 @@ select * from category
 select * from PostCategory;
 select * from tags;
 select * from PostTag;
+select * from friends;

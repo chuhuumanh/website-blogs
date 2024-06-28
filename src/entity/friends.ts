@@ -4,7 +4,10 @@ import { Users } from "./users";
 @Entity()
 export class Friends{
     @PrimaryGeneratedColumn()
-    friendId: number;
+    id: number;
+
+    @Column()
+    userReceiveRequestId: number;
 
     @Column({nullable: true})
     addedDate?: Date;
@@ -13,5 +16,5 @@ export class Friends{
     isAccept: boolean;
 
     @ManyToOne(() => Users, (user) => user.friends)
-    currentUser: Users
+    userSentRequest: Users
 }

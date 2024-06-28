@@ -90,16 +90,6 @@ export class PostService {
     }
 
     async UpdatePost(id: number, updatePost: PostDto): Promise<object|any>{
-        const isPostExist = await this.postRepository
-            .findOne({
-                where:{id}, 
-                relations: ['user']
-            }
-        );
-        if(!isPostExist)
-            throw new NotFoundException("This post is not exist!");
-        if(updatePost.userId && undefined && updatePost.userId !== isPostExist.user.id)
-            throw new ForbiddenException("Cannot edit other's post")
 
         const categories = [];
         if(updatePost.categoriesId){
@@ -128,13 +118,8 @@ export class PostService {
         await this.postRepository.delete({user: {id: userId}});
     }
 
-    async DeletePost(id: number, userId: number):Promise<object|any>{
+    async DeletePost(id: number):Promise<object|any>{
         const post = await this.FindOneById(id);
-        if(!post)
-            throw new NotFoundException("Post Not Found !");
-        if(post.user.id !== userId)
-            throw new ForbiddenException("Cannot delete other's post")
-
         await this.postRepository.delete({id});
         
         const user = await this.userService.FindOne(undefined, undefined, post.user.id)

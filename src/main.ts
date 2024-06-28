@@ -1,9 +1,11 @@
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+
 declare const module: any;
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.enableCors({origin: '*', allowedHeaders: '*', methods: ["GET", "POST", "PUT", "DELETE"]})
   const config = new DocumentBuilder()
     .setTitle('Website Blogs API')
     .setDescription('The Website Blogs API description')

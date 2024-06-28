@@ -2,6 +2,7 @@ import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, JoinTable, ManyToOn
 import { Actions } from "./actions";
 import { Posts } from "./posts";
 import { Users } from "./users";
+import { nullable } from "zod";
 
 @Entity()
 export class Notifications{

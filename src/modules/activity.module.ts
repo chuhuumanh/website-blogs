@@ -15,10 +15,11 @@ import { Tags } from 'src/entity/tags';
 import { TagService } from 'src/services/tag.service';
 import { UserService } from 'src/services/user.service';
 import { Users } from 'src/entity/users';
+import { NotificationService } from 'src/services/notification.service';
 
 @Module({
     imports: [TypeOrmModule.forFeature([Activity, Actions, Posts, Comments, Category, Tags, Users])],
-    providers: [ActivityService, DatetimeService, ActionService, PostService, CategoryService, TagService, UserService],
+    providers: [ActivityService, DatetimeService, ActionService, PostService, CategoryService, TagService, UserService, NotificationService],
     controllers: [ActivityController]
 })
 export class ActivityModule {}

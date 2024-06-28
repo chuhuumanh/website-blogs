@@ -4,6 +4,10 @@ import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Config } from './entity/db.config';
 import { AuthModule } from './modules/auth.module';
+import { FriendController } from './controllers/friend.controller';
+import { FriendService } from './services/friend.service';
+import { NotificationController } from './controllers/notification.controller';
+import { NotificationService } from './services/notification.service';
 @Module({
   imports: [ 
     TypeOrmModule.forRoot({
@@ -20,7 +24,7 @@ import { AuthModule } from './modules/auth.module';
       },
       synchronize: Config.synchronize
     }), AuthModule],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [AppController, NotificationController],
+  providers: [AppService, NotificationService],
 })
 export class AppModule {}

@@ -15,8 +15,6 @@ export class PostDto{
     @IsString()
     content?: string
 
-    @IsNotEmpty()
-    @IsNumber()
     userId?: number
 
     @IsNotEmpty()
@@ -34,7 +32,6 @@ export class PostDto{
     @IsArray()
     @IsNumber({}, {each: true})
     tagsId?: number[]
-
 
     likeCount?:number
     shareCount?: number

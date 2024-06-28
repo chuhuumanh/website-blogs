@@ -11,6 +11,7 @@ import { CategoryModule } from './category.module';
 import { PostModule } from './post.module';
 import { ActivityModule } from './activity.module';
 import { ImageModule } from './image.module';
+import { FriendModule } from './friend.module';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Users]), UserModule,
@@ -22,7 +23,7 @@ import { ImageModule } from './image.module';
             CategoryModule,
             PostModule,
             ActivityModule,
-            ImageModule],
+            ImageModule, FriendModule],
   providers: [AuthService],
   controllers: [AuthController],
   exports: [AuthService]

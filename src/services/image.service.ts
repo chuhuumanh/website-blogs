@@ -11,7 +11,7 @@ export class ImageService {
     constructor(@InjectRepository(Images) private ImagesRepository: Repository<Images>, private dateTimeService: DatetimeService,
                 private postService: PostService){}
 
-    async AddPostImage(postId: number, files: Array<Express.Multer.File>): Promise<any>{
+    async AddPostImage(postId: number, userId: number, files: Array<Express.Multer.File>): Promise<any>{
         const uploadedDate = this.dateTimeService.GetDateTimeString();
         for(const file of files){
             const newFilePath = `${file.path}.${file.mimetype.split('/')[1]}`
@@ -20,7 +20,7 @@ export class ImageService {
                     console.log(err);
             })
             await this.ImagesRepository.insert({imgPath: newFilePath, uploadedDate: uploadedDate, fileType: file.mimetype.split('/')[1], 
-                size: file.size, post: {id: postId}});
+                size: file.size, post: {id: postId}, user: {id: userId}});
         };
         return {message: "Successful !"};
     }
