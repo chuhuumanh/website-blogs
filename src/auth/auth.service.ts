@@ -7,8 +7,8 @@ import { UserSignInDto } from 'src/validation/user.signin.dto';
 export class AuthService {
     constructor(private userSerivce: UserService, private jwtService: JwtService){}
 
-    async SignIn(user: UserSignInDto): Promise<any>{
-        const userInfor = await this.userSerivce.FindOne(user.username, user.password);
+    async signIn(user: UserSignInDto): Promise<any>{
+        const userInfor = await this.userSerivce.findOne(user.username, user.password);
         if(!userInfor)
             throw new NotAcceptableException("Incorect username or passowrd !");
         const payload = {profile: JSON.stringify(userInfor)}
@@ -17,8 +17,8 @@ export class AuthService {
         };
     }
 
-    async SignUp(newUser: UserRegisterDto): Promise<any>{
-        const isUsernameExist = await this.userSerivce.FindOne(newUser.username, undefined)?true:false;
+    async signUp(newUser: UserRegisterDto): Promise<any>{
+        const isUsernameExist = await this.userSerivce.findOne(newUser.username, undefined)?true:false;
         const isPasswordMatch = newUser.password === newUser.confirmPassword;
         if(typeof newUser.roleId !== 'number')
             throw new BadRequestException('roleId must be a number !');
@@ -27,8 +27,8 @@ export class AuthService {
         if(!isPasswordMatch)
             throw new NotAcceptableException("Password and confirm password doesn't match !");
         try{
-            await this.userSerivce.Add(newUser);
-            const payload = {profile: JSON.stringify(await this.userSerivce.FindOne(newUser.username, newUser.password))}
+            await this.userSerivce.add(newUser);
+            const payload = {profile: JSON.stringify(await this.userSerivce.findOne(newUser.username, newUser.password))}
             return {
                 access_token: await this.jwtService.signAsync(payload)
             };

@@ -12,21 +12,21 @@ export class CategoryController {
     @Roles(Role.Admin)
     @Post()
     addCategory(@Body(new ValidationPipe()) category: CategoryDto){
-        return this.categoryService.Add(category);
+        return this.categoryService.add(category);
     }
 
     @Get()
     getCategory(@Query() keyword: {name?:string} ){
-        return this.categoryService.FindCategoryByName(keyword.name);
+        return this.categoryService.findCategoryByName(keyword.name);
     }
     @Roles(Role.Admin)
     @Patch(':id')
     updateTag(@Body(new ValidationPipe()) category: CategoryDto, @Param('id', ParseIntPipe) categoryId: number){
-        return this.categoryService.UpdateCategory(categoryId, category)
+        return this.categoryService.updateCategory(categoryId, category)
     }
     @Roles(Role.Admin)
     @Delete(':id')
     deleteTag(@Param('id', ParseIntPipe) categoryId: number){
-        return this.categoryService.DeleteCategory(categoryId);
+        return this.categoryService.deleteCategory(categoryId);
     }
 }

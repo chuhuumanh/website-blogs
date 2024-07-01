@@ -16,8 +16,8 @@ export class NotificationService {
         this.subject.next({data});
     }
 
-    async Add(actionId: number, userId: number, receiverId: number, postId?: number){
-        const activatedDate = this.dateTimService.GetDateTimeString();
+    async add(actionId: number, userId: number, receiverId: number, postId?: number){
+        const activatedDate = this.dateTimService.getDateTimeString();
         return await this.notificationRepository.save({action: {id: actionId}, activedDate: activatedDate, 
             user: {id: userId}, post: {id: postId}, isSeen: false, receiverId: receiverId});
     }
@@ -26,7 +26,7 @@ export class NotificationService {
         return await this.notificationRepository.find({where: {id}, relations: ['action']});
     }
 
-    async GetUserNotifications(userId: number){
+    async getUserNotifications(userId: number){
         const results = await this.notificationRepository.find({where: {receiverId: userId}, relations: ['action', 'post', 'user']});
         const notifications = []
         for(const result of results){
@@ -41,7 +41,7 @@ export class NotificationService {
         return notifications;
     }
 
-    async Delete(id: number){
+    async delete(id: number){
         return await this.notificationRepository.delete({id});
     }
 }

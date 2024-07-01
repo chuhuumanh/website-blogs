@@ -12,17 +12,17 @@ export class TagController {
     constructor(private tagService: TagService){}
     @Post()
     addTag(@Body(new ValidationPipe()) tag: TagDto){
-        return this.tagService.Add(tag);
+        return this.tagService.add(tag);
     }
 
     @Get()
     getTag(@Query() keyword: {name?:string} ){
-        return this.tagService.FindTag(keyword.name);
+        return this.tagService.findTag(keyword.name);
     }
 
     @Patch(':id')
     updateTag(@Body(new ValidationPipe()) tag: TagDto, @Param('id', ParseIntPipe) tagId: number){
-        return this.tagService.UpdateTag(tagId, tag)
+        return this.tagService.updateTag(tagId, tag)
     }
 
     @Delete(':id')

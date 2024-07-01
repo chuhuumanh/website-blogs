@@ -16,7 +16,7 @@ export class ImageController {
         const path = req.url;
         const pathSplit = path.split('/');
         const filePath = `${pathSplit[1]}\\${pathSplit[2]}\\${pathSplit[3]}`
-        await this.imgService.GetPostImagesByPath(filePath);
+        await this.imgService.getPostImagesByPath(filePath);
         res.set({
             'Content-Type': `image/jpeg`,
             'Content-Disposition': 'attachment;',
@@ -30,7 +30,7 @@ export class ImageController {
         const path = req.url;
         const pathSplit = path.split('/');
         const filePath = `${pathSplit[1]}\\${pathSplit[2]}\\${pathSplit[3].split('?')[0]}`
-        await this.userService.FindUserProfilePicture(userId, filePath);
+        await this.userService.findUserProfilePicture(userId, filePath);
         res.set({
             'Content-Type': `image/jpeg`,
             'Content-Disposition': 'attachment;',

@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class DatetimeService {
-    GetDateTimeString():string{
+    getDateTimeString():string{
         const now = Date.now()
         const dateTimeString = new Date(now).toLocaleString('en-US', {
             year: 'numeric',

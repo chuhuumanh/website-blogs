@@ -10,19 +10,19 @@ export class UserService {
 
     constructor(@InjectRepository(Users) private userRepository: Repository<Users>){}
 
-    async Add(newUser: UserRegisterDto){
+    async add(newUser: UserRegisterDto){
         return await this.userRepository.save(newUser);
     }
 
-    async FindAll(){
+    async findAll(){
         return await this.userRepository.findAndCount({relations: ['role']})
     }
 
-    async FindOne(username?: string, password?: string, userId?: number): Promise<Users | undefined>{
+    async findOne(username?: string, password?: string, userId?: number): Promise<Users | undefined>{
         return await this.userRepository.findOne({where: {username: username, password: password, id: userId}, relations:["role"]});
     }
 
-    async FindUserProfilePicture(id: number, path: string){
+    async findUserProfilePicture(id: number, path: string){
         const user = await this.userRepository.findOneBy({id});
         if(!user)
             throw new NotFoundException('User not found !');
@@ -31,7 +31,7 @@ export class UserService {
         return user;
     }
 
-    async UpdateUserInfor(id: number, updateInfor: UserUpdateDto): Promise<any>{
+    async updateUserInfor(id: number, updateInfor: UserUpdateDto): Promise<any>{
         const action = await this.userRepository.update({id}, 
                         {firstName: updateInfor.firstName, lastName: updateInfor.lastName, 
                         phoneNum: updateInfor.phoneNum, password: updateInfor.password,

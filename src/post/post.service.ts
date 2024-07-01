@@ -14,17 +14,17 @@ export class PostService {
     constructor(@InjectRepository(Posts) private postRepository: Repository<Posts>, private dateTime: DatetimeService,
                 private categoryService: CategoryService, private tagService: TagService, private userService: UserService){}
 
-    async Add(post: PostDto): Promise<any>{
-        const publishedDate = this.dateTime.GetDateTimeString();
+    async add(post: PostDto): Promise<any>{
+        const publishedDate = this.dateTime.getDateTimeString();
         const categories = [];
         for (const id of post.categoriesId) {
-            const category = await this.categoryService.FindCategoryById(id);
+            const category = await this.categoryService.findCategoryById(id);
             categories.push(category);
         }
         const tags = []
         if(post.tagsId){
             for (const id of post.tagsId) {
-                const tag = await this.tagService.FindTagById(id);
+                const tag = await this.tagService.findTagById(id);
                 tags.push(tag);
             }
         }
@@ -33,7 +33,7 @@ export class PostService {
                                         commentCount: 0, publishedDate:publishedDate,
                                         user:{id: post.userId}, access: {id: post.accessId}, 
                                         categories: categories, tags: tags});
-        const user = await this.userService.FindOne(undefined, undefined , post.userId);
+        const user = await this.userService.findOne(undefined, undefined , post.userId);
         const updatedUser: UserUpdateDto = {
             publishedPostCount: user.postPublishedCount += 1,
             firstName: user.firstName, 
@@ -46,18 +46,18 @@ export class PostService {
             dateOfBirth: user.dateOfBirth,
             confirmPassword: user.password
         }
-        await this.userService.UpdateUserInfor(user.id, updatedUser);
+        await this.userService.updateUserInfor(user.id, updatedUser);
         return newPost
     }
 
-    async FindOneById(id: number): Promise<Posts>{
+    async findOneById(id: number): Promise<Posts>{
         const post = await this.postRepository.findOne({where: {id}, relations:['user', 'access']});
         if(!post)
             throw new NotFoundException("Post not found !");
         return post;
     }
 
-    async GetUserPost(id: number): Promise<[Posts[], number] | any>{
+    async getUserPost(id: number): Promise<[Posts[], number] | any>{
         const post = await this.postRepository
             .findAndCount({
                 where: {
@@ -70,7 +70,7 @@ export class PostService {
         return post;
     }
 
-    async SearchPosts(keyword?: string, id?: number): Promise<[Posts[], number] | Posts | any>{
+    async searchPosts(keyword?: string, id?: number): Promise<[Posts[], number] | Posts | any>{
         const post = await this.postRepository
             .findAndCount({
                 where: {
@@ -85,19 +85,19 @@ export class PostService {
         return post;
     }
 
-    async UpdatePost(id: number, updatePost: PostDto): Promise<object|any>{
+    async updatePost(id: number, updatePost: PostDto): Promise<object|any>{
 
         const categories = [];
         if(updatePost.categoriesId){
             for (const id of updatePost.categoriesId) {
-                const category = await this.categoryService.FindCategoryById(id);
+                const category = await this.categoryService.findCategoryById(id);
                 categories.push(category);
             }
         }
         const tags = []
         if(updatePost.tagsId){
             for (const id of updatePost.tagsId) {
-                const tag = await this.tagService.FindTagById(id);
+                const tag = await this.tagService.findTagById(id);
                 tags.push(tag);
             }
         }
@@ -109,15 +109,15 @@ export class PostService {
         return {message: "Update successfully !"};
     }
 
-    async DeleteUserPost(userId: number){
+    async deleteUserPost(userId: number){
         await this.postRepository.delete({user: {id: userId}});
     }
 
-    async DeletePost(id: number):Promise<object|any>{
-        const post = await this.FindOneById(id);
+    async deletePost(id: number):Promise<object|any>{
+        const post = await this.findOneById(id);
         await this.postRepository.delete({id});
         
-        const user = await this.userService.FindOne(undefined, undefined, post.user.id)
+        const user = await this.userService.findOne(undefined, undefined, post.user.id)
         const updatedUser: UserUpdateDto = {
             publishedPostCount: user.postPublishedCount -= 1,
             firstName: user.firstName, 
@@ -130,7 +130,7 @@ export class PostService {
             dateOfBirth: user.dateOfBirth,
             confirmPassword: user.password
         }
-        await this.userService.UpdateUserInfor(user.id, updatedUser);
+        await this.userService.updateUserInfor(user.id, updatedUser);
         return {message: "Deleted !"};
     }
 }

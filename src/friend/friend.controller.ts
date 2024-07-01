@@ -11,16 +11,16 @@ export class FriendController {
     constructor(private friendService: FriendService, private userService: UserService){}
     @Post()
     async sendFriendRequest(@Body('userReciveRequestId', ParseIntPipe) userReceiveRequestId: number, @Request() req){
-        await this.userService.FindOne(undefined, undefined, userReceiveRequestId)
+        await this.userService.findOne(undefined, undefined, userReceiveRequestId)
         const userSendRequest = JSON.parse(req.user.profile);
-        return await this.friendService.SentFriendRequest(userSendRequest.id, userReceiveRequestId);
+        return await this.friendService.sentFriendRequest(userSendRequest.id, userReceiveRequestId);
     }
 
     @Patch(':userSendRequestId')
     async handleFriendRequest(@Param('userSendRequestId', ParseIntPipe) userSendRequestId: number, @Request() req, 
         @Body('isAccept', ParseBoolPipe) isAccept: boolean){
-        await this.userService.FindOne(undefined, undefined, userSendRequestId);
+        await this.userService.findOne(undefined, undefined, userSendRequestId);
         const userReceiveRequest = JSON.parse(req.user.profile);
-        return await this.friendService.HandleFriendRequest(userReceiveRequest.id, userSendRequestId, isAccept);
+        return await this.friendService.handleFriendRequest(userReceiveRequest.id, userSendRequestId, isAccept);
     }
 }

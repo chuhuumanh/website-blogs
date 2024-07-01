@@ -8,7 +8,7 @@ import { TagDto } from 'src/validation/tag.dto';
 export class TagService {
     constructor(@InjectRepository(Tags) private tagRepository: Repository<Tags>){}
 
-    async Add(tag: TagDto): Promise<any>{
+    async add(tag: TagDto): Promise<any>{
         const isTagExist = await this.tagRepository.findOne({where: {name: tag.name}});
         if(isTagExist)
             throw new NotAcceptableException("This tag is already Exist !");
@@ -18,28 +18,28 @@ export class TagService {
         return {message: "Successful !"};
     }
 
-    async FindTag(name?: string): Promise<[Tags[], number] | undefined>{
+    async findTag(name?: string): Promise<[Tags[], number] | undefined>{
         const tag = await this.tagRepository.findAndCount({where: {name: Like('%' + name + '%')}});
         if(!tag)
             throw new NotFoundException("Tag not found");
         return tag;
     }
 
-    async FindTagById(id: number): Promise<Tags| any>{
+    async findTagById(id: number): Promise<Tags| any>{
         const tag =  await this.tagRepository.findOneBy({id})
         if(!tag)
             throw new NotFoundException("Tag not found !");
         return tag;
     }
 
-    async GetPostTag(postId: number): Promise<[Tags[], number] | any>{
+    async getPostTag(postId: number): Promise<[Tags[], number] | any>{
         const postTags = await this.tagRepository.findAndCount({where: {posts: {id: postId}}});
         if(!postTags)
             throw new NotFoundException("Post not found !");
         return postTags;
     }
 
-    async UpdateTag(id: number, updateTag: TagDto): Promise<any>{
+    async updateTag(id: number, updateTag: TagDto): Promise<any>{
         const isTagExist = await this.tagRepository.findOne({where: {name: updateTag.name}});
         if(isTagExist)
             throw new NotAcceptableException("This tag name is already taken !");

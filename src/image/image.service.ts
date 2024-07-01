@@ -11,8 +11,8 @@ export class ImageService {
     constructor(@InjectRepository(Images) private ImagesRepository: Repository<Images>, private dateTimeService: DatetimeService,
                 private postService: PostService){}
 
-    async AddPostImage(postId: number, userId: number, files: Array<Express.Multer.File>): Promise<any>{
-        const uploadedDate = this.dateTimeService.GetDateTimeString();
+    async addPostImage(postId: number, userId: number, files: Array<Express.Multer.File>): Promise<any>{
+        const uploadedDate = this.dateTimeService.getDateTimeString();
         for(const file of files){
             const newFilePath = `${file.path}.${file.mimetype.split('/')[1]}`
             fs.rename(file.path, newFilePath, (err)=>{
@@ -25,27 +25,27 @@ export class ImageService {
         return {message: "Successful !"};
     }
 
-    async GetPostImagesByPath(imgPath: string): Promise<Images| any>{
+    async getPostImagesByPath(imgPath: string): Promise<Images| any>{
         const img = await this.ImagesRepository.findOneBy({imgPath});
         if(!img)
             throw new NotFoundException('Image not found !');
         return img;
     }
 
-    async GetPostImages(postId: number): Promise<[Images[], number]>{
-        await this.postService.FindOneById(postId);
+    async getPostImages(postId: number): Promise<[Images[], number]>{
+        await this.postService.findOneById(postId);
         const files = await this.ImagesRepository.findAndCount({where: {post: {id: postId}}});
         return files;
     }
 
-    async DeleteProfileImage(imgPath: string){
+    async deleteProfileImage(imgPath: string){
        fs.unlink(imgPath, (err) =>{
         if(err)
             console.log(err);
        })
     }
 
-    async DeleteUserImages(userId: number){
+    async deleteUserImages(userId: number){
         const images = await this.ImagesRepository.findBy({user : {id: userId}})
         for(const image of images ){
             fs.unlink(`${image.imgPath}`, (err) => {
@@ -58,7 +58,7 @@ export class ImageService {
         }
     }
 
-    async DeletePostImages(postId: number){
+    async deletePostImages(postId: number){
         const images = await this.ImagesRepository.findBy({post: {id: postId}});
         for(const image of images ){
             fs.unlink(`${image.imgPath}`, (err) => {

@@ -23,33 +23,33 @@ export class PostController {
                   @Body(new ParseFormDataPipe, new ValidationPipe) postDto: PostDto, @Request() req){
         const user = JSON.parse(req.user.profile)
         postDto.userId = user.id;
-        const newPost = await this.postService.Add(postDto);
+        const newPost = await this.postService.add(postDto);
         if(files)
-            await this.imgService.AddPostImage(newPost.id, user.id, files)
+            await this.imgService.addPostImage(newPost.id, user.id, files)
         return {message: 'Post uploaded'};
     }
 
     @Get()
     searchPosts(@Query() keyword: string ){
-        return this.postService.SearchPosts(keyword);
+        return this.postService.searchPosts(keyword);
     }
 
     @Get(':id')
     async getPostById(@Param('id', ParseIntPipe) postId: number){
-        return await this.postService.FindOneById(postId);
+        return await this.postService.findOneById(postId);
     }
 
     @Get(':id/activities')
     async getPostActivities(@Query('action') action: string, @Param('id', ParseIntPipe) postId: number){
-        const actionPerformed = await this.actionService.FindOneByName(action);
+        const actionPerformed = await this.actionService.findOneByName(action);
         if(actionPerformed.name === 'comment')
-            return await this.activityService.GetPostComments(postId);
-        return await this.activityService.GetPostActivities(postId, actionPerformed);
+            return await this.activityService.getPostComments(postId);
+        return await this.activityService.getPostActivities(postId, actionPerformed);
     }
 
     @Get(':id/images/path')
     async getPostImagesPath(@Param('id', ParseIntPipe) postId : number){
-        return this.imgService.GetPostImages(postId);
+        return this.imgService.getPostImages(postId);
     }
     
     @Patch(':id')
@@ -57,13 +57,13 @@ export class PostController {
     async updatePost(@UploadedFiles(new ParseFilePipeBuilder().build({fileIsRequired: false})) files: Array<Express.Multer.File>, 
         @Body(new ParseFormDataPipe, new ValidationPipe()) postDto: PostDto, @Param('id', ParseIntPipe) postId: number, @Request() req){
         const user = JSON.parse(req.user.profile);
-        const post = await this.postService.FindOneById(postId);
+        const post = await this.postService.findOneById(postId);
         if(post.user.id !== user.id)
             throw new ForbiddenException("Cannot edit other's post");
-        const message = await this.postService.UpdatePost(postId, postDto);
+        const message = await this.postService.updatePost(postId, postDto);
         if(files)
-            await this.imgService.DeletePostImages(postId);
-            await this.imgService.AddPostImage(postId, user.id, files);
+            await this.imgService.deletePostImages(postId);
+            await this.imgService.addPostImage(postId, user.id, files);
         return message;
     }
 
@@ -71,12 +71,12 @@ export class PostController {
     @Delete(':id')
     async deletePost(@Param('id', ParseIntPipe) postId: number, @Request() req){
         const user = JSON.parse(req.user.profile);
-        const post = await this.postService.FindOneById(postId);
+        const post = await this.postService.findOneById(postId);
         if(post.user.id !== user.id)
             throw new ForbiddenException("Cannot delete other's post !");
-        await this.imgService.DeletePostImages(postId);
-        await this.activityService.DeletePostComments(postId);
-        await this.activityService.DeletePostActivities(postId);
-        return await this.postService.DeletePost(postId);
+        await this.imgService.deletePostImages(postId);
+        await this.activityService.deletePostComments(postId);
+        await this.activityService.deletePostActivities(postId);
+        return await this.postService.deletePost(postId);
     }
 }

@@ -10,11 +10,11 @@ export class AuthController {
     constructor(private authService: AuthService){}
     @Post('login')
     async login(@Body(new ValidationPipe()) signInDto: UserSignInDto){
-        return await this.authService.SignIn(signInDto);
+        return await this.authService.signIn(signInDto);
     }
 
     @Post('signup')
     signup(@Body(new ValidationPipe()) signUpDto: UserRegisterDto){
-        return this.authService.SignUp(signUpDto)
+        return this.authService.signUp(signUpDto)
     }
 }

@@ -8,7 +8,7 @@ import { NotAcceptableException, NotFoundException } from '@nestjs/common';
 export class CategoryService {
     constructor(@InjectRepository(Category) private categoryRepository: Repository<Category>){}
 
-    async Add(category: CategoryDto): Promise<any>{
+    async add(category: CategoryDto): Promise<any>{
         const isCategoryExist = await this.categoryRepository.findOne({where: {name: category.name}});
         if(isCategoryExist)
             throw new NotAcceptableException("This category is already Exist !");
@@ -16,25 +16,25 @@ export class CategoryService {
         return {message: "Successful !"};
     }
 
-    async FindCategoryById(id: number): Promise<Category | any>{
+    async findCategoryById(id: number): Promise<Category | any>{
         const category = await this.categoryRepository.findOneBy({id});
         if(!category)
             throw new NotFoundException('Category not found');
         return category;
     }
 
-    async FindCategoryByName(name?: string): Promise<[Category[], number] | undefined>{
+    async findCategoryByName(name?: string): Promise<[Category[], number] | undefined>{
         const category = await this.categoryRepository.findAndCount({where: {name: Like('%' + name + '%')}});
         if(!category)
             throw new NotFoundException('Category not found !');
         return category;
     }
 
-    async GetPostCategories(postId: number): Promise<[Category[], number]| any>{
+    async getPostCategories(postId: number): Promise<[Category[], number]| any>{
         return await this.categoryRepository.findAndCount({where: {posts: {id: postId}}});
     }
 
-    async UpdateCategory(id: number, updateCategory: CategoryDto): Promise<any>{
+    async updateCategory(id: number, updateCategory: CategoryDto): Promise<any>{
         const isCategoryExist = await this.categoryRepository.findOne({where: {name: updateCategory.name}});
         if(isCategoryExist)
             throw new NotAcceptableException("This category name is already taken !");
@@ -44,7 +44,7 @@ export class CategoryService {
         return {message: "Update successfully !"};
     }
 
-    async DeleteCategory(id: number){
+    async deleteCategory(id: number){
         const action = await this.categoryRepository.delete({id});
         if(action.affected === 0)
             throw new NotFoundException("Category Not Found !");

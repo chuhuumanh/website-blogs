@@ -6,7 +6,7 @@ import { Repository } from 'typeorm';
 @Injectable()
 export class ActionService {
     constructor(@InjectRepository(Actions) private actionRepository: Repository<Actions>){}
-    async FindOneByName(actionName: string):Promise<Actions>{
+    async findOneByName(actionName: string):Promise<Actions>{
         const action = await this.actionRepository
             .findOne({
                 where: {
