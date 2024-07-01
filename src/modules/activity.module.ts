@@ -19,10 +19,13 @@ import { NotificationService } from 'src/services/notification.service';
 import { Notifications } from 'src/entity/notifications';
 import { APP_GUARD } from '@nestjs/core';
 import { RoleGuard } from 'src/auth/role.guard';
+import { PostModule } from './post.module';
+import { ActionModule } from './action.module';
+import { NotificationModule } from './notification.module';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Activity, Actions, Posts, Comments, Category, Tags, Users, Notifications])],
-    providers: [ActivityService, DatetimeService, ActionService, PostService, CategoryService, TagService, UserService, NotificationService, {provide:APP_GUARD, useClass: RoleGuard}],
+    imports: [TypeOrmModule.forFeature([Activity, Comments]), PostModule, ActionModule, NotificationModule],
+    providers: [ActivityService, DatetimeService, {provide:APP_GUARD, useClass: RoleGuard}],
     controllers: [ActivityController]
 })
 export class ActivityModule {}

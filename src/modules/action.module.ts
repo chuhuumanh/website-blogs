@@ -8,6 +8,7 @@ import { NotificationModule } from './notification.module';
 
 @Module({
     imports: [TypeOrmModule.forFeature([Actions]), FriendModule, NotificationModule],
-    providers: [ActionService]
+    providers: [ActionService],
+    exports: [ActionService]
 })
 export class ActionModule {}

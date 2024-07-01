@@ -38,6 +38,7 @@ import { Users } from 'src/entity/users';
     providers: [PostService, DatetimeService, ActivityService, ImageService, 
                 TagService, CategoryService, ImageService, ActionService, UserService,
                 CategoryService, TagService, {provide:APP_GUARD, useClass: RoleGuard}],
-    controllers: [PostController]
+    controllers: [PostController],
+    exports: [PostService]
 })
 export class PostModule {}

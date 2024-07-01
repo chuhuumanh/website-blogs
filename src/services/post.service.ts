@@ -59,9 +59,6 @@ export class PostService {
         const post = await this.postRepository.findOne({where: {id}, relations:['user', 'access']});
         if(!post)
             throw new NotFoundException("Post not found !");
-        const userId = post.user.id
-        post.user = null;
-        post['userId'] = userId;
         return post;
     }
 

@@ -14,7 +14,7 @@ import { ImageModule } from './image.module';
 import { FriendModule } from './friend.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Users]), UserModule,
+  imports: [ UserModule,
             JwtModule.register({
               global: true,
               secret: jwtConstants.secret
