@@ -1,12 +1,13 @@
 import { Body, Controller, Post, Query, Delete, ParseIntPipe, Param, Patch, Sse, Request, UseGuards } from '@nestjs/common';
 import { AuthGuard } from 'src/auth/auth.guard';
-import { ActivityDto } from 'src/validation/activity.dto';
 import { ValidationPipe } from 'src/validation/validation.pipe';
 import { Roles, Role } from 'src/role/role.decorator';
 import { ActivityService } from './activity.service';
 import { ActionService } from 'src/action/action.service';
 import { NotificationService } from 'src/notification/notification.service';
 import { PostService } from 'src/post/post.service';
+import { ActivityCreateDto } from 'src/validation/activity.create.dto';
+import { ActivityUpdateDto } from 'src/validation/activity.update.dto';
 
 @Roles(Role.Admin, Role.User)
 @Controller('activities')
@@ -20,7 +21,7 @@ export class ActivityController {
     }
     @UseGuards(AuthGuard)
     @Post()
-    async actionPerform(@Body(new ValidationPipe(['insert'])) activityDto: ActivityDto, @Request() req: any){
+    async actionPerform(@Body(new ValidationPipe()) activityDto: ActivityCreateDto, @Request() req: any){
         const user = JSON.parse(req.user.profile);
         activityDto.userId = user.id;
         const actionPerformed = await this.actionService.FindOneByName(activityDto.action);
@@ -39,7 +40,7 @@ export class ActivityController {
     }
     @UseGuards(AuthGuard)
     @Patch('comments/:id/')
-    async updateComment(@Param('id', ParseIntPipe)postId, @Body(new ValidationPipe(['update']))updatedComment : ActivityDto){
+    async updateComment(@Param('id', ParseIntPipe)postId, @Body(new ValidationPipe())updatedComment : ActivityUpdateDto){
         return await this.activityService.UpdateComment(postId, updatedComment)
     }
     @UseGuards(AuthGuard)

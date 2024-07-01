@@ -7,7 +7,7 @@ import { CategoryService } from 'src/category/category.service';
 import { TagService } from 'src/tag/tag.service';
 import { UserService } from 'src/user/user.service';
 import { PostDto } from 'src/validation/post.dto';
-import { UserDto } from 'src/validation/user.dto';
+import { UserUpdateDto } from 'src/validation/user.update.dto';
 
 @Injectable()
 export class PostService {
@@ -34,7 +34,7 @@ export class PostService {
                                         user:{id: post.userId}, access: {id: post.accessId}, 
                                         categories: categories, tags: tags});
         const user = await this.userService.FindOne(undefined, undefined , post.userId);
-        const updatedUser: UserDto = {
+        const updatedUser: UserUpdateDto = {
             publishedPostCount: user.postPublishedCount += 1,
             firstName: user.firstName, 
             lastName: user.lastName, 
@@ -44,10 +44,7 @@ export class PostService {
             bio: user.bio,
             profilePicturePath: user.profilePicturePath,
             dateOfBirth: user.dateOfBirth,
-            username: user.username,
-            confirmPassword: user.password,
-            gender: user.gender,
-            roleId: user.role.id
+            confirmPassword: user.password
         }
         await this.userService.UpdateUserInfor(user.id, updatedUser);
         return newPost
@@ -121,7 +118,7 @@ export class PostService {
         await this.postRepository.delete({id});
         
         const user = await this.userService.FindOne(undefined, undefined, post.user.id)
-        const updatedUser: UserDto = {
+        const updatedUser: UserUpdateDto = {
             publishedPostCount: user.postPublishedCount -= 1,
             firstName: user.firstName, 
             lastName: user.lastName, 
@@ -131,10 +128,7 @@ export class PostService {
             bio: user.bio,
             profilePicturePath: user.profilePicturePath,
             dateOfBirth: user.dateOfBirth,
-            username: user.username,
-            confirmPassword: user.password,
-            gender: user.gender,
-            roleId: user.role.id
+            confirmPassword: user.password
         }
         await this.userService.UpdateUserInfor(user.id, updatedUser);
         return {message: "Deleted !"};

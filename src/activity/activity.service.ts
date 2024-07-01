@@ -6,8 +6,9 @@ import { Comments } from "./comments";
 import { DatetimeService } from "src/datetime/datetime.service";
 import { PostService } from "src/post/post.service";
 import { Actions } from "src/action/actions";
-import { ActivityDto } from "src/validation/activity.dto";
 import { PostDto } from "src/validation/post.dto";
+import { ActivityCreateDto } from "src/validation/activity.create.dto";
+import { ActivityUpdateDto } from "src/validation/activity.update.dto";
 
 @Injectable()
 export class ActivityService {
@@ -16,7 +17,7 @@ export class ActivityService {
                 private dateTime: DatetimeService,
                 private postService: PostService){}
 
-    async PerformAction(action: Actions, activity: ActivityDto): Promise<object|any>{
+    async PerformAction(action: Actions, activity: ActivityCreateDto): Promise<object|any>{
         const performedDate = this.dateTime.GetDateTimeString();
         const isActionPerformed = await this.activityRepository
             .findOne({
@@ -108,7 +109,7 @@ export class ActivityService {
             return {notify: false, message: "un" + action.name + " successful !"}
         }
     }
-    async PublishComment(comment: ActivityDto):Promise<object| any>{
+    async PublishComment(comment: ActivityCreateDto):Promise<object| any>{
         const performedPost = await this.postService.FindOneById(comment.postId);
         if(!performedPost)
             throw new NotFoundException('Post not found !');
@@ -194,7 +195,7 @@ export class ActivityService {
         await this.activityRepository.delete({user: {id: userId}});
     }
 
-    async UpdateComment(id: number, updatedComment: ActivityDto):Promise<object | any>{
+    async UpdateComment(id: number, updatedComment: ActivityUpdateDto):Promise<object | any>{
         const comment = await this.commentRepository
             .findOne({
                 where: {id}, 

@@ -5,13 +5,13 @@ import { plainToInstance } from 'class-transformer';
 @Injectable()
 export class ValidationPipe implements PipeTransform<any> {
   
-  constructor(private group?: string[]){this.group = group}
+  constructor(){}
   async transform(value: any, { metatype }: ArgumentMetadata) {
     if (!metatype || !this.toValidate(metatype)) {
       return value;
     }
     const object = plainToInstance(metatype, value);
-    const errors = await validate(object, {groups: this.group});
+    const errors = await validate(object);
     let allErrorMessages = [];
     errors.forEach(error => {allErrorMessages.push(error.constraints)})
     if (errors.length > 0) {

@@ -11,7 +11,7 @@ import { NotificationService } from 'src/notification/notification.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ParseFormDataPipe } from 'src/validation/parse.formdata.pipe';
 import { ValidationPipe } from 'src/validation/validation.pipe';
-import { UserDto } from 'src/validation/user.dto';
+import { UserUpdateDto } from 'src/validation/user.update.dto';
 
 @UseGuards(AuthGuard)
 @Roles(Role.User, Role.Admin)
@@ -72,7 +72,7 @@ export class UserController {
     @Patch(':id')
     @UseInterceptors(FileInterceptor('file'))
     async updateUserProfile(@UploadedFile(new ParseFilePipeBuilder().build({fileIsRequired: false})) file: Express.Multer.File, 
-        @Body(new ParseFormDataPipe, new ValidationPipe(['update'])) updateInfor: UserDto, 
+        @Body(new ParseFormDataPipe, new ValidationPipe()) updateInfor: UserUpdateDto, 
         @Param('id', ParseIntPipe) userId: number): Promise<any>{
         const user = await this.userService.FindOne(undefined, undefined, userId);
         if(user.profilePicturePath)

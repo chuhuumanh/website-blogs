@@ -11,7 +11,7 @@ export class CategoryController {
     constructor(private categoryService: CategoryService){}
     @Roles(Role.Admin)
     @Post()
-    addCategory(@Body(new ValidationPipe(undefined)) category: CategoryDto){
+    addCategory(@Body(new ValidationPipe()) category: CategoryDto){
         return this.categoryService.Add(category);
     }
 
@@ -21,7 +21,7 @@ export class CategoryController {
     }
     @Roles(Role.Admin)
     @Patch(':id')
-    updateTag(@Body(new ValidationPipe(undefined)) category: CategoryDto, @Param('id', ParseIntPipe) categoryId: number){
+    updateTag(@Body(new ValidationPipe()) category: CategoryDto, @Param('id', ParseIntPipe) categoryId: number){
         return this.categoryService.UpdateCategory(categoryId, category)
     }
     @Roles(Role.Admin)

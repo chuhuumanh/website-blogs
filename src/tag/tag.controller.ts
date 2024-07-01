@@ -11,7 +11,7 @@ import { ValidationPipe } from 'src/validation/validation.pipe';
 export class TagController {
     constructor(private tagService: TagService){}
     @Post()
-    addTag(@Body(new ValidationPipe(undefined)) tag: TagDto){
+    addTag(@Body(new ValidationPipe()) tag: TagDto){
         return this.tagService.Add(tag);
     }
 
@@ -21,7 +21,7 @@ export class TagController {
     }
 
     @Patch(':id')
-    updateTag(@Body(new ValidationPipe(undefined)) tag: TagDto, @Param('id', ParseIntPipe) tagId: number){
+    updateTag(@Body(new ValidationPipe()) tag: TagDto, @Param('id', ParseIntPipe) tagId: number){
         return this.tagService.UpdateTag(tagId, tag)
     }
 
