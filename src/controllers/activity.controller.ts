@@ -1,5 +1,6 @@
 import { BadRequestException, Body, Controller, Post, Query, Delete, ParseIntPipe, Param, Patch, Get, Sse, Request, UseGuards } from '@nestjs/common';
 import { AuthGuard } from 'src/auth/auth.guard';
+import { Role, Roles } from 'src/auth/role.decorator';
 import { ActionService } from 'src/services/action.service';
 import { ActivityService } from 'src/services/activity.service';
 import { NotificationService } from 'src/services/notification.service';
@@ -7,7 +8,7 @@ import { PostService } from 'src/services/post.service';
 import { ActivityDto } from 'src/validation/activity.dto';
 import { ValidationPipe } from 'src/validation/validation.pipe';
 
-
+@Roles(Role.Admin, Role.User)
 @Controller('activities')
 export class ActivityController {
     constructor(private activityService: ActivityService, private actionService: ActionService, 

@@ -4,8 +4,10 @@ import { Response } from 'express';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 import { NotificationService } from 'src/services/notification.service';
+import { Role, Roles } from 'src/auth/role.decorator';
 
 @Controller('notification')
+@Roles(Role.Admin, Role.User)
 export class NotificationController {
   constructor(private notificationService: NotificationService){}
   @Sse('events')

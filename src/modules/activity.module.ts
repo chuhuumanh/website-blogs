@@ -17,10 +17,12 @@ import { UserService } from 'src/services/user.service';
 import { Users } from 'src/entity/users';
 import { NotificationService } from 'src/services/notification.service';
 import { Notifications } from 'src/entity/notifications';
+import { APP_GUARD } from '@nestjs/core';
+import { RoleGuard } from 'src/auth/role.guard';
 
 @Module({
     imports: [TypeOrmModule.forFeature([Activity, Actions, Posts, Comments, Category, Tags, Users, Notifications])],
-    providers: [ActivityService, DatetimeService, ActionService, PostService, CategoryService, TagService, UserService, NotificationService],
+    providers: [ActivityService, DatetimeService, ActionService, PostService, CategoryService, TagService, UserService, NotificationService, {provide:APP_GUARD, useClass: RoleGuard}],
     controllers: [ActivityController]
 })
 export class ActivityModule {}

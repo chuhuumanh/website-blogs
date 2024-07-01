@@ -6,7 +6,9 @@ import { createReadStream } from 'fs';
 import { join } from 'path';
 import { Request } from 'express';
 import { UserService } from 'src/services/user.service';
+import { Role, Roles } from 'src/auth/role.decorator';
 @Controller('images')
+@Roles(Role.Admin, Role.User)
 export class ImageController {
     constructor(private imgService: ImageService, private userService: UserService){}
     @Get('/postsImg/:fileName')

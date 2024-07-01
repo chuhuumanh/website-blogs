@@ -12,10 +12,12 @@ import { ImageService } from 'src/services/image.service';
 import { PostService } from 'src/services/post.service';
 import { TagService } from 'src/services/tag.service';
 import { UserService } from 'src/services/user.service';
+import { APP_GUARD } from '@nestjs/core';
+import { RoleGuard } from 'src/auth/role.guard';
 
 @Module({
     imports: [TypeOrmModule.forFeature([Images, Posts, Category, Tags, Users])],
-    providers: [ImageService, DatetimeService, PostService, CategoryService, TagService, UserService],
+    providers: [ImageService, DatetimeService, PostService, CategoryService, TagService, UserService, {provide:APP_GUARD, useClass: RoleGuard}],
     controllers: [ImageController]
 })
 export class ImageModule {}

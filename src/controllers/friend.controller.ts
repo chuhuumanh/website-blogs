@@ -1,10 +1,12 @@
 import { Body, Controller, Get, Param, ParseBoolPipe, ParseIntPipe, Patch, Post, Request, UseGuards } from '@nestjs/common';
 import { AuthGuard } from 'src/auth/auth.guard';
+import { Role, Roles } from 'src/auth/role.decorator';
 import { FriendService } from 'src/services/friend.service';
 import { UserService } from 'src/services/user.service';
 
 @Controller('friends')
 @UseGuards(AuthGuard)
+@Roles(Role.Admin, Role.User)
 export class FriendController {
     constructor(private friendService: FriendService, private userService: UserService){}
     @Post()
