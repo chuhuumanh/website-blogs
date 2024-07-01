@@ -1,10 +1,5 @@
-import { ArrayMinSize, IsArray, IsOptional, IsString, ValidateNested, arrayMinSize} from "@nestjs/class-validator";
-import { ApiProperty } from "@nestjs/swagger";
-import { Type } from "class-transformer";
+import { ArrayMinSize, IsArray, IsOptional, IsString} from "@nestjs/class-validator";
 import { IsNotEmpty, IsNumber } from "class-validator";
-import { Images } from "src/entity/images";
-import { Tags } from "src/entity/tags";
-import { number } from "zod";
 
 export class PostDto{
     @IsNotEmpty()

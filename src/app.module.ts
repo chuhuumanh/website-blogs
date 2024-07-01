@@ -2,14 +2,10 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Config } from './entity/db.config';
-import { AuthModule } from './modules/auth.module';
-import { FriendController } from './controllers/friend.controller';
-import { FriendService } from './services/friend.service';
-import { NotificationController } from './controllers/notification.controller';
-import { NotificationService } from './services/notification.service';
-import { UserModule } from './modules/user.module';
-import { UserController } from './controllers/user.controller';
+import { Config } from './db.config';
+import { AuthModule } from './auth/auth.module';
+import { NotificationsGateway } from './notifications/notifications.gateway';
+import { AuthController } from './auth/auth.controller';
 @Module({
   imports: [ 
     TypeOrmModule.forRoot({
