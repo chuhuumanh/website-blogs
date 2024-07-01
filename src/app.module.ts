@@ -8,6 +8,8 @@ import { FriendController } from './controllers/friend.controller';
 import { FriendService } from './services/friend.service';
 import { NotificationController } from './controllers/notification.controller';
 import { NotificationService } from './services/notification.service';
+import { UserModule } from './modules/user.module';
+import { UserController } from './controllers/user.controller';
 @Module({
   imports: [ 
     TypeOrmModule.forRoot({
@@ -24,7 +26,7 @@ import { NotificationService } from './services/notification.service';
       },
       synchronize: Config.synchronize
     }), AuthModule],
-  controllers: [AppController, NotificationController],
-  providers: [AppService, NotificationService],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}

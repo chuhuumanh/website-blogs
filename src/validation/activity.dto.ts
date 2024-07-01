@@ -4,8 +4,6 @@ import { IsString } from "class-validator";
 import { number } from "zod";
 
 export class ActivityDto{
-    @IsNotEmpty({groups: ['insert', 'update']})
-    @IsNumber({}, {groups: ['insert', 'update']})
     userId: number
 
     @IsNotEmpty({groups: ['insert']})

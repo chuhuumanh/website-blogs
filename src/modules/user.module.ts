@@ -22,9 +22,11 @@ import { ActivityService } from 'src/services/activity.service';
 import { Comments } from 'src/entity/comments';
 import { Friends } from 'src/entity/friends';
 import { FriendService } from 'src/services/friend.service';
+import { Notifications } from 'src/entity/notifications';
+import { NotificationService } from 'src/services/notification.service';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Users, Posts, Category, Tags, Images, Activity, Comments, Friends]), MulterModule.register({
+    imports: [TypeOrmModule.forFeature([Users, Posts, Category, Tags, Images, Activity, Comments, Friends, Notifications]), MulterModule.register({
         fileFilter: (req, file, callback) => {
             if (!file.mimetype.match(/^(image\/jpeg|image\/png|image\/gif|image\/bmp)$/i)) {
                 callback(new BadRequestException("Only jpeg, jpg, gif, bmp files are allow"), false);
@@ -43,7 +45,7 @@ import { FriendService } from 'src/services/friend.service';
 )],
     exports: [UserService],
     providers: [UserService, ImageService, ActivityService, PostService,
-         DatetimeService, FriendService, CategoryService, TagService, {provide:APP_GUARD, useClass: RoleGuard}],
+         DatetimeService, FriendService, CategoryService, TagService, NotificationService, {provide:APP_GUARD, useClass: RoleGuard}],
     controllers: [UserController]
 })
 export class UserModule {}

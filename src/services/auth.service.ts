@@ -7,7 +7,7 @@ import { Repository } from 'typeorm';
 import { UserDto } from 'src/validation/user.dto';
 @Injectable()
 export class AuthService {
-    constructor(@InjectRepository(Users) private userRepository: Repository<Users> ,private userSerivce: UserService, private jwtService: JwtService){}
+    constructor(private userSerivce: UserService, private jwtService: JwtService){}
 
     async SignIn(user: UserDto): Promise<any>{
         const userInfor = await this.userSerivce.FindOne(user.username, user.password);
@@ -29,7 +29,7 @@ export class AuthService {
         if(!isPasswordMatch)
             throw new NotAcceptableException("Password and confirm password doesn't match !");
         try{
-            await this.userRepository.save(newUser);
+            await this.userSerivce.Add(newUser);
             const payload = {profile: JSON.stringify(await this.userSerivce.FindOne(newUser.username, newUser.password))}
             return {
                 access_token: await this.jwtService.signAsync(payload)

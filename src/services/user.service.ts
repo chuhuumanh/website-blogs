@@ -9,6 +9,10 @@ export class UserService {
 
     constructor(@InjectRepository(Users) private userRepository: Repository<Users>){}
 
+    async Add(newUser: UserDto){
+        return await this.userRepository.save(newUser);
+    }
+
     async FindAll(){
         return await this.userRepository.findAndCount({relations: ['role']})
     }

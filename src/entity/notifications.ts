@@ -15,6 +15,9 @@ export class Notifications{
     @Column()
     isSeen: boolean;
 
+    @Column()
+    receiverId: number
+
     @ManyToOne(() => Actions, (action) => action.notifications)
     action: Actions;
 

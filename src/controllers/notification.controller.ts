@@ -10,12 +10,12 @@ export class NotificationController {
   constructor(private notificationService: NotificationService){}
   @Sse('events')
   events() {
-      return this.notificationService.subscribe("a")
+      return this.notificationService.subscribe();
   }
 
   @Post('emit')
   async emit() {
-      this.notificationService.emit("a", {message: "Hello"});
+      this.notificationService.emit({message: "Hello"});
       return {ok: true};
   }
 }

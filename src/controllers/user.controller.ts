@@ -12,13 +12,16 @@ import { ParseFormDataPipe } from 'src/validation/parse.formdata.pipe';
 import { ImageService } from 'src/services/image.service';
 import { ActivityService } from 'src/services/activity.service';
 import { FriendService } from 'src/services/friend.service';
+import { NotificationService } from 'src/services/notification.service';
+import { json } from 'stream/consumers';
 
 @UseGuards(AuthGuard)
 @Roles(Role.User, Role.Admin)
 @Controller('users')
 export class UserController {
     constructor(private userService: UserService, private postService: PostService, 
-        private imgService: ImageService, private activityService: ActivityService, private friendService: FriendService){}
+        private imgService: ImageService, private activityService: ActivityService, 
+        private friendService: FriendService, private notificationService: NotificationService){}
     @Get('profile')
     getUserProfile(@Request() req): any{
         return JSON.parse(req.user.profile);
@@ -60,6 +63,12 @@ export class UserController {
         const user = JSON.parse(req.user.profile);
         const isAccept = false;
         return await this.friendService.GetUserFriends(user.id, isAccept)
+    }
+
+    @Get('notifications')
+    async getUserNotifications(@Request() req: any){
+        const user = JSON.parse(req.user.profile);
+        return await this.notificationService.GetUserNotifications(user.id);
     }
 
     @Patch(':id')

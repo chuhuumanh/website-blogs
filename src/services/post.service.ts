@@ -10,6 +10,7 @@ import { TagService } from './tag.service';
 import { UserService } from './user.service';
 import { UserDto } from 'src/validation/user.dto';
 import { ImageService } from './image.service';
+import { object } from 'zod';
 @Injectable()
 export class PostService {
     constructor(@InjectRepository(Posts) private postRepository: Repository<Posts>, private dateTime: DatetimeService,
@@ -58,6 +59,9 @@ export class PostService {
         const post = await this.postRepository.findOne({where: {id}, relations:['user', 'access']});
         if(!post)
             throw new NotFoundException("Post not found !");
+        const userId = post.user.id
+        post.user = null;
+        post['userId'] = userId;
         return post;
     }
 

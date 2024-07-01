@@ -34,7 +34,7 @@ export class ActivityService {
             }
         );
         if(!isActionPerformed){
-            await this.activityRepository
+            const notification = await this.activityRepository
                 .insert({
                     user: {
                     id: activity.userId
@@ -68,7 +68,7 @@ export class ActivityService {
                 shareCount: performedPost.sharedCount
             };
             await this.postService.UpdatePost(activity.postId, updatedPost)
-            return {message: action.name + " post successful !"}
+            return {notify:true, message: action.name + " post successful !"}
         }
         else{
             await this.activityRepository
@@ -105,7 +105,7 @@ export class ActivityService {
                 shareCount: performedPost.sharedCount,
             };
             await this.postService.UpdatePost(activity.postId, updatedPost)
-            return {message: "un" + action.name + " successful !"}
+            return {notify: false, message: "un" + action.name + " successful !"}
         }
     }
     async PublishComment(comment: ActivityDto):Promise<object| any>{
@@ -129,7 +129,7 @@ export class ActivityService {
                 }
             }
         );
-        return {message: "Comment successful !"};
+        return {notify: true, message: "Comment successful !"};
     }
 
     async GetPostComments(postId: number):Promise<[Comments[], number] | any>{
