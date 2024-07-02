@@ -1,11 +1,17 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Config } from './db.config';
 import { AuthModule } from './auth/auth.module';
-import { NotificationsGateway } from './notifications/notifications.gateway';
-import { AuthController } from './auth/auth.controller';
+import { TagModule } from './tag/tag.module';
+import { FriendModule } from './friend/friend.module';
+import { CategoryModule } from './category/category.module';
+import { PostModule } from './post/post.module';
+import { ActivityModule } from './activity/activity.module';
+import { ImageModule } from './image/image.module';
+import { UserModule } from './user/user.module';
+
 @Module({
   imports: [ 
     TypeOrmModule.forRoot({
@@ -21,7 +27,8 @@ import { AuthController } from './auth/auth.controller';
         trustServerCertificate: Config.options.trustServerCertificate
       },
       synchronize: Config.synchronize
-    }), AuthModule],
+    }), AuthModule, TagModule ,CategoryModule,PostModule,
+    ActivityModule , ImageModule, FriendModule, UserModule],
   controllers: [AppController],
   providers: [AppService],
 })

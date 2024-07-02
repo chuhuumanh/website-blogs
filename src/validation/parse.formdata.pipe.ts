@@ -3,6 +3,7 @@ import { PipeTransform, Injectable, ArgumentMetadata, BadRequestException } from
 @Injectable()
 export class ParseFormDataPipe implements PipeTransform {
   transform(value: any, metadata: ArgumentMetadata) {
+    console.log(value);
     try {
         return JSON.parse(value.request);
     } catch (err) {

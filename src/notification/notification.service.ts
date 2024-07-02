@@ -4,17 +4,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Notifications } from './notifications';
 import { Repository } from 'typeorm';
 import { DatetimeService } from 'src/datetime/datetime.service';
+
 @Injectable()
 export class NotificationService {
-    constructor(@InjectRepository(Notifications) private notificationRepository: Repository<Notifications>, private dateTimService: DatetimeService){}
-    private readonly subject = new Subject<any>();
-    subscribe() {
-        return this.subject.asObservable();
-    }
-
-    emit(data?: object) {
-        this.subject.next({data});
-    }
+    constructor(@InjectRepository(Notifications) private notificationRepository: Repository<Notifications>, 
+    private dateTimService: DatetimeService){}
 
     async add(actionId: number, userId: number, receiverId: number, postId?: number){
         const activatedDate = this.dateTimService.getDateTimeString();
@@ -22,26 +16,35 @@ export class NotificationService {
             user: {id: userId}, post: {id: postId}, isSeen: false, receiverId: receiverId});
     }
 
-    async getNotificationById(id: number){
-        return await this.notificationRepository.find({where: {id}, relations: ['action']});
+    async getNotificationById(id: number): Promise<Notifications>{
+        return await this.notificationRepository.findOne({where: {id}, relations: ['action', 'user', 'post']});
+    }
+
+    async getByPostIdAndUserId(userId: number, postId: number, actionId: number): Promise<Notifications>{
+        return await this.notificationRepository.findOne({where: {user: {id: userId}, post: {id: postId}, action: {id: actionId}}});
     }
 
     async getUserNotifications(userId: number){
-        const results = await this.notificationRepository.find({where: {receiverId: userId}, relations: ['action', 'post', 'user']});
-        const notifications = []
-        for(const result of results){
+        const results = await this.notificationRepository.findAndCount({where: {receiverId: userId}, relations: ['action', 'post', 'user']});
+        const notifications = {
+            element: [],
+            count: 0
+        }
+        for(const result of results[0]){
             const noti = {
                 userId: result.user.id,
                 post: result.post,
                 action: result.action,
                 activedDate: result.activedDate
             }
-            notifications.push(noti);
+            notifications.element.push(noti);
         }
+        notifications.count = results[1];
         return notifications;
     }
 
     async delete(id: number){
-        return await this.notificationRepository.delete({id});
+        await this.notificationRepository.delete({id});
+        return {message: 'Deleted notification'};
     }
 }

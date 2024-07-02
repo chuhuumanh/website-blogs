@@ -32,7 +32,7 @@ import { UserController } from './user.controller';
             }
         })
     }
-), PostModule, CategoryModule, TagModule, forwardRef(() => ImageModule), ActivityModule, FriendModule, NotificationModule],
+), PostModule, CategoryModule, TagModule, forwardRef(() => ImageModule), ActivityModule, forwardRef(() => FriendModule) , NotificationModule],
     exports: [UserService],
     providers: [UserService, DatetimeService, {provide:APP_GUARD, useClass: RoleGuard}],
     controllers: [UserController]

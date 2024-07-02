@@ -18,13 +18,14 @@ export class FriendService {
         return{message: 'Friend request sent !'};
     }
 
-    async handleFriendRequest(currentUserId: number, friendId: number, isAccept: boolean): Promise<object| any>{
+    async acceptFriendRequest(currentUserId: number, friendId: number): Promise<object| any>{
         const friendRequest = await this.friendRepository.findOneBy({userReceiveRequestId: currentUserId, userSentRequest: {id: friendId}});
-        if(isAccept){
             friendRequest.isAccept = true;
             await this.friendRepository.save(friendRequest);
             return{message: 'Friend request accepted !'};
-        }
-        return{message: 'Friend request rejected !'}
+    }
+
+    async deleteFriend(friendId: number, userId: number){
+        await this.friendRepository.delete({userSentRequest: {id: friendId || userId}, userReceiveRequestId: userId || friendId});
     }
 }

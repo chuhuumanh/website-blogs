@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, ParseBoolPipe, ParseIntPipe, Patch, Post, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseBoolPipe, ParseIntPipe, Patch, Post, Request, UseGuards } from '@nestjs/common';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { Role, Roles } from 'src/role/role.decorator';
 import { FriendService } from './friend.service';
@@ -21,6 +21,15 @@ export class FriendController {
         @Body('isAccept', ParseBoolPipe) isAccept: boolean){
         await this.userService.findOne(undefined, undefined, userSendRequestId);
         const userReceiveRequest = JSON.parse(req.user.profile);
-        return await this.friendService.handleFriendRequest(userReceiveRequest.id, userSendRequestId, isAccept);
+        if(isAccept)
+            return await this.friendService.acceptFriendRequest(userReceiveRequest.id, userSendRequestId);
+        return await this.friendService.deleteFriend(userSendRequestId, userReceiveRequest.id)
+    }
+
+    @Delete(':id')
+    async deleteFriend(@Param('id', ParseIntPipe) friendId: number, @Request() req){
+        await this.userService.findOne(undefined, undefined, friendId);
+        const currentUser = JSON.parse(req.user.profile);
+        return await this.friendService.deleteFriend(friendId, currentUser.id);
     }
 }

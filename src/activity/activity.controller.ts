@@ -10,40 +10,17 @@ import { ActivityCreateDto } from 'src/validation/activity.create.dto';
 import { ActivityUpdateDto } from 'src/validation/activity.update.dto';
 
 @Roles(Role.Admin, Role.User)
+@UseGuards(AuthGuard)
 @Controller('activities')
 export class ActivityController {
     constructor(private activityService: ActivityService, private actionService: ActionService, 
         private notificationService: NotificationService, private postService: PostService){}
-
-    @Sse('notifications')
-    fireEvent(){
-        return this.notificationService.subscribe();
-    }
-    @UseGuards(AuthGuard)
-    @Post()
-    async actionPerform(@Body(new ValidationPipe()) activityDto: ActivityCreateDto, @Request() req: any){
-        const user = JSON.parse(req.user.profile);
-        activityDto.userId = user.id;
-        const actionPerformed = await this.actionService.findOneByName(activityDto.action);
-        let notify = null;
-        if(actionPerformed.name === "comment")
-            notify = await this.activityService.publishComment(activityDto);
-        else notify =  await this.activityService.performAction(actionPerformed, activityDto);
-        if(notify){
-            const postOwnerId = (await this.postService.findOneById(activityDto.postId)).user.id;
-            const notificationId = await this.notificationService.add(actionPerformed.id, activityDto.userId, postOwnerId, activityDto.postId);
-            const notification = await this.notificationService.getNotificationById(notificationId.id)
-            this.notificationService.emit({receiverId: postOwnerId, message: notification});
-        }
-        return notify.message;
-        
-    }
-    @UseGuards(AuthGuard)
+    
     @Patch('comments/:id/')
     async updateComment(@Param('id', ParseIntPipe)postId, @Body(new ValidationPipe())updatedComment : ActivityUpdateDto){
         return await this.activityService.updateComment(postId, updatedComment)
     }
-    @UseGuards(AuthGuard)
+    
     @Delete('comments/:id')
     async deleteComent(@Param('id', ParseIntPipe) postId: number ,@Query('userId', ParseIntPipe) userId: number){
         return await this.activityService.deleteComment(postId, userId);

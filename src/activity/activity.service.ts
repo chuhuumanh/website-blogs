@@ -17,7 +17,7 @@ export class ActivityService {
                 private dateTime: DatetimeService,
                 private postService: PostService){}
 
-    async performAction(action: Actions, activity: ActivityCreateDto): Promise<object|any>{
+    async performAction(action: Actions, activity: ActivityCreateDto): Promise<object|null>{
         const performedDate = this.dateTime.getDateTimeString();
         const isActionPerformed = await this.activityRepository
             .findOne({
@@ -106,7 +106,7 @@ export class ActivityService {
                 shareCount: performedPost.sharedCount,
             };
             await this.postService.updatePost(activity.postId, updatedPost)
-            return {notify: false, message: "un" + action.name + " successful !"}
+            return {message: 'Undo action successful !', notify: false};
         }
     }
     async publishComment(comment: ActivityCreateDto):Promise<object| any>{

@@ -26,7 +26,7 @@ import { TagModule } from 'src/tag/tag.module';
                     }
                 } //
             ),
-    forwardRef(() => ActivityModule) , ImageModule, CategoryModule, ActionModule, TagModule, forwardRef(() => UserModule)],
+    forwardRef(() => ActivityModule) , forwardRef(() => ImageModule), CategoryModule, ActionModule, TagModule, forwardRef(() => UserModule)],
     providers: [PostService, DatetimeService, {provide:APP_GUARD, useClass: RoleGuard}],
     controllers: [PostController],
     exports: [PostService]

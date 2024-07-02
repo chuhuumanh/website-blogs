@@ -1,15 +1,15 @@
 import { BadRequestException, CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { jwtConstants } from './jwt.constant';
-import { Request } from 'express';
+import { Socket } from 'dgram';
 
 @Injectable()
-export class AuthGuard implements CanActivate {
+export class AuthGuardGateWay implements CanActivate {
   constructor(private jwtService: JwtService){}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request = context.switchToHttp().getRequest();
-        const token = this.extractTokenFromHeader(request);
+    const client = context.switchToWs().getClient()
+        const token = this.extractTokenFromHeader(client);
         if(!token)
             throw new UnauthorizedException();
 
@@ -17,20 +17,21 @@ export class AuthGuard implements CanActivate {
             const payload = await this.jwtService.verifyAsync(token, {
                 secret: jwtConstants.secret
             });
-            request['user'] = payload;
+            client['user'] = payload;
         }
         catch{
             throw new UnauthorizedException();
         }
         return true;
   }
-  extractTokenFromHeader(request: Request): string | undefined{
-        try{
-            const[type, token] = request.headers.authorization.split(' ')??[];
-            return type === 'Bearer' ? token : undefined;
-        }
-        catch{
-            throw new BadRequestException('Token is required')
-        }
+  extractTokenFromHeader(client: Socket): string | undefined{
+    try{
+      const[type, token] = client['handshake'].headers.authorization.split(' ')??[];
+        return type === 'Bearer' ? token : undefined;
     }
+    catch{
+      throw new BadRequestException('Token required !');
+    }
+    
+  }
 }

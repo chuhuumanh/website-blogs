@@ -1,4 +1,4 @@
-import { Module } from "@nestjs/common";
+import { Module, forwardRef } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { Activity } from "./activity";
 import { Comments } from "./comments";
@@ -10,10 +10,14 @@ import { DatetimeService } from "src/datetime/datetime.service";
 import { APP_GUARD } from "@nestjs/core";
 import { RoleGuard } from "src/role/role.guard";
 import { ActivityController } from "./activity.controller";
+import { ActivityGateway } from './activity.gateway';
+import { AuthGuard } from "src/auth/auth.guard";
+import { ParseFormDataPipe } from "src/validation/parse.formdata.pipe";
+import { ValidationPipe } from "src/validation/validation.pipe";
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Activity, Comments]), PostModule, ActionModule, NotificationModule],
-    providers: [ActivityService, DatetimeService, {provide:APP_GUARD, useClass: RoleGuard}],
+    imports: [TypeOrmModule.forFeature([Activity, Comments]), forwardRef(() => PostModule), ActionModule, NotificationModule],
+    providers: [ActivityService, DatetimeService, {provide:APP_GUARD, useClass: RoleGuard}, ActivityGateway],
     controllers: [ActivityController],
     exports: [ActivityService]
 })

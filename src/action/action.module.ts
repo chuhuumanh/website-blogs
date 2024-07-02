@@ -7,7 +7,7 @@ import { ActionService } from './action.service';
 
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Actions]), FriendModule, NotificationModule],
+    imports: [TypeOrmModule.forFeature([Actions])],
     providers: [ActionService],
     exports: [ActionService]
 })

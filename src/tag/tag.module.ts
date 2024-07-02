@@ -7,7 +7,7 @@ import { TagService } from './tag.service';
 import { TagController } from './tag.controller';
 @Module({
     imports: [TypeOrmModule.forFeature([Tags])],
-    providers: [TagService, {provide:APP_GUARD, useClass: RoleGuard}, {provide:APP_GUARD, useClass: RoleGuard}],
+    providers: [TagService, {provide:APP_GUARD, useClass: RoleGuard}],
     controllers: [TagController],
     exports: [TagService]
 })
