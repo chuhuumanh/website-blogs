@@ -41,6 +41,7 @@ export class PostController {
 
     @Get(':id/activities')
     async getPostActivities(@Query('action') action: string, @Param('id', ParseIntPipe) postId: number){
+        await this.postService.findOneById(postId);
         const actionPerformed = await this.actionService.findOneByName(action);
         if(actionPerformed.name === 'comment')
             return await this.activityService.getPostComments(postId);
@@ -49,6 +50,7 @@ export class PostController {
 
     @Get(':id/images/path')
     async getPostImagesPath(@Param('id', ParseIntPipe) postId : number){
+        await this.postService.findOneById(postId);
         return this.imgService.getPostImages(postId);
     }
     

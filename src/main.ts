@@ -1,10 +1,15 @@
 import { LazyModuleLoader, NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
-;
+import * as dotenv from 'dotenv'
 
 declare const module: any;
 async function bootstrap() {
+  const result = dotenv.config({path: 'dbconfig.env'});
+  if (result.error) {
+    console.error('Error loading .env file:', result.error);
+    throw result.error;
+  }
   const app = await NestFactory.create(AppModule);
   app.enableCors({origin: '*', allowedHeaders: '*', methods: ["GET", "POST", "PUT", "DELETE"]})
   const config = new DocumentBuilder()

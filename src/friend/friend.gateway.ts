@@ -27,10 +27,15 @@ export class FriendGateway {
     await this.userService.findOne(undefined, undefined, userReceiveRequestId)
     const userSendRequest = JSON.parse(client['user'].profile);
     const action = await this.actionService.findOneByName('friendRequest');
-    let notification = await this.notificationService.add(action.id, userSendRequest.id, userReceiveRequestId, null)
-    const userReceiverRequest = userReceiveRequestId.toString()
-    this.server.emit(userReceiverRequest, notification);
-    return await this.friendService.sentFriendRequest(userSendRequest.id, userReceiveRequestId);
+    const isRequestSent = await this.friendService.getFriendRequest(userSendRequest.id, userReceiveRequestId);
+    let notification = null;
+    if(isRequestSent){
+      notification = await this.notificationService.add(action.id, userSendRequest.id, userReceiveRequestId, null)
+      const userReceiverRequest = userReceiveRequestId.toString()
+      this.server.emit(userReceiverRequest, notification);
+      return await this.friendService.sentFriendRequest(userSendRequest.id, userReceiveRequestId);
+    }
+    return 'Request already sent !';
 }
 
   @SubscribeMessage('friendRequestHandle')

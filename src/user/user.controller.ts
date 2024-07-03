@@ -1,5 +1,6 @@
 import { Controller, Get, Patch, Request, UseGuards, Body, Param, 
-    ParseIntPipe, Delete, UseInterceptors, UploadedFile, ParseFilePipeBuilder } from '@nestjs/common';
+    ParseIntPipe, Delete, UseInterceptors, UploadedFile, ParseFilePipeBuilder, 
+    ForbiddenException} from '@nestjs/common';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { Role, Roles } from 'src/role/role.decorator';
 import { UserService } from './user.service';
@@ -13,9 +14,9 @@ import { ParseFormDataPipe } from 'src/validation/parse.formdata.pipe';
 import { ValidationPipe } from 'src/validation/validation.pipe';
 import { UserUpdateDto } from 'src/validation/user.update.dto';
 
+@Controller('users')
 @UseGuards(AuthGuard)
 @Roles(Role.User, Role.Admin)
-@Controller('users')
 export class UserController {
     constructor(private userService: UserService, private postService: PostService, 
         private imgService: ImageService, private activityService: ActivityService, 
@@ -73,16 +74,24 @@ export class UserController {
     @UseInterceptors(FileInterceptor('file'))
     async updateUserProfile(@UploadedFile(new ParseFilePipeBuilder().build({fileIsRequired: false})) file: Express.Multer.File, 
         @Body(new ParseFormDataPipe, new ValidationPipe()) updateInfor: UserUpdateDto, 
-        @Param('id', ParseIntPipe) userId: number): Promise<any>{
+        @Param('id', ParseIntPipe) userId: number, @Request() req): Promise<any>{
+        const currentUser = JSON.parse(req.user.profile);
+        if(currentUser.id !== userId)
+            throw new ForbiddenException('UserId not match !');
         const user = await this.userService.findOne(undefined, undefined, userId);
-        if(user.profilePicturePath)
-            await this.imgService.deleteProfileImage(user.profilePicturePath);
-        updateInfor.profilePicturePath = file.path;
+        if(file){
+            if(user.profilePicturePath)
+                await this.imgService.deleteProfileImage(user.profilePicturePath);
+            updateInfor.profilePicturePath = file.path;
+        }
         return this.userService.updateUserInfor(userId, updateInfor)
     }
 
     @Delete(':id')
-    async deleteUser(@Param('id', ParseIntPipe) userId: number){
+    async deleteUser(@Param('id', ParseIntPipe) userId: number, @Request() req){
+        const currentUser = JSON.parse(req.user.profile);
+        if(currentUser.id !== userId)
+            throw new ForbiddenException('UserId not match !');
         const user = await this.userService.findOne(undefined, undefined, userId);
         if(user.profilePicturePath)
             await this.imgService.deleteProfileImage(user.profilePicturePath);

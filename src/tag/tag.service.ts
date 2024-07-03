@@ -1,4 +1,4 @@
-import { Injectable, NotAcceptableException, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, NotAcceptableException, NotFoundException } from '@nestjs/common';
 import { Tags } from './tags';
 import { Like, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -25,6 +25,10 @@ export class TagService {
         return tag;
     }
 
+    async getTagByName(name: string): Promise<Tags| any>{
+        return await this.tagRepository.findOneBy({name});
+    }
+
     async findTagById(id: number): Promise<Tags| any>{
         const tag =  await this.tagRepository.findOneBy({id})
         if(!tag)
@@ -42,9 +46,9 @@ export class TagService {
     async updateTag(id: number, updateTag: TagDto): Promise<any>{
         const isTagExist = await this.tagRepository.findOne({where: {name: updateTag.name}});
         if(isTagExist)
-            throw new NotAcceptableException("This tag name is already taken !");
+            throw new ConflictException("This tag name is already taken !");
         if(updateTag.name.includes(" "))
-            throw new NotAcceptableException("Tag name must not include space !")
+            throw new BadRequestException("Tag name must not include space !")
         const action =  await this.tagRepository.update({id}, {name: updateTag.name});
         if(action.affected === 0)
             return {message: "Update failed !"};

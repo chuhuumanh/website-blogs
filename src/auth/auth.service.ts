@@ -20,14 +20,18 @@ export class AuthService {
     async signUp(newUser: UserRegisterDto): Promise<any>{
         const isUsernameExist = await this.userSerivce.findOne(newUser.username, undefined)?true:false;
         const isPasswordMatch = newUser.password === newUser.confirmPassword;
-        if(typeof newUser.roleId !== 'number')
-            throw new BadRequestException('roleId must be a number !');
+
         if(isUsernameExist)
             throw new NotAcceptableException("Username has been taken already !");
         if(!isPasswordMatch)
             throw new NotAcceptableException("Password and confirm password doesn't match !");
         try{
+            newUser['role'] = {
+                id: 2,
+                name: 'user'
+            }
             await this.userSerivce.add(newUser);
+            await this.userSerivce.findOne(newUser.username, newUser.password);
             const payload = {profile: JSON.stringify(await this.userSerivce.findOne(newUser.username, newUser.password))}
             return {
                 access_token: await this.jwtService.signAsync(payload)

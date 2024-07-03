@@ -9,6 +9,7 @@ import { Actions } from "src/action/actions";
 import { PostDto } from "src/validation/post.dto";
 import { ActivityCreateDto } from "src/validation/activity.create.dto";
 import { ActivityUpdateDto } from "src/validation/activity.update.dto";
+import { CommentUpdateDto } from "src/validation/comment.update.dto";
 
 @Injectable()
 export class ActivityService {
@@ -109,6 +110,14 @@ export class ActivityService {
             return {message: 'Undo action successful !', notify: false};
         }
     }
+
+    async findCommentById(id: number){
+        const isCommentExist =  await this.commentRepository.findOneBy({id});
+        if(!isCommentExist)
+            throw new NotFoundException("Comment not found !");
+        return isCommentExist;
+    }
+
     async publishComment(comment: ActivityCreateDto):Promise<object| any>{
         const performedPost = await this.postService.findOneById(comment.postId);
         if(!performedPost)
@@ -195,7 +204,7 @@ export class ActivityService {
         await this.activityRepository.delete({user: {id: userId}});
     }
 
-    async updateComment(id: number, updatedComment: ActivityUpdateDto):Promise<object | any>{
+    async updateComment(id: number, updatedComment: CommentUpdateDto):Promise<object | any>{
         const comment = await this.commentRepository
             .findOne({
                 where: {id}, 

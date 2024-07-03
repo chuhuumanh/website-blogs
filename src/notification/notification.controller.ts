@@ -1,4 +1,4 @@
-import { Controller, Sse, Post, Get, Request, UseGuards, Delete, Param, ParseIntPipe } from '@nestjs/common';
+import { Controller, Sse, Post, Get, Request, UseGuards, Delete, Param, ParseIntPipe, ForbiddenException } from '@nestjs/common';
 import { NotificationService } from './notification.service';
 import { Role, Roles } from 'src/role/role.decorator';
 import { UserService } from 'src/user/user.service';
@@ -8,17 +8,12 @@ import { AuthGuard } from 'src/auth/auth.guard';
 @UseGuards(AuthGuard)
 export class NotificationController {
   constructor(private notificationService: NotificationService, private userService: UserService){}
-
-  @Get()
-  async getUserNotifications(@Request() req){
-    const user = JSON.parse(req.user.profile).id;
-    await this.userService.findOne(undefined, undefined, user);
-    return await this.notificationService.getUserNotifications(user);
-  }
-
   @Delete(':id')
-  async deleteNotification(@Param('id', ParseIntPipe) id: number){
-    await this.notificationService.getNotificationById(id);
+  async deleteNotification(@Param('id', ParseIntPipe) id: number, @Request() req){
+    const notification = await this.notificationService.getNotificationById(id);
+    const user = JSON.parse(req.user.profile);
+    if(notification.receiverId !== user.id)
+      throw new ForbiddenException("Cannot delete other's notification");
     return await this.notificationService.delete(id);
   }
 }

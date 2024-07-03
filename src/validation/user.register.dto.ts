@@ -1,4 +1,5 @@
 import {IsAlpha, IsBoolean, IsEmail, IsPhoneNumber, IsString, IsNotEmpty, IsNumber, IsOptional, IsDateString } from "@nestjs/class-validator";
+import { IsDate } from "class-validator";
 
 export class UserRegisterDto{
 
@@ -34,9 +35,7 @@ export class UserRegisterDto{
     @IsEmail()
     email: string
 
-    @IsString()
-    bio: string
-
+    @IsNotEmpty()
     @IsDateString()
     dateOfBirth: Date
 
@@ -46,10 +45,6 @@ export class UserRegisterDto{
 
     @IsBoolean()
     gender: boolean
-
-    @IsNotEmpty()
-    @IsNumber()
-    roleId: number
 
     @IsOptional()
     @IsNumber()

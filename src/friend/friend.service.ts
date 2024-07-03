@@ -18,6 +18,10 @@ export class FriendService {
         return{message: 'Friend request sent !'};
     }
 
+    async getFriendRequest(friendId: number, userId: number): Promise<object|any>{
+        return await this.friendRepository.findOne({where: {userSentRequest:{id: userId}, userReceiveRequestId: friendId}})
+    }
+
     async acceptFriendRequest(currentUserId: number, friendId: number): Promise<object| any>{
         const friendRequest = await this.friendRepository.findOneBy({userReceiveRequestId: currentUserId, userSentRequest: {id: friendId}});
             friendRequest.isAccept = true;

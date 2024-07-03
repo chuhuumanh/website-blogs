@@ -11,23 +11,26 @@ import { PostModule } from './post/post.module';
 import { ActivityModule } from './activity/activity.module';
 import { ImageModule } from './image/image.module';
 import { UserModule } from './user/user.module';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
-  imports: [ 
-    TypeOrmModule.forRoot({
+  imports: [ ConfigModule.forRoot({isGlobal: true}),
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
       type: 'mssql',
-      host: Config.host,
-      port: Config.port,
-      username: Config.username,
-      password: Config.password,
-      database: Config.database,
+      host: configService.get<string>('HOST'),
+      port: +configService.get<number>('DB_PORT'),
+      username: configService.get<string>('DB_USERNAME'),
+      password: configService.get<string>('DB_PASSWORD'),
+      database: configService.get<string>('DATABASE'),
       entities: Config.entities,
       options: {
         encrypt: Config.options.encrypt,
         trustServerCertificate: Config.options.trustServerCertificate
       },
       synchronize: Config.synchronize
-    }), AuthModule, TagModule ,CategoryModule,PostModule,
+    }), inject: [ConfigService]}), AuthModule, TagModule ,CategoryModule,PostModule,
     ActivityModule , ImageModule, FriendModule, UserModule],
   controllers: [AppController],
   providers: [AppService],

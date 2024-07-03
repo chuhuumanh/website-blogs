@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Subject } from 'rxjs';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Notifications } from './notifications';
@@ -17,7 +17,10 @@ export class NotificationService {
     }
 
     async getNotificationById(id: number): Promise<Notifications>{
-        return await this.notificationRepository.findOne({where: {id}, relations: ['action', 'user', 'post']});
+        const isNotificationExist =  await this.notificationRepository.findOne({where: {id}, relations: ['action', 'user', 'post']});
+        if(!isNotificationExist)
+            throw new NotFoundException('Notification not found !');
+        return isNotificationExist;
     }
 
     async getByPostIdAndUserId(userId: number, postId: number, actionId: number): Promise<Notifications>{

@@ -23,11 +23,15 @@ export class CategoryService {
         return category;
     }
 
-    async findCategoryByName(name?: string): Promise<[Category[], number] | undefined>{
+    async findCategoryByKeyword(name?: string): Promise<[Category[], number] | undefined>{
         const category = await this.categoryRepository.findAndCount({where: {name: Like('%' + name + '%')}});
         if(!category)
             throw new NotFoundException('Category not found !');
         return category;
+    }
+
+    async findCategoryByName(name: string): Promise<Category| any>{
+        return await this.categoryRepository.findOneBy({name})
     }
 
     async getPostCategories(postId: number): Promise<[Category[], number]| any>{

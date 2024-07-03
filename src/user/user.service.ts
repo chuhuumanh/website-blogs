@@ -11,7 +11,7 @@ export class UserService {
     constructor(@InjectRepository(Users) private userRepository: Repository<Users>){}
 
     async add(newUser: UserRegisterDto){
-        return await this.userRepository.save(newUser);
+        return await this.userRepository.insert(newUser);
     }
 
     async findAll(){
