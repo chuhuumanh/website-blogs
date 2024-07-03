@@ -1,11 +1,11 @@
 import { BadRequestException, CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { jwtConstants } from './jwt.constant';
 import { Socket } from 'dgram';
 
 @Injectable()
 export class AuthGuardGateWay implements CanActivate {
-  constructor(private jwtService: JwtService){}
+  constructor(private jwtService: JwtService, private configService: ConfigService){}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const client = context.switchToWs().getClient()
@@ -15,7 +15,7 @@ export class AuthGuardGateWay implements CanActivate {
 
         try{
             const payload = await this.jwtService.verifyAsync(token, {
-                secret: jwtConstants.secret
+                secret: this.configService.get<string>('JWTCONSTANT')
             });
             client['user'] = payload;
         }

@@ -15,6 +15,8 @@ import { UserService } from './user.service';
 import { APP_GUARD } from '@nestjs/core';
 import { RoleGuard } from 'src/role/role.guard';
 import { UserController } from './user.controller';
+import { RoleModule } from 'src/role/role.module';
+import { AuthModule } from 'src/auth/auth.module';
 @Module({
     imports: [TypeOrmModule.forFeature([Users]), MulterModule.register({
         fileFilter: (req, file, callback) => {
@@ -32,7 +34,8 @@ import { UserController } from './user.controller';
             }
         })
     }
-), PostModule, CategoryModule, TagModule, forwardRef(() => ImageModule), ActivityModule, forwardRef(() => FriendModule) , NotificationModule],
+), PostModule, CategoryModule, TagModule, forwardRef(() => ImageModule), ActivityModule, forwardRef(() => FriendModule) ,
+    NotificationModule, RoleModule, AuthModule],
     exports: [UserService],
     providers: [UserService, DatetimeService, {provide:APP_GUARD, useClass: RoleGuard}],
     controllers: [UserController]

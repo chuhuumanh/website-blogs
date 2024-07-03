@@ -6,7 +6,6 @@ export class ParseMessageBodyPipe implements PipeTransform {
     try {
         return JSON.parse(value);
     } catch (err) {
-      console.log(err)
         throw new BadRequestException('Invalid JSON data in form-data');
       }
   }

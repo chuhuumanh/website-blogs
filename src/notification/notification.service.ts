@@ -29,21 +29,7 @@ export class NotificationService {
 
     async getUserNotifications(userId: number){
         const results = await this.notificationRepository.findAndCount({where: {receiverId: userId}, relations: ['action', 'post', 'user']});
-        const notifications = {
-            element: [],
-            count: 0
-        }
-        for(const result of results[0]){
-            const noti = {
-                userId: result.user.id,
-                post: result.post,
-                action: result.action,
-                activedDate: result.activedDate
-            }
-            notifications.element.push(noti);
-        }
-        notifications.count = results[1];
-        return notifications;
+        return results;
     }
 
     async delete(id: number){

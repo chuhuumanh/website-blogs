@@ -13,6 +13,8 @@ import { APP_GUARD } from '@nestjs/core';
 import { RoleGuard } from 'src/role/role.guard';
 import { PostController } from './post.controller';
 import { TagModule } from 'src/tag/tag.module';
+import { RoleModule } from 'src/role/role.module';
+import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
     imports: [TypeOrmModule.forFeature([Posts]),
@@ -26,7 +28,7 @@ import { TagModule } from 'src/tag/tag.module';
                     }
                 } //
             ),
-    forwardRef(() => ActivityModule) , forwardRef(() => ImageModule), CategoryModule, ActionModule, TagModule, forwardRef(() => UserModule)],
+    forwardRef(() => ActivityModule) , forwardRef(() => ImageModule), CategoryModule, ActionModule, TagModule, forwardRef(() => UserModule), RoleModule, AuthModule],
     providers: [PostService, DatetimeService, {provide:APP_GUARD, useClass: RoleGuard}],
     controllers: [PostController],
     exports: [PostService]

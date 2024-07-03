@@ -14,9 +14,11 @@ import { ActivityGateway } from './activity.gateway';
 import { AuthGuard } from "src/auth/auth.guard";
 import { ParseFormDataPipe } from "src/validation/parse.formdata.pipe";
 import { ValidationPipe } from "src/validation/validation.pipe";
+import { RoleModule } from "src/role/role.module";
+import { AuthModule } from "src/auth/auth.module";
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Activity, Comments]), forwardRef(() => PostModule), ActionModule, NotificationModule],
+    imports: [TypeOrmModule.forFeature([Activity, Comments]), forwardRef(() => PostModule), ActionModule, NotificationModule, RoleModule, AuthModule],
     providers: [ActivityService, DatetimeService, {provide:APP_GUARD, useClass: RoleGuard}, ActivityGateway],
     controllers: [ActivityController],
     exports: [ActivityService]

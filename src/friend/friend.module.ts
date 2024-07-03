@@ -10,9 +10,11 @@ import { FriendController } from './friend.controller';
 import { FriendGateway } from './friend.gateway';
 import { NotificationModule } from 'src/notification/notification.module';
 import { ActionModule } from 'src/action/action.module';
+import { RoleModule } from 'src/role/role.module';
+import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Friends]), forwardRef(() => UserModule), forwardRef(() => NotificationModule), ActionModule],
+    imports: [TypeOrmModule.forFeature([Friends]), forwardRef(() => UserModule), forwardRef(() => NotificationModule), ActionModule, RoleModule, AuthModule],
     providers: [FriendService, DatetimeService, {provide:APP_GUARD, useClass: RoleGuard}, FriendGateway],
     controllers: [FriendController],
     exports: [FriendService]

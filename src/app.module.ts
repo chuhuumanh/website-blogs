@@ -12,6 +12,7 @@ import { ActivityModule } from './activity/activity.module';
 import { ImageModule } from './image/image.module';
 import { UserModule } from './user/user.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { RoleModule } from './role/role.module';
 
 @Module({
   imports: [ ConfigModule.forRoot({isGlobal: true}),

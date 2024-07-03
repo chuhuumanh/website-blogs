@@ -4,11 +4,11 @@ import { Role } from './role.decorator';
 import { ROLES_KEY } from './role.decorator';
 import { Request } from 'express';
 import { JwtService } from '@nestjs/jwt';
-import { jwtConstants } from 'src/auth/jwt.constant';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class RoleGuard implements CanActivate {
-  constructor(private reflector: Reflector, private jwtService: JwtService){}
+  constructor(private reflector: Reflector, private jwtService: JwtService, private configService: ConfigService){}
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const requiredRoles = this.reflector.getAllAndOverride<Role[]>(ROLES_KEY, [
       context.getHandler(),
@@ -21,13 +21,13 @@ export class RoleGuard implements CanActivate {
     const token = this.extractTokenFromHeader(user);
     try{
       const payload = await this.jwtService.verifyAsync(token, {
-          secret: jwtConstants.secret
+          secret: this.configService.get<string>('JWTCONSTANT')
       });
       const profile = JSON.parse(payload.profile)
       return requiredRoles.some((role) => profile.role.name?.includes(role));
     }
     catch(error){
-      throw new UnauthorizedException("JWT Expired");
+      throw new UnauthorizedException();
     }
   }
   extractTokenFromHeader(request: Request): string | undefined{

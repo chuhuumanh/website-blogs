@@ -10,10 +10,12 @@ import { APP_GUARD } from '@nestjs/core';
 import { RoleGuard } from 'src/role/role.guard';
 import { Images } from './images';
 import { DatetimeService } from 'src/datetime/datetime.service';
+import { RoleModule } from 'src/role/role.module';
+import { AuthModule } from 'src/auth/auth.module';
 
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Images]), forwardRef(() => PostModule) , CategoryModule, TagModule, forwardRef(() => UserModule)],
+    imports: [TypeOrmModule.forFeature([Images]), forwardRef(() => PostModule) , CategoryModule, TagModule, forwardRef(() => UserModule), RoleModule, AuthModule],
     providers: [ImageService, DatetimeService, {provide:APP_GUARD, useClass: RoleGuard}],
     controllers: [ImageController],
     exports: [ImageService]

@@ -10,6 +10,7 @@ import { Posts } from "./post/posts"
 import { Roles } from "./role/roles"
 import { Tags } from "./tag/tags"
 import { Users } from "./user/users"
+import { TokenBlackList } from "./auth/token.blacklist"
 export const Config = {
     type: 'mssql',
     host: 'localhost',
@@ -19,7 +20,7 @@ export const Config = {
     database: 'WebBlog',
     entities: [Access, Actions, Activity, Category, 
         Comments, Friends, Images, Notifications, 
-        Posts, Roles, Tags, Users],
+        Posts, Roles, Tags, Users, TokenBlackList],
     options: {
         encrypt: false,
         trustServerCertificate: true

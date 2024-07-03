@@ -1,11 +1,15 @@
 import { BadRequestException, Injectable, NotAcceptableException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { InjectRepository } from '@nestjs/typeorm';
 import { UserService } from 'src/user/user.service';
 import { UserRegisterDto } from 'src/validation/user.register.dto';
 import { UserSignInDto } from 'src/validation/user.signin.dto';
+import { TokenBlackList } from './token.blacklist';
+import { Repository } from 'typeorm';
 @Injectable()
 export class AuthService {
-    constructor(private userSerivce: UserService, private jwtService: JwtService){}
+    constructor(private userSerivce: UserService, private jwtService: JwtService, 
+        @InjectRepository(TokenBlackList) private tokenBlackListRepository: Repository<TokenBlackList>){}
 
     async signIn(user: UserSignInDto): Promise<any>{
         const userInfor = await this.userSerivce.findOne(user.username, user.password);
@@ -41,5 +45,14 @@ export class AuthService {
             console.log(error)
             throw new BadRequestException();
         }
+    }
+
+    async logout(token: string){
+        const expiredToken = token.split(' ')[1];
+        await this.tokenBlackListRepository.save({token: expiredToken});
+    }
+
+    async findTokenBlackList(token: string){
+        return await this.tokenBlackListRepository.findOneBy({token});
     }
 }
