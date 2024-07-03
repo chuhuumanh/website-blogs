@@ -12,7 +12,6 @@ import { AuthGuardGateWay } from 'src/auth/auth.gateway.guard.guard';
 import { Server } from 'http';
 import { GateWayFilter } from 'src/validation/gateway.filter';
 
-@UseGuards(AuthGuardGateWay)
 @UseFilters(new GateWayFilter())
 @WebSocketGateway()
 export class ActivityGateway {
@@ -20,6 +19,7 @@ export class ActivityGateway {
     private notificationService: NotificationService, private postService: PostService){}
   @WebSocketServer()
   server: Server
+  @UseGuards(AuthGuardGateWay)
   @SubscribeMessage('activities')
   async actionPerform(@MessageBody(new ParseMessageBodyPipe, new ValidationPipe) activityDto: ActivityCreateDto, @ConnectedSocket() client: Socket){
     activityDto.userId = JSON.parse(client['user'].profile).id;
@@ -31,6 +31,7 @@ export class ActivityGateway {
     if(perform.notify){
         const postOwnerId = (await this.postService.findOneById(activityDto.postId)).user.id;
         let notification = await this.notificationService.getByPostIdAndUserId(activityDto.userId, activityDto.postId, actionPerformed.id);
+        console.log(notification)
         if(!notification || actionPerformed.name === 'comment'){
           const notificationId = await this.notificationService.add(actionPerformed.id, activityDto.userId, postOwnerId, activityDto.postId);
           notification = await this.notificationService.getNotificationById(notificationId.id);

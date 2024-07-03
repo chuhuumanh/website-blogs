@@ -12,7 +12,6 @@ export class AuthGuardGateWay implements CanActivate {
         const token = this.extractTokenFromHeader(client);
         if(!token)
             throw new UnauthorizedException();
-
         try{
             const payload = await this.jwtService.verifyAsync(token, {
                 secret: this.configService.get<string>('JWTCONSTANT')

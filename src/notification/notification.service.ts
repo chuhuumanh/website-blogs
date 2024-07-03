@@ -24,7 +24,7 @@ export class NotificationService {
     }
 
     async getByPostIdAndUserId(userId: number, postId: number, actionId: number): Promise<Notifications>{
-        return await this.notificationRepository.findOne({where: {user: {id: userId}, post: {id: postId}, action: {id: actionId}}});
+        return await this.notificationRepository.findOne({where: {user: {id: userId}, post: {id: postId}, action: {id: actionId}}, relations: ['action', 'user', 'post']});
     }
 
     async getUserNotifications(userId: number){

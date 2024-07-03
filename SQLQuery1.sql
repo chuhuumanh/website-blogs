@@ -12,4 +12,4 @@ select * from PostTag;
 select * from friends;
 select * from notifications
 select * from roles
-delete from friends
+select * from token_black_list
