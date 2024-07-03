@@ -31,11 +31,11 @@ export class ActivityGateway {
     if(perform.notify){
         const postOwnerId = (await this.postService.findOneById(activityDto.postId)).user.id;
         let notification = await this.notificationService.getByPostIdAndUserId(activityDto.userId, activityDto.postId, actionPerformed.id);
-        console.log(notification)
         if(!notification || actionPerformed.name === 'comment'){
           const notificationId = await this.notificationService.add(actionPerformed.id, activityDto.userId, postOwnerId, activityDto.postId);
           notification = await this.notificationService.getNotificationById(notificationId.id);
         }
+        console.log(notification)
         const user = postOwnerId.toString();
         this.server.emit(user, notification)
     }
