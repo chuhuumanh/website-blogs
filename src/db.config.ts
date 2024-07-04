@@ -11,6 +11,7 @@ import { Roles } from "./role/roles"
 import { Tags } from "./tag/tags"
 import { Users } from "./user/users"
 import { TokenBlackList } from "./auth/token.blacklist"
+// vẫn chưa thây dùng env
 export const Config = {
     type: 'mssql',
     host: 'localhost',

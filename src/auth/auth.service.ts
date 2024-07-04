@@ -12,6 +12,8 @@ export class AuthService {
         @InjectRepository(TokenBlackList) private tokenBlackListRepository: Repository<TokenBlackList>){}
 
     async signIn(user: UserSignInDto): Promise<any>{
+        // find one nên nhận vào là options  ví dụ ở đây options sẽ là = {username,password}
+        // login sẽ cần thực hiện các step : check email tôn tại hay không rồi sau đó mới dùng bcrypt để check với password client gưi xuốg
         const userInfor = await this.userSerivce.findOne(user.username, user.password);
         if(!userInfor)
             throw new NotAcceptableException("Incorect username or passowrd !");
@@ -22,6 +24,8 @@ export class AuthService {
     }
 
     async signUp(newUser: UserRegisterDto): Promise<any>{
+            // ko dc set cứng, cần find data by name
+            // password cần hash trước khi lưu vào database sử dụng bcrypt
         const isUsernameExist = await this.userSerivce.findOne(newUser.username, undefined)?true:false;
         const isPasswordMatch = newUser.password === newUser.confirmPassword;
 
@@ -29,11 +33,15 @@ export class AuthService {
             throw new NotAcceptableException("Username has been taken already !");
         if(!isPasswordMatch)
             throw new NotAcceptableException("Password and confirm password doesn't match !");
-        try{
+        try {
+            
             newUser['role'] = {
-                id: 2,
+                id: 2, 
                 name: 'user'
             }
+
+
+            // khi tạo user sẽ tạo 1 constant user = await this.userSerivce.add(newUser); và xử dụng luôn k cân query lại
             await this.userSerivce.add(newUser);
             await this.userSerivce.findOne(newUser.username, newUser.password);
             const payload = {profile: JSON.stringify(await this.userSerivce.findOne(newUser.username, newUser.password))}
