@@ -19,6 +19,7 @@ export class ImageController {
     }
     @Get(':path(*)')
     async getImages(@Res({ passthrough: true }) res: Response, @Req() req: Request){
+        // tìm hiểu sử dụng package path để lấy đường dẫn , k nên xử lý cắt chuỗi kiểu này https://nodejs.org/docs/latest/api/path.html
         const path = req.url;
         const pathSplit = path.split('/');
         const filePath = `${pathSplit[2]}\\${pathSplit[3]}\\${pathSplit[4]}`;

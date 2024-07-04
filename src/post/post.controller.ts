@@ -20,6 +20,7 @@ export class PostController {
     @Post()
     @UseInterceptors(FilesInterceptor('files'))
     async addPost(@UploadedFiles(new ParseFilePipeBuilder().addMaxSizeValidator(null).build({fileIsRequired: false})) files: Array<Express.Multer.File>,
+    // thông thường  sẽ k nên sử dụng api post đê truyền vào files luôn , mà sẽ chỉ nhận vào url của link ảnh đó , như vậy sẽ cần 1 api upload images sau đó truyên vào đây
                   @Body(new ParseFormDataPipe, new ValidationPipe) postDto: PostDto, @Request() req){
         const user = JSON.parse(req.user.profile)
         postDto.userId = user.id;

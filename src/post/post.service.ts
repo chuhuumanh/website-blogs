@@ -71,6 +71,7 @@ export class PostService {
     }
 
     async searchPosts(keyword?: string, id?: number): Promise<[Posts[], number] | Posts | any>{
+        // thêm paginate
         const post = await this.postRepository
             .findAndCount({
                 where: {
