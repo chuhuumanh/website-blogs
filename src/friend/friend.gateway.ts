@@ -1,4 +1,4 @@
-import { ConnectedSocket, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
+import { ConnectedSocket, OnGatewayConnection, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { MessageBody } from '@nestjs/websockets';
 import { ParseIntPipe, ParseBoolPipe, Param, UseGuards, UseFilters, NotFoundException } from '@nestjs/common';
 import { Socket } from 'dgram';
@@ -13,15 +13,25 @@ import { GateWayFilter } from 'src/validation/gateway.filter';
 import { ParseMessageBodyPipe } from 'src/validation/parse.message.body.pipe';
 import { ParseMessageBodyIntPipe } from 'src/validation/parse.message.body.int.pipe';
 import { ParseMessageBodyBoolPipe } from 'src/validation/parse.message.body.bool.pipe';
+import { WsConnectionAuth } from 'src/auth/ws.connection.auth.guard';
 @WebSocketGateway()
 @UseGuards(AuthGuardGateWay)
 @Roles(Role.Admin, Role.User)
 @UseFilters(new GateWayFilter)
-export class FriendGateway {
+export class FriendGateway implements OnGatewayConnection {
   constructor(private friendService: FriendService, private userService: UserService, 
-    private notificationService: NotificationService, private actionService: ActionService){}
+    private notificationService: NotificationService, private actionService: ActionService, private wsConnectionAuth: WsConnectionAuth){}
   @WebSocketServer()
   server: Server
+
+  async handleConnection(client: Socket, ...args: any[]) {
+    const canActivate = await this.wsConnectionAuth.canActivate(client);
+    if(!canActivate){
+      this.server.emit('connection', 'Unauthorize !')
+      client.disconnect();
+    }     
+  }
+
   @SubscribeMessage('friendRequestSend')
   async sendFriendRequest(@MessageBody(new ParseMessageBodyPipe, new ParseMessageBodyIntPipe('userReceiveRequestId')) userReceiveRequestId: number, 
   @ConnectedSocket() client: Socket){

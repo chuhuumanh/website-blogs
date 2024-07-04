@@ -7,6 +7,7 @@ import { Users } from "src/user/users";
 import { UserService } from "src/user/user.service";
 import { TokenBlackList } from "./token.blacklist";
 import { ConfigModule, ConfigService } from "@nestjs/config";
+import { WsConnectionAuth } from "./ws.connection.auth.guard";
 
 @Module({
   imports: [ TypeOrmModule.forFeature([Users, TokenBlackList]),
@@ -17,8 +18,8 @@ import { ConfigModule, ConfigService } from "@nestjs/config";
                 secret: configService.get<string>('JWTCONSTANT')
               }), inject: [ConfigService]  
     })],
-  providers: [AuthService, UserService],
+  providers: [AuthService, UserService, WsConnectionAuth],
   controllers: [AuthController],
-  exports: [AuthService]
+  exports: [AuthService, WsConnectionAuth]
 })
 export class AuthModule {}

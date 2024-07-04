@@ -5,14 +5,13 @@ import { Socket } from 'dgram';
 import { AuthService } from './auth.service';
 
 @Injectable()
-export class AuthGuardGateWay implements CanActivate {
+export class WsConnectionAuth {
   constructor(private jwtService: JwtService, private configService: ConfigService, private authService: AuthService){}
 
-  async canActivate(context: ExecutionContext): Promise<boolean> {
-    const client = context.switchToWs().getClient()
+  async canActivate(client: Socket): Promise<boolean> {
         const token = this.extractTokenFromHeader(client);
         if(!token)
-            throw new UnauthorizedException();
+            return false;
         if(await this.isTokenInBlackList(token))
           throw new UnauthorizedException('Token expired !');
         try{
@@ -22,7 +21,7 @@ export class AuthGuardGateWay implements CanActivate {
             client['user'] = payload;
         }
         catch{
-            throw new UnauthorizedException();
+            return false;
         }
         return true;
   }
@@ -37,5 +36,5 @@ export class AuthGuardGateWay implements CanActivate {
   }
   async isTokenInBlackList(token: string){
     return await this.authService.findTokenBlackList(token);
-}
+  }
 }
