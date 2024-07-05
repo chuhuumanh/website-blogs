@@ -12,14 +12,14 @@ export class ImageService {
     constructor(@InjectRepository(Images) private ImagesRepository: Repository<Images>, private dateTimeService: DatetimeService,
                 private postService: PostService){}
 
-    async addPostImage(postId: number, userId: number, files: Array<Express.Multer.File>): Promise<any>{
+    async addPostImage(postId: number, files: Array<Express.Multer.File>): Promise<any>{
         const uploadedDate = this.dateTimeService.getDateTimeString();
         for(const file of files){
             const fileType = file.mimetype.split('/')[1];
             const newFilePath = `${file.path}.${fileType}`;
             await fs.rename(file.path, newFilePath)
             await this.ImagesRepository.insert({imgPath: newFilePath, uploadedDate: uploadedDate, fileType: fileType, 
-                size: file.size, post: {id: postId}, user: {id: userId}, mimetype: file.mimetype});
+                size: file.size, post: {id: postId}, mimetype: file.mimetype});
         };
         return {message: "Successful !"};
     }
@@ -42,11 +42,7 @@ export class ImageService {
     }
 
     async deleteUserImages(userId: number){
-        const images = await this.ImagesRepository.findBy({user : {id: userId}})
-        for(const image of images ){
-            await fs.unlink(`${image.imgPath}`);
-            await this.ImagesRepository.delete(image);
-        }
+        
     }
 
     async deletePostImages(postId: number){
@@ -56,5 +52,11 @@ export class ImageService {
             await this.ImagesRepository.delete(image);
         }
         return {message: "Deleted !"};
+    }
+
+    async deleteImages(files: Array<Express.Multer.File>){
+        for(const file of files){
+            await fs.unlink(`${file.path}`);
+        }
     }
 }

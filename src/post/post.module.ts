@@ -18,19 +18,10 @@ import { AuthModule } from 'src/auth/auth.module';
 import { NotificationModule } from 'src/notification/notification.module';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Posts]),
-                MulterModule.register({
-                    dest: 'public/images',
-                    fileFilter: (req, file, callback) => {
-                        if (!file.mimetype.match(/^(image\/jpeg|image\/png|image\/gif|image\/bmp)$/i)) {
-                        callback(new BadRequestException("Only jpeg, jpg, gif, bmp files are allow"), false);
-                        }
-                        else callback(null, true)
-                    },
-                } //
-            ),
-    forwardRef(() => ActivityModule) , forwardRef(() => ImageModule), CategoryModule, ActionModule, TagModule, forwardRef(() => UserModule), 
-        RoleModule, AuthModule, NotificationModule],
+    imports: [TypeOrmModule.forFeature([Posts]), forwardRef(() => ActivityModule), 
+        forwardRef(() => ImageModule), CategoryModule, ActionModule, 
+            TagModule, forwardRef(() => UserModule), 
+            RoleModule, AuthModule, NotificationModule],
     providers: [PostService, DatetimeService, {provide:APP_GUARD, useClass: RoleGuard}],
     controllers: [PostController],
     exports: [PostService]

@@ -92,9 +92,7 @@ export class UserController {
     }
 
     @Patch(':id')
-    @UseInterceptors(FileInterceptor('file'))
-    async updateUserProfile(@UploadedFile(new ParseFilePipeBuilder().build({fileIsRequired: false})) file: Express.Multer.File, 
-        @Body(new ParseFormDataPipe, new ValidationPipe()) updateInfor: UserUpdateDto, 
+    async updateUserProfile(@Body(new ParseFormDataPipe, new ValidationPipe()) updateInfor: UserUpdateDto, 
         @Param('id', ParseIntPipe) userId: number, @Request() req): Promise<any>{
         const currentUser = JSON.parse(req.user.profile);
         if(currentUser.id !== userId)
@@ -102,12 +100,7 @@ export class UserController {
         const options = {
             id: userId
         }
-        const user = await this.userService.findOne(options);
-        if(file){
-            if(user.profilePicturePath)
-                await this.imgService.deleteProfileImage(user.profilePicturePath);
-            updateInfor.profilePicturePath = file.path;
-        }
+        await this.userService.findOne(options);
         return this.userService.updateUserInfor(userId, updateInfor)
     }
 

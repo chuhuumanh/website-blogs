@@ -18,23 +18,8 @@ import { UserController } from './user.controller';
 import { RoleModule } from 'src/role/role.module';
 import { AuthModule } from 'src/auth/auth.module';
 @Module({
-    imports: [TypeOrmModule.forFeature([Users]), MulterModule.register({
-        fileFilter: (req, file, callback) => {
-            if (!file.mimetype.match(/^(image\/jpeg|image\/png|image\/gif|image\/bmp)$/i)) {
-                callback(new BadRequestException("Only jpeg, jpg, gif, bmp files are allow"), false);
-            }
-            else callback(null, true)
-        },
-        storage: diskStorage({
-            destination: 'public/images',
-            filename: (req, file, cb) =>{
-                const encodeName = Date.now();
-                const fileName = `${encodeName}.${file.mimetype.split('/')[1]}`
-                cb(null, fileName);
-            }
-        })
-    }
-), PostModule, CategoryModule, TagModule, forwardRef(() => ImageModule), ActivityModule, forwardRef(() => FriendModule) ,
+    imports: [TypeOrmModule.forFeature([Users]), PostModule, CategoryModule, TagModule, forwardRef(() => ImageModule), 
+    ActivityModule, forwardRef(() => FriendModule) ,
     NotificationModule, RoleModule, AuthModule],
     exports: [UserService],
     providers: [UserService, DatetimeService, {provide:APP_GUARD, useClass: RoleGuard}],

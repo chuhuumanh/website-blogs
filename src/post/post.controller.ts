@@ -20,15 +20,10 @@ export class PostController {
     constructor(private postService: PostService, private activityService: ActivityService, 
                 private imgService: ImageService, private actionService: ActionService, private notificationService: NotificationService){}
     @Post()
-    @UseInterceptors(FilesInterceptor('files'))
-    async addPost(@UploadedFiles(new ParseFilePipeBuilder().addMaxSizeValidator(null).build({fileIsRequired: false})) files: Array<Express.Multer.File>,
-                  @Body(new ParseFormDataPipe, new ValidationPipe) postDto: PostDto, @Request() req){
+    async addPost(@Body(new ValidationPipe) postDto: PostDto, @Request() req){
         const user = JSON.parse(req.user.profile)
         postDto.userId = user.id;
-        const newPost = await this.postService.add(postDto);
-        console.log(files)
-        if(files)
-            await this.imgService.addPostImage(newPost.id, user.id, files)
+        await this.postService.add(postDto);
         return {message: 'Post uploaded'};
     }
 
@@ -58,17 +53,12 @@ export class PostController {
     }
     
     @Patch(':id')
-    @UseInterceptors(FilesInterceptor('files'))
-    async updatePost(@UploadedFiles(new ParseFilePipeBuilder().build({fileIsRequired: false})) files: Array<Express.Multer.File>, 
-        @Body(new ParseFormDataPipe, new ValidationPipe()) postDto: PostDto, @Param('id', ParseIntPipe) postId: number, @Request() req){
+    async updatePost(@Body(new ValidationPipe) postDto: PostDto, @Param('id', ParseIntPipe) postId: number, @Request() req){
         const user = JSON.parse(req.user.profile);
         const post = await this.postService.findOneById(postId);
         if(post.user.id !== user.id)
             throw new ForbiddenException("Cannot edit other's post");
         const message = await this.postService.updatePost(postId, postDto);
-        if(files)
-            await this.imgService.deletePostImages(postId);
-            await this.imgService.addPostImage(postId, user.id, files);
         return message;
     }
 

@@ -4,7 +4,6 @@ import { Users } from './users';
 import { Repository } from 'typeorm';
 import { UserRegisterDto } from 'src/validation/user.register.dto';
 import { UserUpdateDto } from 'src/validation/user.update.dto';
-import { UserProfileDto } from 'src/validation/user.profile.dto';
 @Injectable()
 export class UserService {
 
@@ -21,6 +20,8 @@ export class UserService {
 
     async findOne(options: object): Promise<Users| null>{
         const user = await this.userRepository.findOne({where: options, relations: ['role']})
+        if(!user)
+            throw new NotFoundException('User not found !');
         return user;
     }
 
@@ -35,7 +36,7 @@ export class UserService {
             throw new NotFoundException('User not found !');
         if(user.profilePicturePath !== path)
             throw new NotFoundException('Profile image not found !');
-        return user;
+        return user.profilePicturePath;
     }
 
     async updateUserInfor(id: number, updateInfor: UserUpdateDto): Promise<any>{

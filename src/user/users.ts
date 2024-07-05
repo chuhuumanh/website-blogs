@@ -67,6 +67,4 @@ export class Users{
     @OneToMany(() => Posts, (post) => post.user)
     posts: Posts[]
 
-    @OneToMany(() => Images, (image) => image.user)
-    images: Images[]
 }
