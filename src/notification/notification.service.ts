@@ -1,5 +1,4 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Subject } from 'rxjs';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Notifications } from './notifications';
 import { Repository } from 'typeorm';
@@ -27,9 +26,26 @@ export class NotificationService {
         return await this.notificationRepository.findOne({where: {user: {id: userId}, post: {id: postId}, action: {id: actionId}}, relations: ['action', 'user', 'post']});
     }
 
-    async getUserNotifications(userId: number){
-        const results = await this.notificationRepository.findAndCount({where: {receiverId: userId}, relations: ['action', 'post', 'user']});
+    async getUserNotifications(options: object){
+        const results = await this.notificationRepository
+            .findAndCount({
+                where: {
+                    receiverId: options['userId']
+                }, 
+                relations: ['action', 'post', 'user'],
+                skip: options['page'] - 1,
+                take: options['take']
+            });
         return results;
+    }
+
+    async deleteUserNotifications(userId: number){
+        return await this.notificationRepository.createQueryBuilder().delete().where('userId =:userId', {userId}).
+        orWhere('receiverId =:userId', {userId}).execute();
+    }
+
+    async deletePostNotifications(postId: number){
+        return await this.notificationRepository.delete({post: {id: postId}});
     }
 
     async delete(id: number){

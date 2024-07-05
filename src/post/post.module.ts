@@ -15,6 +15,7 @@ import { PostController } from './post.controller';
 import { TagModule } from 'src/tag/tag.module';
 import { RoleModule } from 'src/role/role.module';
 import { AuthModule } from 'src/auth/auth.module';
+import { NotificationModule } from 'src/notification/notification.module';
 
 @Module({
     imports: [TypeOrmModule.forFeature([Posts]),
@@ -25,10 +26,11 @@ import { AuthModule } from 'src/auth/auth.module';
                         callback(new BadRequestException("Only jpeg, jpg, gif, bmp files are allow"), false);
                         }
                         else callback(null, true)
-                    }
+                    },
                 } //
             ),
-    forwardRef(() => ActivityModule) , forwardRef(() => ImageModule), CategoryModule, ActionModule, TagModule, forwardRef(() => UserModule), RoleModule, AuthModule],
+    forwardRef(() => ActivityModule) , forwardRef(() => ImageModule), CategoryModule, ActionModule, TagModule, forwardRef(() => UserModule), 
+        RoleModule, AuthModule, NotificationModule],
     providers: [PostService, DatetimeService, {provide:APP_GUARD, useClass: RoleGuard}],
     controllers: [PostController],
     exports: [PostService]

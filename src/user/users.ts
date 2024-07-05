@@ -6,6 +6,7 @@ import { Comments } from "src/activity/comments";
 import { Activity } from "src/activity/activity";
 import { Friends } from "src/friend/friends";
 import { Images } from "src/image/images";
+import { classToPlain, Exclude } from "class-transformer";
 @Entity()
 export class Users{
     
@@ -68,5 +69,4 @@ export class Users{
 
     @OneToMany(() => Images, (image) => image.user)
     images: Images[]
-
 }

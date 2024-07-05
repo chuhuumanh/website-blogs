@@ -18,6 +18,9 @@ export class Images{
     @Column()
     size: number;
 
+    @Column()
+    mimetype: string
+
     @ManyToOne(() => Posts, (post) => post.images)
     post: Posts
 

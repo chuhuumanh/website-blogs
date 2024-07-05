@@ -35,7 +35,10 @@ export class FriendGateway implements OnGatewayConnection {
   @SubscribeMessage('friendRequestSend')
   async sendFriendRequest(@MessageBody(new ParseMessageBodyPipe, new ParseMessageBodyIntPipe('userReceiveRequestId')) userReceiveRequestId: number, 
   @ConnectedSocket() client: Socket){
-    await this.userService.findOne(undefined, undefined, userReceiveRequestId)
+    const options = {
+      id: userReceiveRequestId
+    }
+    await this.userService.findOne(options)
     const userSendRequest = JSON.parse(client['user'].profile);
     const action = await this.actionService.findOneByName('friendRequest');
     const isRequestSent = await this.friendService.getFriendRequest(userReceiveRequestId, userSendRequest.id);
@@ -54,7 +57,10 @@ export class FriendGateway implements OnGatewayConnection {
   async handleFriendRequest(@ConnectedSocket() client: Socket, 
     @MessageBody(new ParseMessageBodyPipe, new ParseMessageBodyBoolPipe('isAccept')) isAccept: boolean){
     const userSendRequestId = client['handshake'].query.userSendRequestId;
-    const isUserSendRequestExist = await this.userService.findOne(undefined, undefined, userSendRequestId);
+    const options = {
+      id: userSendRequestId
+  }
+    const isUserSendRequestExist = await this.userService.findOne(options);
     if(!isUserSendRequestExist)
       throw new NotFoundException('User send friend request not found');
     const userReceiveRequestId = JSON.parse(client['user'].profile).id;

@@ -19,7 +19,7 @@ import { RoleModule } from './role/role.module';
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
-      type: 'mssql',
+      type: configService.get<any>('DB_TYPE'),
       host: configService.get<string>('HOST'),
       port: +configService.get<number>('DB_PORT'),
       username: configService.get<string>('DB_USERNAME'),

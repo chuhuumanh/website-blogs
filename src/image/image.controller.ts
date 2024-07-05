@@ -1,4 +1,4 @@
-import { Controller, Get, Res, Req, Query, ParseIntPipe, UseGuards, Param} from '@nestjs/common';
+import { Controller, Get, Res, Req, UseGuards, Param} from '@nestjs/common';
 import { ImageService } from './image.service';
 import { Response } from 'express';
 import { StreamableFile } from '@nestjs/common';
@@ -8,23 +8,19 @@ import { Request } from 'express';
 import { UserService } from 'src/user/user.service';
 import { Role, Roles } from 'src/role/role.decorator';
 import { AuthGuard } from 'src/auth/auth.guard';
-@Controller('images')
+import * as path from 'path'
+@Controller('resource')
 @UseGuards(AuthGuard)
 @Roles(Role.Admin, Role.User)
 export class ImageController {
     constructor(private imgService: ImageService, private userService: UserService){}
-    @Get()
-    get(){
-        return"Hello"
-    }
     @Get(':path(*)')
-    async getImages(@Res({ passthrough: true }) res: Response, @Req() req: Request){
-        const path = req.url;
-        const pathSplit = path.split('/');
-        const filePath = `${pathSplit[2]}\\${pathSplit[3]}\\${pathSplit[4]}`;
-        await this.imgService.getPostImagesByPath(filePath);
+    async getImages(@Res({ passthrough: true }) res: Response, @Req() req: Request, @Param('path') imgPath: string){
+        const filePath = path.join(imgPath);
+        const file = await this.imgService.getPostImagesByPath(filePath);
+        console.log(file)
         res.set({
-            'Content-Type': `image/jpeg`,
+            'Content-Type': `${file.mimetype}`,
             'Content-Disposition': 'attachment;',
         });
         const stream = createReadStream(join(process.cwd(), filePath));

@@ -8,6 +8,7 @@ import { TagService } from 'src/tag/tag.service';
 import { UserService } from 'src/user/user.service';
 import { PostDto } from 'src/validation/post.dto';
 import { UserUpdateDto } from 'src/validation/user.update.dto';
+import { FindManyOptions } from 'typeorm';
 
 @Injectable()
 export class PostService {
@@ -33,7 +34,10 @@ export class PostService {
                                         commentCount: 0, publishedDate:publishedDate,
                                         user:{id: post.userId}, access: {id: post.accessId}, 
                                         categories: categories, tags: tags});
-        const user = await this.userService.findOne(undefined, undefined , post.userId);
+        const options = {
+            id: post.userId
+        }
+        const user = await this.userService.findOne(options);
         const updatedUser: UserUpdateDto = {
             publishedPostCount: user.postPublishedCount += 1,
             firstName: user.firstName, 
@@ -57,32 +61,38 @@ export class PostService {
         return post;
     }
 
-    async getUserPost(id: number): Promise<[Posts[], number] | any>{
+    async getUserPost(options: object): Promise<[Posts[], number] | any>{
         const post = await this.postRepository
-            .findAndCount({
-                where: {
-                    user: {id}
-                }
-            }
-        );
+        .findAndCount({
+            where: {user: {id: options['id']}}, 
+            relations: ['user', 'access'],
+            skip: options['page'] - 1,
+            take: options['take']
+        })
         if(!post)
             throw new NotFoundException('Post not found !');
         return post;
     }
 
-    async searchPosts(keyword?: string, id?: number): Promise<[Posts[], number] | Posts | any>{
-        const post = await this.postRepository
-            .findAndCount({
-                where: {
-                    title: Like('%' + keyword + '%'), 
-                    content: Like('%' + keyword + '%')
-                }, 
-                relations: ['user', 'access']
-            }
-        );
-        if(!post)
+    async searchPosts(options?: object): Promise<[Posts[], number] | Posts | any>{
+
+        const conditions: FindManyOptions<Posts> = {
+            where: [
+              { content: Like("%" + options['keyword'] + "%") },
+              { title: Like("%" + options['keyword'] + "%") },
+            ],
+          };
+        const posts = await this.postRepository
+        .findAndCount({
+            where: conditions.where, 
+            skip: options['page'] - 1, 
+            take: options['take'], 
+            relations: ['user', 'access']
+        });
+
+        if(!posts)
             throw new NotFoundException('Post not found !');
-        return post;
+        return {post: posts[0], count: posts[1]} ;
     }
 
     async updatePost(id: number, updatePost: PostDto): Promise<object|any>{
@@ -116,8 +126,10 @@ export class PostService {
     async deletePost(id: number):Promise<object|any>{
         const post = await this.findOneById(id);
         await this.postRepository.delete({id});
-        
-        const user = await this.userService.findOne(undefined, undefined, post.user.id)
+        const options = {
+            id: post.user.id
+        }
+        const user = await this.userService.findOne(options)
         const updatedUser: UserUpdateDto = {
             publishedPostCount: user.postPublishedCount -= 1,
             firstName: user.firstName, 

@@ -1,5 +1,6 @@
 import { Controller, Post, Get, Patch, Delete, Body, Param, Query, ParseIntPipe, UseGuards, 
-    UseInterceptors, ParseFilePipeBuilder, UploadedFiles, Request, ForbiddenException} from '@nestjs/common';
+    UseInterceptors, ParseFilePipeBuilder, UploadedFiles, Request, ForbiddenException,
+    BadRequestException} from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { ActivityService } from 'src/activity/activity.service';
@@ -10,13 +11,14 @@ import { Role, Roles } from 'src/role/role.decorator';
 import { PostService } from './post.service';
 import { ImageService } from 'src/image/image.service';
 import { ActionService } from 'src/action/action.service';
+import { NotificationService } from 'src/notification/notification.service';
 
 @UseGuards(AuthGuard)
 @Roles(Role.User, Role.Admin)
 @Controller('posts')
 export class PostController {
     constructor(private postService: PostService, private activityService: ActivityService, 
-                private imgService: ImageService, private actionService: ActionService){}
+                private imgService: ImageService, private actionService: ActionService, private notificationService: NotificationService){}
     @Post()
     @UseInterceptors(FilesInterceptor('files'))
     async addPost(@UploadedFiles(new ParseFilePipeBuilder().addMaxSizeValidator(null).build({fileIsRequired: false})) files: Array<Express.Multer.File>,
@@ -24,14 +26,15 @@ export class PostController {
         const user = JSON.parse(req.user.profile)
         postDto.userId = user.id;
         const newPost = await this.postService.add(postDto);
+        console.log(files)
         if(files)
             await this.imgService.addPostImage(newPost.id, user.id, files)
         return {message: 'Post uploaded'};
     }
 
     @Get()
-    searchPosts(@Query() keyword: string ){
-        return this.postService.searchPosts(keyword);
+    searchPosts(@Query() options:{keyword: string, page: number, take: number} ){
+        return this.postService.searchPosts(options);
     }
 
     @Get(':id')
@@ -79,6 +82,7 @@ export class PostController {
         await this.imgService.deletePostImages(postId);
         await this.activityService.deletePostComments(postId);
         await this.activityService.deletePostActivities(postId);
+        await this.notificationService.deletePostNotifications(postId);
         return await this.postService.deletePost(postId);
     }
 }

@@ -11,7 +11,10 @@ export class FriendController {
     constructor(private friendService: FriendService, private userService: UserService){}
     @Delete(':id')
     async deleteFriend(@Param('id', ParseIntPipe) friendId: number, @Request() req){
-        await this.userService.findOne(undefined, undefined, friendId);
+        const options = {
+            idd: friendId
+        }
+        await this.userService.findOne(options);
         const currentUser = JSON.parse(req.user.profile);
         return await this.friendService.deleteFriend(friendId, currentUser.id);
     }

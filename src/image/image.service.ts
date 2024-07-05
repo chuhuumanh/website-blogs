@@ -4,7 +4,8 @@ import { Repository } from 'typeorm';
 import { Images } from './images';
 import { DatetimeService } from 'src/datetime/datetime.service';
 import { PostService } from 'src/post/post.service';
-import * as fs from 'fs'
+import * as fs from 'fs/promises'
+import * as path from 'path'
 
 @Injectable()
 export class ImageService {
@@ -14,13 +15,11 @@ export class ImageService {
     async addPostImage(postId: number, userId: number, files: Array<Express.Multer.File>): Promise<any>{
         const uploadedDate = this.dateTimeService.getDateTimeString();
         for(const file of files){
-            const newFilePath = `${file.path}.${file.mimetype.split('/')[1]}`
-            fs.rename(file.path, newFilePath, (err)=>{
-                if(err)
-                    console.log(err);
-            })
-            await this.ImagesRepository.insert({imgPath: newFilePath, uploadedDate: uploadedDate, fileType: file.mimetype.split('/')[1], 
-                size: file.size, post: {id: postId}, user: {id: userId}});
+            const fileType = file.mimetype.split('/')[1];
+            const newFilePath = `${file.path}.${fileType}`;
+            await fs.rename(file.path, newFilePath)
+            await this.ImagesRepository.insert({imgPath: newFilePath, uploadedDate: uploadedDate, fileType: fileType, 
+                size: file.size, post: {id: postId}, user: {id: userId}, mimetype: file.mimetype});
         };
         return {message: "Successful !"};
     }
@@ -39,21 +38,13 @@ export class ImageService {
     }
 
     async deleteProfileImage(imgPath: string){
-       fs.unlink(imgPath, (err) =>{
-        if(err)
-            console.log(err);
-       })
+       await fs.unlink(imgPath)
     }
 
     async deleteUserImages(userId: number){
         const images = await this.ImagesRepository.findBy({user : {id: userId}})
         for(const image of images ){
-            fs.unlink(`${image.imgPath}`, (err) => {
-                if (err) {
-                 console.error(err);
-                 return err;
-                }
-            });
+            await fs.unlink(`${image.imgPath}`);
             await this.ImagesRepository.delete(image);
         }
     }
@@ -61,12 +52,7 @@ export class ImageService {
     async deletePostImages(postId: number){
         const images = await this.ImagesRepository.findBy({post: {id: postId}});
         for(const image of images ){
-            fs.unlink(`${image.imgPath}`, (err) => {
-                if (err) {
-                 console.error(err);
-                 return err;
-                }
-            });
+            await fs.unlink(`${image.imgPath}`);
             await this.ImagesRepository.delete(image);
         }
         return {message: "Deleted !"};

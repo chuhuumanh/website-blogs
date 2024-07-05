@@ -4,22 +4,29 @@ import { Users } from './users';
 import { Repository } from 'typeorm';
 import { UserRegisterDto } from 'src/validation/user.register.dto';
 import { UserUpdateDto } from 'src/validation/user.update.dto';
-
+import { UserProfileDto } from 'src/validation/user.profile.dto';
 @Injectable()
 export class UserService {
 
     constructor(@InjectRepository(Users) private userRepository: Repository<Users>){}
 
-    async add(newUser: UserRegisterDto){
-        return await this.userRepository.insert(newUser);
+    async add(newUser: UserRegisterDto): Promise<Users>{
+        const user = await this.userRepository.save(newUser);
+        return await this.userRepository.findOne({where: {id: user.id}, relations: ['role']});
     }
 
     async findAll(){
         return await this.userRepository.findAndCount({relations: ['role']})
     }
 
-    async findOne(username?: string, password?: string, userId?: number): Promise<Users | undefined>{
-        return await this.userRepository.findOne({where: {username: username, password: password, id: userId}, relations:["role"]});
+    async findOne(options: object): Promise<Users| null>{
+        const user = await this.userRepository.findOne({where: options, relations: ['role']})
+        return user;
+    }
+
+    async findPassword(username: string): Promise<string| null>{
+        const user = await this.userRepository.createQueryBuilder().where('username = :username', {username}).select().addSelect('Users.password').getOne();
+        return user.password;
     }
 
     async findUserProfilePicture(id: number, path: string){

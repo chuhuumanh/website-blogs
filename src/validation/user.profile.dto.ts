@@ -2,7 +2,10 @@ import {IsAlpha, IsBoolean, IsEmail, IsPhoneNumber, IsString, IsNotEmpty, IsNumb
 import { Exclude } from "class-transformer";
 import { IsDate } from "class-validator";
 
-export class UserRegisterDto{
+export class UserProfileDto{
+
+    @IsNumber()
+    id: number
 
     @IsString()
     @IsNotEmpty()
@@ -10,11 +13,8 @@ export class UserRegisterDto{
 
     @IsString()
     @IsNotEmpty()
+    @Exclude()
     password: string
-
-    @IsString()
-    @IsNotEmpty()
-    confirmPassword: string
 
     @IsString()
     @IsNotEmpty()
@@ -49,6 +49,6 @@ export class UserRegisterDto{
 
     @IsOptional()
     @IsNumber()
-    publishedPostCount: number
+    postPublishedCount: number
 }
 
