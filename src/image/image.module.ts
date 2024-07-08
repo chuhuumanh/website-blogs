@@ -14,10 +14,11 @@ import { RoleModule } from 'src/role/role.module';
 import { AuthModule } from 'src/auth/auth.module';
 import { MulterModule } from '@nestjs/platform-express';
 import { BadRequestException } from '@nestjs/common';
+import { Users } from 'src/user/users';
 
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Images]), forwardRef(() => PostModule) , 
+    imports: [TypeOrmModule.forFeature([Images, Users]), forwardRef(() => PostModule) , 
         CategoryModule, TagModule, forwardRef(() => UserModule), 
         RoleModule, AuthModule, MulterModule.register({
             dest: 'public/images',

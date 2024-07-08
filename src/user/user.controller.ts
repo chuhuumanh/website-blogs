@@ -114,11 +114,10 @@ export class UserController {
         }
         const user = await this.userService.findOne(options);
         if(user.profilePicturePath)
-            await this.imgService.deleteProfileImage(user.profilePicturePath);
+            await this.imgService.deleteUserProfilePicture(user.profilePicturePath);
         await this.activityService.deleteUserActivities(userId);
         await this.friendService.deleteUserFriends(userId)
         await this.activityService.deleteUserComments(userId);
-        await this.imgService.deleteUserImages(userId);
         await this.postService.deleteUserPost(userId);
         await this.notificationService.deleteUserNotifications(userId);
         await this.authService.logout(req.headers.authorization);

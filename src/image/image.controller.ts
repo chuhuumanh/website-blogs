@@ -22,8 +22,13 @@ export class ImageController {
     @Get(':path(*)')
     async getImages(@Res({ passthrough: true }) res: Response, @Req() req: Request, @Param('path') imgPath: string){
         const filePath = path.join(imgPath);
-        const file = await this.imgService.getPostImagesByPath(filePath);
-        console.log(file)
+        let file = undefined;
+        try{
+            file = await this.imgService.getPostImagesByPath(filePath);
+        }
+        catch{
+            file = await this.imgService.getUserProfilePictureByPath(filePath);
+        }
         res.set({
             'Content-Type': `${file.mimetype}`,
             'Content-Disposition': 'attachment;',
@@ -39,7 +44,7 @@ export class ImageController {
         
         try{
             await this.postService.findOneById(postId);
-            await this.imgService.addPostImage(postId, files)
+            return await this.imgService.addPostImage(postId, files);
         }
         catch(err){
             await this.imgService.deleteImages(files);
@@ -48,19 +53,18 @@ export class ImageController {
     }
 
     @Post('public/images/profiles')
-    @UseInterceptors(FilesInterceptor('file'))
-    async uploadProfilePicture(@UploadedFiles(new ParseFilePipeBuilder().build({fileIsRequired: false})) files: Array<Express.Multer.File>,
+    @UseInterceptors(FileInterceptor('file'))
+    async uploadProfilePicture(@UploadedFile(new ParseFilePipeBuilder().build({fileIsRequired: false})) file: Express.Multer.File,
                                @Body(new ParseFormDataPipe, new ParseMessageBodyIntPipe('userId')) userId: number){
         try{
-            if(files.length > 1)
-                throw new BadRequestException('Only upload one profile picture');
             const options = {
                 id: userId
             }
             await this.userService.findOne(options);
+            return await this.imgService.addUserProfilePicture(options.id, file);
         }
         catch(err){
-            await this.imgService.deleteImages(files)
+            await this.imgService.deleteImage(file)
             throw err;
         }
     }
