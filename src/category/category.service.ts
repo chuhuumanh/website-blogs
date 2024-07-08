@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Category } from './category';
 import { CategoryDto } from 'src/validation/category.dto';
@@ -30,8 +30,10 @@ export class CategoryService {
         return category;
     }
 
-    async findCategoryByName(name: string): Promise<Category| any>{
-        return await this.categoryRepository.findOneBy({name})
+    async findCategoryByName(options: object): Promise<Category| any>{
+        const category = await this.categoryRepository.findOneBy({name: options['name']});
+        if(options['isExist'] && category)
+            throw new ConflictException('Category is already Exist !');
     }
 
     async getPostCategories(postId: number): Promise<[Category[], number]| any>{

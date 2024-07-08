@@ -41,36 +41,29 @@ export class PostController {
     async getPostActivities(@Query('action') action: string, @Param('id', ParseIntPipe) postId: number){
         await this.postService.findOneById(postId);
         const actionPerformed = await this.actionService.findOneByName(action);
-        if(actionPerformed.name === 'comment')
-            return await this.activityService.getPostComments(postId);
         return await this.activityService.getPostActivities(postId, actionPerformed);
     }
 
     @Get(':id/images/path')
     async getPostImagesPath(@Param('id', ParseIntPipe) postId : number){
         await this.postService.findOneById(postId);
-        return this.imgService.getPostImages(postId);
+        return this.imgService.getPostImagesPath(postId);
     }
     
     @Patch(':id')
     async updatePost(@Body(new ValidationPipe) postDto: PostDto, @Param('id', ParseIntPipe) postId: number, @Request() req){
         const user = JSON.parse(req.user.profile);
         const post = await this.postService.findOneById(postId);
-        if(post.user.id !== user.id)
-            throw new ForbiddenException("Cannot edit other's post");
-        const message = await this.postService.updatePost(postId, postDto);
-        return message;
+        this.postService.isOwner(user.id, post.user.id);
+        return await this.postService.updatePost(postId, postDto);
     }
-
 
     @Delete(':id')
     async deletePost(@Param('id', ParseIntPipe) postId: number, @Request() req){
         const user = JSON.parse(req.user.profile);
         const post = await this.postService.findOneById(postId);
-        if(post.user.id !== user.id)
-            throw new ForbiddenException("Cannot delete other's post !");
+        this.postService.isOwner(user.id, post.user.id);
         await this.imgService.deletePostImages(postId);
-        await this.activityService.deletePostComments(postId);
         await this.activityService.deletePostActivities(postId);
         await this.notificationService.deletePostNotifications(postId);
         return await this.postService.deletePost(postId);

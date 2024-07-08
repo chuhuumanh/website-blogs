@@ -9,7 +9,7 @@ import { UserService } from 'src/user/user.service';
 import { PostDto } from 'src/validation/post.dto';
 import { UserUpdateDto } from 'src/validation/user.update.dto';
 import { FindManyOptions } from 'typeorm';
-
+import { ForbiddenException } from '@nestjs/common';
 @Injectable()
 export class PostService {
     constructor(@InjectRepository(Posts) private postRepository: Repository<Posts>, private dateTime: DatetimeService,
@@ -95,8 +95,7 @@ export class PostService {
         return {post: posts[0], count: posts[1]} ;
     }
 
-    async updatePost(id: number, updatePost: PostDto): Promise<object|any>{
-
+    async updatePost(postId: number, updatePost: PostDto): Promise<object|any>{
         const categories = [];
         if(updatePost.categoriesId){
             for (const id of updatePost.categoriesId) {
@@ -112,7 +111,7 @@ export class PostService {
             }
         }
         
-        await this.postRepository.save({id, title: updatePost.title, content: updatePost.content,
+        await this.postRepository.save({id: postId, title: updatePost.title, content: updatePost.content,
             likedCount: updatePost.likeCount, sharedCount: updatePost.shareCount,
             savedCount: updatePost.saveCount, commentCount: updatePost.commentCount,
             categories: categories, tags: tags});
@@ -121,6 +120,12 @@ export class PostService {
 
     async deleteUserPost(userId: number){
         await this.postRepository.delete({user: {id: userId}});
+    }
+
+    isOwner(userId: number, ownerId: number):Boolean{
+        if(userId !== ownerId)
+            throw new ForbiddenException('User is not Post Owner !');
+        return true;
     }
 
     async deletePost(id: number):Promise<object|any>{

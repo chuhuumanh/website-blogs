@@ -11,6 +11,9 @@ export class Activity{
     @Column()
     activedDate: string;
 
+    @Column({nullable: true})
+    comment: string;
+
     @ManyToOne(() => Users, (user) => user.activities)
     user: Users
 

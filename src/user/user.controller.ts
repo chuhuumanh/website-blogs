@@ -1,7 +1,5 @@
 import { Controller, Get, Patch, Request, UseGuards, Body, Param, 
-    ParseIntPipe, Delete, UseInterceptors, UploadedFile, ParseFilePipeBuilder, 
-    ForbiddenException,
-    Query, BadRequestException} from '@nestjs/common';
+    ParseIntPipe, Delete,Query} from '@nestjs/common';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { Role, Roles } from 'src/role/role.decorator';
 import { UserService } from './user.service';
@@ -10,7 +8,6 @@ import { ImageService } from 'src/image/image.service';
 import { ActivityService } from 'src/activity/activity.service';
 import { FriendService } from 'src/friend/friend.service';
 import { NotificationService } from 'src/notification/notification.service';
-import { FileInterceptor } from '@nestjs/platform-express';
 import { ParseFormDataPipe } from 'src/validation/parse.formdata.pipe';
 import { ValidationPipe } from 'src/validation/validation.pipe';
 import { UserUpdateDto } from 'src/validation/user.update.dto';
@@ -62,7 +59,6 @@ export class UserController {
             id: userId
         }
         await this.userService.findOne(options);
-        const isAccept = true;
         paginate['isAccept'] = true;
         paginate['userId'] = options.id;
         return await this.friendService.getUserFriends(paginate);
@@ -95,8 +91,7 @@ export class UserController {
     async updateUserProfile(@Body(new ParseFormDataPipe, new ValidationPipe()) updateInfor: UserUpdateDto, 
         @Param('id', ParseIntPipe) userId: number, @Request() req): Promise<any>{
         const currentUser = JSON.parse(req.user.profile);
-        if(currentUser.id !== userId)
-            throw new ForbiddenException('UserId not match !');
+        this.userService.isIdMatch(currentUser.id, userId);
         const options = {
             id: userId
         }
@@ -107,8 +102,7 @@ export class UserController {
     @Delete(':id')
     async deleteUser(@Param('id', ParseIntPipe) userId: number, @Request() req){
         const currentUser = JSON.parse(req.user.profile);
-        if(currentUser.id !== userId)
-            throw new ForbiddenException('UserId not match !');
+        this.userService.isIdMatch(currentUser.id, userId);
         const options = {
             id: userId
         }
@@ -117,7 +111,6 @@ export class UserController {
             await this.imgService.deleteUserProfilePicture(user.profilePicturePath);
         await this.activityService.deleteUserActivities(userId);
         await this.friendService.deleteUserFriends(userId)
-        await this.activityService.deleteUserComments(userId);
         await this.postService.deleteUserPost(userId);
         await this.notificationService.deleteUserNotifications(userId);
         await this.authService.logout(req.headers.authorization);

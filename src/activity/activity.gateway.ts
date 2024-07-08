@@ -22,7 +22,6 @@ export class ActivityGateway implements OnGatewayConnection{
   @WebSocketServer()
   server: Server
 
-  
   async handleConnection(client: Socket, ...args: any[]) {
     const canActivate = await this.wsConnectionAuth.canActivate(client);
     if(!canActivate){
@@ -31,29 +30,12 @@ export class ActivityGateway implements OnGatewayConnection{
     }     
   }
 
-  @SubscribeMessage('unauthorize')
-  handleUnauthorizeMessage(){
-    return {message: 'Unauthorize'}
-  }
-
   @SubscribeMessage('activities')
   async actionPerform(@MessageBody(new ParseMessageBodyPipe, new ValidationPipe) activityDto: ActivityCreateDto, @ConnectedSocket() client: Socket){
     activityDto.userId = JSON.parse(client['user'].profile).id;
     const actionPerformed = await this.actionService.findOneByName(activityDto.action);
-    let perform = null;
-    if(actionPerformed.name === "comment")
-        perform = await this.activityService.publishComment(activityDto);
-    else perform = await this.activityService.performAction(actionPerformed, activityDto);
-    if(perform.notify){
-        const postOwnerId = (await this.postService.findOneById(activityDto.postId)).user.id;
-        let notification = await this.notificationService.getByPostIdAndUserId(activityDto.userId, activityDto.postId, actionPerformed.id);
-        if(!notification || actionPerformed.name === 'comment'){
-          const notificationId = await this.notificationService.add(actionPerformed.id, activityDto.userId, postOwnerId, activityDto.postId);
-          notification = await this.notificationService.getNotificationById(notificationId.id);
-        }
-        const user = postOwnerId.toString();
-        this.server.emit(user, notification)
-    }
-    return perform
+    let perform = await this.activityService.performAction(actionPerformed, activityDto);
+    this.server.emit(perform['notification'].receiverId, perform['notification']);
+    return perform;
   }
 }

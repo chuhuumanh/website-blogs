@@ -12,9 +12,11 @@ export class CategoryController {
     constructor(private categoryService: CategoryService){}
     @Post()
     async addCategory(@Body(new ValidationPipe()) category: CategoryDto){
-        const isCategoryExist = await this.categoryService.findCategoryByName(category.name);
-        if(isCategoryExist)
-            throw new ConflictException('Category is already exist !');
+        const options = {
+            name: category.name,
+            isExist: true
+        }
+        await this.categoryService.findCategoryByName(options);
         return await this.categoryService.add(category);
     }
 
@@ -27,7 +29,11 @@ export class CategoryController {
     @Roles(Role.User)
     @Get()
     async getCategory(@Query() keyword: {name?:string} ){
-        return await this.categoryService.findCategoryByName(keyword.name);
+        const options = {
+            name: keyword.name,
+            isExist: false
+        }
+        return await this.categoryService.findCategoryByName(options);
     }
     @Patch(':id')
     async updateCategory(@Body(new ValidationPipe()) category: CategoryDto, @Param('id', ParseIntPipe) categoryId: number){

@@ -36,28 +36,29 @@ export class ImageService {
         return {filePath: newFilePath};
     }
 
-    async getPostImagesByPath(imgPath: string): Promise<Images| any>{
-        const img = await this.ImagesRepository.findOneBy({imgPath});
-        if(!img)
-            throw new NotFoundException('Image not found !');
-        return img;
+
+    async getImageByPath(imgPath: string){
+        try{
+            const img = await this.ImagesRepository.findOneBy({imgPath});
+            if(!img)
+                throw new NotFoundException('Image not found !');
+            return img;
+        }
+        catch{
+            const img = await this.userRepository.findOneBy({profilePicturePath: imgPath});
+            if(!img)
+                return new NotFoundException('Image not found !');
+            const fileType = img.profilePicturePath.split('.')[1];
+            img['mimetype'] = path.join('image', fileType);
+            return img;
+        }
     }
 
-    async getUserProfilePictureByPath(profilePicturePath: string){
-        const img = await this.userRepository.findOneBy({profilePicturePath});
-        if(!img)
-            return new NotFoundException('Image not found !');
-        const fileType = img.profilePicturePath.split('.')[1];
-        img['mimetype'] = path.join('image', fileType);
-        return img;
-    }
-
-    async getPostImages(postId: number): Promise<[Images[], number]>{
+    async getPostImagesPath(postId: number): Promise<[Images[], number]>{
         await this.postService.findOneById(postId);
         const files = await this.ImagesRepository.findAndCount({where: {post: {id: postId}}});
         return files;
     }
-
 
     async deletePostImages(postId: number){
         const images = await this.ImagesRepository.findBy({post: {id: postId}});
@@ -69,7 +70,8 @@ export class ImageService {
     }
 
     async deleteUserProfilePicture(path: string){
-        await fs.unlink(`${path}`);
+        if(path)
+            await fs.unlink(`${path}`);
     }
 
     async deleteImages(files: Array<Express.Multer.File>){

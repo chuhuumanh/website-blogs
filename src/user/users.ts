@@ -5,8 +5,7 @@ import { Posts } from "src/post/posts";
 import { Comments } from "src/activity/comments";
 import { Activity } from "src/activity/activity";
 import { Friends } from "src/friend/friends";
-import { Images } from "src/image/images";
-import { classToPlain, Exclude } from "class-transformer";
+
 @Entity()
 export class Users{
     

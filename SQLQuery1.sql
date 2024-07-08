@@ -13,4 +13,3 @@ select * from friends;
 select * from notifications
 select * from roles
 select * from token_black_list
-

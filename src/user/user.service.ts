@@ -4,6 +4,7 @@ import { Users } from './users';
 import { Repository } from 'typeorm';
 import { UserRegisterDto } from 'src/validation/user.register.dto';
 import { UserUpdateDto } from 'src/validation/user.update.dto';
+import { ForbiddenException } from '@nestjs/common';
 @Injectable()
 export class UserService {
 
@@ -58,5 +59,11 @@ export class UserService {
         if(action.affected === 0)
             throw new NotFoundException("User Not Found !")
         return {message: "Deleted !"};
+    }
+
+    isIdMatch(currentUserId: number, userId:number):Boolean{
+        if(currentUserId !== userId)
+            throw new ForbiddenException('UserId not match !');
+        return true;
     }
 }

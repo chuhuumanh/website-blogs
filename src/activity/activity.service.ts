@@ -10,46 +10,50 @@ import { PostDto } from "src/validation/post.dto";
 import { ActivityCreateDto } from "src/validation/activity.create.dto";
 import { ActivityUpdateDto } from "src/validation/activity.update.dto";
 import { CommentUpdateDto } from "src/validation/comment.update.dto";
+import { NotificationService } from "src/notification/notification.service";
+import { Notifications } from "src/notification/notifications";
+import { Posts } from "src/post/posts";
 
 @Injectable()
 export class ActivityService {
     constructor(@InjectRepository(Activity)private activityRepository: Repository<Activity>,
-                @InjectRepository(Comments)private commentRepository: Repository<Comments>, 
+                @InjectRepository(Comments)private commentRepository: Repository<Comments>,
+                @InjectRepository(Posts) private postRepository: Repository<Posts>,
+                private notificationService: NotificationService, 
                 private dateTime: DatetimeService,
                 private postService: PostService){}
 
     async performAction(action: Actions, activity: ActivityCreateDto): Promise<object|null>{
         const performedDate = this.dateTime.getDateTimeString();
-        const isActionPerformed = await this.activityRepository
-            .findOne({
-                where: {
-                    user: {
-                        id: activity.userId
-                    },
-                    post: {
-                        id: activity.postId
-                    },
-                    action: {
-                        id: action.id
+        let isActionPerformed = undefined;
+        if(action.name !== 'comment')
+            activity.content = null;
+        if(action.name !== 'comment'){
+            isActionPerformed = await this.activityRepository
+                .findOne({
+                    where: {
+                        user: {
+                            id: activity.userId
+                        },
+                        post: {
+                            id: activity.postId
+                        },
+                        action: {
+                            id: action.id
+                        }
                     }
                 }
-            }
-        );
-        if(!isActionPerformed){
-            const notification = await this.activityRepository
-                .insert({
-                    user: {
-                    id: activity.userId
-                    },
-                    post: {
-                        id: activity.postId
-                    },
-                    action: {
-                        id: action.id
-                    },
-                    activedDate: performedDate
-                }
             );
+        }
+        if(!isActionPerformed){
+            await this.activityRepository
+                .insert({
+                    action: action, 
+                    user: {id: activity.userId}, 
+                    post: {id: activity.postId}, 
+                    activedDate: performedDate,
+                    comment: activity.content
+                });
             const performedPost = await this.postService.findOneById(activity.postId);
             switch(action.name){
                 case "like":
@@ -61,16 +65,25 @@ export class ActivityService {
                 case "save":
                     performedPost.savedCount += 1;
                     break;
+                case "comment":
+                    performedPost.commentCount += 1;
+                    break;
                 default:
                     throw new BadRequestException("Action invalid !");
             }
             const updatedPost: PostDto = {
                 likeCount: performedPost.likedCount,
                 saveCount: performedPost.savedCount,
-                shareCount: performedPost.sharedCount
+                shareCount: performedPost.sharedCount,
+                commentCount: performedPost.commentCount
             };
-            await this.postService.updatePost(activity.postId, updatedPost)
-            return {notify:true, message: action.name + " post successful !"}
+            await this.postRepository.update(activity.postId, updatedPost);
+            const postOwnerId = (await this.postService.findOneById(activity.postId)).user.id;
+            let notification = {receiverId: -1};
+            const isNotificationExist = await this.notificationService.getByPostIdAndUserId(activity.userId, activity.postId, action.id)
+            if((!isNotificationExist && action.name !== 'comment') || action.name === 'comment')
+                notification = await this.notificationService.add(action.id, activity.userId, postOwnerId, activity.postId);
+            return {message: action.name + " post successful !", notification: notification}
         }
         else{
             await this.activityRepository
@@ -106,8 +119,8 @@ export class ActivityService {
                 saveCount: performedPost.savedCount,
                 shareCount: performedPost.sharedCount,
             };
-            await this.postService.updatePost(activity.postId, updatedPost)
-            return {message: 'Undo action successful !', notify: false};
+            await this.postRepository.update(activity.postId, updatedPost);
+            return {message: 'Undo action successful !', notification: {receiverId: -1}};
         }
     }
 
@@ -116,44 +129,6 @@ export class ActivityService {
         if(!isCommentExist)
             throw new NotFoundException("Comment not found !");
         return isCommentExist;
-    }
-
-    async publishComment(comment: ActivityCreateDto):Promise<object| any>{
-        const performedPost = await this.postService.findOneById(comment.postId);
-        if(!performedPost)
-            throw new NotFoundException('Post not found !');
-        const performedDate = this.dateTime.getDateTimeString();
-        const updatedPost: PostDto = {
-            commentCount: performedPost.commentCount += 1
-        };
-        await this.postService.updatePost(comment.postId, updatedPost);
-        await this.commentRepository
-            .insert({
-                content: comment.content, 
-                postedDate: performedDate, 
-                user: {
-                    id: comment.userId
-                }, 
-                post: {
-                    id: comment.postId
-                }
-            }
-        );
-        return {notify: true, message: "Comment successful !"};
-    }
-
-    async getPostComments(postId: number):Promise<[Comments[], number] | any>{
-        await this.postService.findOneById(postId);
-        return await this.commentRepository
-            .findAndCount({
-                where: {
-                    post: {
-                        id: postId
-                    }
-                }, 
-                relations: ['user']
-            }
-        );
     }
 
     async getPostActivities(postId: number, action: Actions){
@@ -171,9 +146,9 @@ export class ActivityService {
     }
 
     async deleteComment(id: number, userId: number):Promise<object | any>{
-        const comment = await this.commentRepository
+        const comment = await this.activityRepository
             .findOne({
-                where: {id}, 
+                where: {id, action: {name: 'comment'}}, 
                 relations: ['post', 'user']
             }
         );
@@ -183,21 +158,13 @@ export class ActivityService {
         const updatedPost: PostDto = {
             commentCount: post.commentCount -= 1
         };
-        await this.commentRepository.delete(comment);
-        await this.postService.updatePost(post.id, updatedPost);
+        
+        await this.postRepository.update(post.id, updatedPost);
         return {message: "Deleted !"};
-    }
-
-    async deletePostComments(postId: number){
-        await this.commentRepository.delete({post :{id: postId}});
     }
 
     async deletePostActivities(postId: number){
         await this.activityRepository.delete({post: {id: postId}});
-    }
-
-    async deleteUserComments(userId: number){
-        await this.commentRepository.delete({user: {id: userId}});
     }
 
     async deleteUserActivities(userId: number){
@@ -205,9 +172,9 @@ export class ActivityService {
     }
 
     async updateComment(id: number, updatedComment: CommentUpdateDto):Promise<object | any>{
-        const comment = await this.commentRepository
+        const comment = await this.activityRepository
             .findOne({
-                where: {id}, 
+                where: {id, action: {name: 'comment'}}, 
                 relations: ['post', 'user']
             }
         );

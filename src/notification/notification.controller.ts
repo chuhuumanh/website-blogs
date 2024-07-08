@@ -12,8 +12,11 @@ export class NotificationController {
   async deleteNotification(@Param('id', ParseIntPipe) id: number, @Request() req){
     const notification = await this.notificationService.getNotificationById(id);
     const user = JSON.parse(req.user.profile);
-    if(notification.receiverId !== user.id)
-      throw new ForbiddenException("Cannot delete other's notification");
-    return await this.notificationService.delete(id);
+    const options = {
+      userId: user.id,
+      id: notification.id,
+      receiverId: notification.receiverId
+    }
+    return await this.notificationService.delete(options);
   }
 }

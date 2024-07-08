@@ -3,13 +3,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Notifications } from './notifications';
 import { Repository } from 'typeorm';
 import { DatetimeService } from 'src/datetime/datetime.service';
+import { ForbiddenException } from '@nestjs/common';
 
 @Injectable()
 export class NotificationService {
     constructor(@InjectRepository(Notifications) private notificationRepository: Repository<Notifications>, 
     private dateTimService: DatetimeService){}
 
-    async add(actionId: number, userId: number, receiverId: number, postId?: number){
+    async add(actionId: number, userId: number, receiverId: number, postId?: number): Promise<Notifications>{
         const activatedDate = this.dateTimService.getDateTimeString();
         return await this.notificationRepository.save({action: {id: actionId}, activedDate: activatedDate, 
             user: {id: userId}, post: {id: postId}, isSeen: false, receiverId: receiverId});
@@ -48,8 +49,10 @@ export class NotificationService {
         return await this.notificationRepository.delete({post: {id: postId}});
     }
 
-    async delete(id: number){
-        await this.notificationRepository.delete({id});
+    async delete(options: object){
+        if(options['receiverId'] !== options['userId'])
+            throw new ForbiddenException("Cannot delete other's notification");
+        await this.notificationRepository.delete({id: options['id']});
         return {message: 'Deleted notification'};
     }
 }

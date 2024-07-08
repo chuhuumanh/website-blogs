@@ -8,8 +8,6 @@ import { NotificationModule } from 'src/notification/notification.module';
 import { PostModule } from 'src/post/post.module';
 import { TagModule } from 'src/tag/tag.module';
 import { Users } from './users';
-import { MulterModule } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
 import { DatetimeService } from 'src/datetime/datetime.service';
 import { UserService } from './user.service';
 import { APP_GUARD } from '@nestjs/core';

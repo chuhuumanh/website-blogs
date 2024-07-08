@@ -3,9 +3,6 @@ import { AuthGuard } from 'src/auth/auth.guard';
 import { ValidationPipe } from 'src/validation/validation.pipe';
 import { Roles, Role } from 'src/role/role.decorator';
 import { ActivityService } from './activity.service';
-import { ActionService } from 'src/action/action.service';
-import { NotificationService } from 'src/notification/notification.service';
-import { PostService } from 'src/post/post.service';
 import { CommentUpdateDto } from 'src/validation/comment.update.dto';
 
 @Roles(Role.Admin, Role.User)
