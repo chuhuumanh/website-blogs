@@ -1,6 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany} from "typeorm";
-import { Notifications } from "src/notification/notifications";
-import { Activity } from "src/activity/activity";
+import { Activity } from "src/activity/activity.entity";
+import { Notifications } from "src/notification/notifications.entity";
 @Entity()
 export class Actions{
     @PrimaryGeneratedColumn()

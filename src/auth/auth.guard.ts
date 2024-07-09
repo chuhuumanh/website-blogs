@@ -4,7 +4,7 @@ import { Request } from 'express';
 import { AuthService } from './auth.service';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
-import { TokenBlackList } from './token.blacklist';
+import { TokenBlackList } from './token.blacklist.entity';
 
 @Injectable()
 export class AuthGuard implements CanActivate {

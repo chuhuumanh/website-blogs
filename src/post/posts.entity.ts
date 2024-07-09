@@ -1,12 +1,12 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, JoinTable, ManyToOne, OneToMany} from "typeorm";
-import { Notifications } from "src/notification/notifications";
-import { Activity } from "src/activity/activity";
-import { Comments } from "src/activity/comments";
-import { Access } from "src/access/access";
-import { Users } from "src/user/users";
-import { Category } from "src/category/category";
-import { Images } from "src/image/images";
-import { Tags } from "src/tag/tags";
+import { Activity } from "src/activity/activity.entity";
+import { Comments } from "src/activity/comments.entity";
+import { Access } from "src/access/access.entity";
+import { Images } from "src/image/images.entity";
+import { Tags } from "src/tag/tags.entity";
+import { Category } from "src/category/category.entity";
+import { Notifications } from "src/notification/notifications.entity";
+import { Users } from "src/user/users.entity";
 @Entity()
 export class Posts{
     @PrimaryGeneratedColumn()

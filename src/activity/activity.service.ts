@@ -1,19 +1,16 @@
 import { Injectable, BadRequestException, NotFoundException, ForbiddenException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Activity } from "./activity";
+import { Activity } from "./activity.entity";
 import { Repository } from "typeorm";
-import { Comments } from "./comments";
+import { Comments } from "./comments.entity";
 import { DatetimeService } from "src/datetime/datetime.service";
 import { PostService } from "src/post/post.service";
-import { Actions } from "src/action/actions";
 import { PostDto } from "src/validation/post.dto";
 import { ActivityCreateDto } from "src/validation/activity.create.dto";
-import { ActivityUpdateDto } from "src/validation/activity.update.dto";
+import { Actions } from "src/action/actions.entity";
 import { CommentUpdateDto } from "src/validation/comment.update.dto";
 import { NotificationService } from "src/notification/notification.service";
-import { Notifications } from "src/notification/notifications";
-import { Posts } from "src/post/posts";
-
+import { Posts } from "src/post/posts.entity";
 @Injectable()
 export class ActivityService {
     constructor(@InjectRepository(Activity)private activityRepository: Repository<Activity>,

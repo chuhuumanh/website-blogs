@@ -1,6 +1,6 @@
 import {Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Posts } from './posts';
+import { Posts } from './posts.entity';
 import { Repository, Like } from 'typeorm';
 import { DatetimeService } from 'src/datetime/datetime.service';
 import { CategoryService } from 'src/category/category.service';

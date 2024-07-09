@@ -3,14 +3,13 @@ import { JwtModule, JwtService } from "@nestjs/jwt";
 import { AuthService} from "./auth.service";
 import { AuthController } from "./auth.controller";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { Users } from "src/user/users";
 import { UserService } from "src/user/user.service";
-import { TokenBlackList } from "./token.blacklist";
+import { TokenBlackList } from "./token.blacklist.entity";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { WsConnectionAuth } from "./ws.connection.auth.guard";
 import { RoleService } from "src/role/role.service";
-import { Roles } from "src/role/roles";
-
+import { Users } from "src/user/users.entity";
+import { Roles } from "src/role/roles.entity";
 @Module({
   imports: [ TypeOrmModule.forFeature([Users, TokenBlackList, Roles]),
             JwtModule.registerAsync({

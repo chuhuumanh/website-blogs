@@ -1,5 +1,5 @@
 import { BadRequestException, ConflictException, Injectable, NotAcceptableException, NotFoundException } from '@nestjs/common';
-import { Tags } from './tags';
+import { Tags } from './tags.entity';
 import { Like, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { TagDto } from 'src/validation/tag.dto';

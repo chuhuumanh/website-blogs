@@ -1,5 +1,5 @@
 import { Module, forwardRef } from '@nestjs/common';
-import { Notifications } from './notifications';
+import { Notifications } from './notifications.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { NotificationService } from './notification.service';
 import { DatetimeService } from 'src/datetime/datetime.service';

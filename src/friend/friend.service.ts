@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Friends } from './friends';
+import { Friends } from './friends.entity';
 import { Repository } from 'typeorm';
 import { DatetimeService } from 'src/datetime/datetime.service';
 import { FindManyOptions } from 'typeorm';

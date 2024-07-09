@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Category } from './category';
+import { Category } from './category.entity';
 import { CategoryService } from './category.service';
 import { APP_GUARD } from '@nestjs/core';
 import { RoleGuard } from 'src/role/role.guard';

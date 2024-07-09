@@ -1,5 +1,5 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, JoinTable, ManyToOne, OneToMany} from "typeorm";
-import { Users } from "src/user/users";
+import { Users } from "src/user/users.entity";
 
 @Entity()
 export class Roles{

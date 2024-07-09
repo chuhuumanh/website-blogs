@@ -1,15 +1,14 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Images } from './images';
+import { Images } from './images.entity';
 import { DatetimeService } from 'src/datetime/datetime.service';
 import { PostService } from 'src/post/post.service';
 import * as fs from 'fs/promises'
 import * as path from 'path'
 import { unlink } from 'fs';
-import { Users } from 'src/user/users';
 import { createReadStream } from 'fs';
-
+import { Users } from 'src/user/users.entity';
 
 @Injectable()
 export class ImageService {

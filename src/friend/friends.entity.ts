@@ -1,6 +1,5 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, JoinTable, OneToMany, ManyToOne} from "typeorm";
-import { Users } from "src/user/users";
-
+import { Users } from "src/user/users.entity";
 @Entity()
 export class Friends{
     @PrimaryGeneratedColumn()

@@ -6,7 +6,7 @@ import { CategoryModule } from 'src/category/category.module';
 import { ImageModule } from 'src/image/image.module';
 import { UserModule } from 'src/user/user.module';
 import { MulterModule } from '@nestjs/platform-express';
-import { Posts } from './posts';
+import { Posts } from './posts.entity';
 import { PostService } from './post.service';
 import { DatetimeService } from 'src/datetime/datetime.service';
 import { APP_GUARD } from '@nestjs/core';

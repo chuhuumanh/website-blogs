@@ -1,7 +1,7 @@
 import { Module, forwardRef } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { Activity } from "./activity";
-import { Comments } from "./comments";
+import { Activity } from "./activity.entity";
+import { Comments } from "./comments.entity";
 import { PostModule } from "src/post/post.module";
 import { ActionModule } from "src/action/action.module";
 import { NotificationModule } from "src/notification/notification.module";
@@ -16,7 +16,7 @@ import { ParseFormDataPipe } from "src/validation/parse.formdata.pipe";
 import { ValidationPipe } from "src/validation/validation.pipe";
 import { RoleModule } from "src/role/role.module";
 import { AuthModule } from "src/auth/auth.module";
-import { Posts } from "src/post/posts";
+import { Posts } from "src/post/posts.entity";
 
 @Module({
     imports: [TypeOrmModule.forFeature([Activity, Comments, Posts]), forwardRef(() => PostModule), ActionModule, NotificationModule, RoleModule, AuthModule],

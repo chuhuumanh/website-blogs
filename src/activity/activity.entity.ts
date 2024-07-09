@@ -1,8 +1,7 @@
 import { PrimaryGeneratedColumn, Column, Entity, ManyToOne } from "typeorm";
-import { Users } from "src/user/users";
-import { Posts } from "src/post/posts";
-import { Actions } from "src/action/actions";
-
+import { Users } from "src/user/users.entity";
+import { Posts } from "src/post/posts.entity";
+import { Actions } from "src/action/actions.entity";
 @Entity()
 export class Activity{
     @PrimaryGeneratedColumn()

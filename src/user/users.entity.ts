@@ -1,11 +1,10 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany} from "typeorm";
-import { Roles } from "src/role/roles";
-import { Notifications } from "src/notification/notifications";
-import { Posts } from "src/post/posts";
-import { Comments } from "src/activity/comments";
-import { Activity } from "src/activity/activity";
-import { Friends } from "src/friend/friends";
-
+import { Notifications } from "src/notification/notifications.entity";
+import { Posts } from "src/post/posts.entity";
+import { Comments } from "src/activity/comments.entity";
+import { Activity } from "src/activity/activity.entity";
+import { Roles } from "src/role/roles.entity";
+import { Friends } from "src/friend/friends.entity";
 @Entity()
 export class Users{
     

@@ -3,7 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from 'src/user/user.module';
 import { FriendService } from './friend.service';
 import { DatetimeService } from 'src/datetime/datetime.service';
-import { Friends } from './friends';
+import { Friends } from './friends.entity';
 import { APP_GUARD } from '@nestjs/core';
 import { RoleGuard } from 'src/role/role.guard';
 import { FriendController } from './friend.controller';

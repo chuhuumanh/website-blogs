@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Actions } from './actions';
+import { Actions } from './actions.entity';
 import { FriendModule } from 'src/friend/friend.module';
 import { NotificationModule } from 'src/notification/notification.module';
 import { ActionService } from './action.service';

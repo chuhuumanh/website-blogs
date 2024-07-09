@@ -1,8 +1,7 @@
-import { Module, forwardRef } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Config } from './db.config';
 import { AuthModule } from './auth/auth.module';
 import { TagModule } from './tag/tag.module';
 import { FriendModule } from './friend/friend.module';
@@ -12,8 +11,7 @@ import { ActivityModule } from './activity/activity.module';
 import { ImageModule } from './image/image.module';
 import { UserModule } from './user/user.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { RoleModule } from './role/role.module';
-
+import { join } from 'path';
 @Module({
   imports: [ ConfigModule.forRoot({isGlobal: true}),
     TypeOrmModule.forRootAsync({
@@ -25,12 +23,12 @@ import { RoleModule } from './role/role.module';
       username: configService.get<string>('DB_USERNAME'),
       password: configService.get<string>('DB_PASSWORD'),
       database: configService.get<string>('DATABASE'),
-      entities: Config.entities,
+      entities: [join(__dirname, '**', '*.entity.{ts,js}')],
       options: {
-        encrypt: Config.options.encrypt,
-        trustServerCertificate: Config.options.trustServerCertificate
+        encrypt: false,
+        trustServerCertificate: true
       },
-      synchronize: Config.synchronize
+      synchronize: true
     }), inject: [ConfigService]}), AuthModule, TagModule ,CategoryModule,PostModule,
     ActivityModule , ImageModule, FriendModule, UserModule],
   controllers: [AppController],

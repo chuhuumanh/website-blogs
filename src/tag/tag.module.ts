@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { APP_GUARD } from '@nestjs/core';
-import { Tags } from './tags';
+import { Tags } from './tags.entity';
 import { RoleGuard } from 'src/role/role.guard';
 import { TagService } from './tag.service';
 import { TagController } from './tag.controller';

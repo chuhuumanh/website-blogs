@@ -8,14 +8,13 @@ import { UserModule } from 'src/user/user.module';
 import { ImageService } from './image.service';
 import { APP_GUARD } from '@nestjs/core';
 import { RoleGuard } from 'src/role/role.guard';
-import { Images } from './images';
+import { Images } from './images.entity';
 import { DatetimeService } from 'src/datetime/datetime.service';
 import { RoleModule } from 'src/role/role.module';
 import { AuthModule } from 'src/auth/auth.module';
 import { MulterModule } from '@nestjs/platform-express';
 import { BadRequestException } from '@nestjs/common';
-import { Users } from 'src/user/users';
-
+import { Users } from 'src/user/users.entity';
 
 @Module({
     imports: [TypeOrmModule.forFeature([Images, Users]), forwardRef(() => PostModule) , 

@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Notifications } from './notifications';
+import { Notifications } from './notifications.entity';
 import { Repository } from 'typeorm';
 import { DatetimeService } from 'src/datetime/datetime.service';
 import { ForbiddenException } from '@nestjs/common';

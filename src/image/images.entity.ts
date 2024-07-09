@@ -1,6 +1,5 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, JoinTable, ManyToOne} from "typeorm";
-import { Posts } from "src/post/posts";
-import { Users } from "src/user/users";
+import { Posts } from "src/post/posts.entity";
 @Entity()
 export class Images{
     @PrimaryGeneratedColumn()
