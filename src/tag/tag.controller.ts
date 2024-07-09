@@ -7,9 +7,9 @@ import { ValidationPipe } from 'src/validation/validation.pipe';
 
 @Controller('tags')
 @UseGuards(AuthGuard)
-@Roles(Role.Admin, Role.User)
 export class TagController {
     constructor(private tagService: TagService){}
+
     @Post()
     async addTag(@Body(new ValidationPipe()) tag: TagDto){
         const isTagExist = await this.tagService.getTagByName(tag.name);
@@ -28,12 +28,14 @@ export class TagController {
         return await this.tagService.findTagById(id);
     }
 
+    @Roles(Role.Admin)
     @Patch(':id')
     async updateTag(@Body(new ValidationPipe()) tag: TagDto, @Param('id', ParseIntPipe) tagId: number){
         await this.tagService.findTagById(tagId);
         return await this.tagService.updateTag(tagId, tag)
     }
 
+    @Roles(Role.Admin)
     @Delete(':id')
     async deleteTag(@Param('id', ParseIntPipe) tagId: number){
         return await this.tagService.deleteTag(tagId);

@@ -20,12 +20,11 @@ export class AuthService {
         const userInfor = await this.userSerivce.findOne(options);
         if(!userInfor)
             throw new NotAcceptableException("Incorrect username!");
-        
         const userPassword = await this.userSerivce.findPassword(user.username);
         const isUserInforMatch = await bcrypt.compare(user.password, userPassword);
         if(!isUserInforMatch)
             throw new NotAcceptableException('Incorrect password');
-        const payload = {profile: JSON.stringify(userInfor)}
+        const payload = {profile: JSON.stringify({id:userInfor.id, username: userInfor.username, role: userInfor.role})};
         return {
             access_token: await this.jwtService.signAsync(payload)
         };
@@ -43,7 +42,6 @@ export class AuthService {
         const isPasswordMatch = newUser.password === newUser.confirmPassword;
         if(isEmailExist)
             throw new ConflictException('Email has been used by another account !');
-
         if(isUsernameExist)
             throw new ConflictException("Username has been taken already !");
         if(!isPasswordMatch)
@@ -55,7 +53,7 @@ export class AuthService {
             newUser.password = hashPassword;
             newUser['role'] = await this.roleService.findOne(role);
             const user = await this.userSerivce.add(newUser);
-            const payload = {profile: JSON.stringify(user)}
+            const payload = {profile: JSON.stringify({id: user.id, username: user.username, role: user.role.name})}
             return {
                 access_token: await this.jwtService.signAsync(payload)
             };

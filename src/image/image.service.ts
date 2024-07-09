@@ -8,6 +8,8 @@ import * as fs from 'fs/promises'
 import * as path from 'path'
 import { unlink } from 'fs';
 import { Users } from 'src/user/users';
+import { createReadStream } from 'fs';
+
 
 @Injectable()
 export class ImageService {
@@ -42,6 +44,7 @@ export class ImageService {
             const img = await this.ImagesRepository.findOneBy({imgPath});
             if(!img)
                 throw new NotFoundException('Image not found !');
+            img['stream'] = createReadStream(path.join(process.cwd(), img.imgPath));
             return img;
         }
         catch{
@@ -50,6 +53,7 @@ export class ImageService {
                 return new NotFoundException('Image not found !');
             const fileType = img.profilePicturePath.split('.')[1];
             img['mimetype'] = path.join('image', fileType);
+            img['stream'] = createReadStream(path.join(process.cwd(), img.profilePicturePath));
             return img;
         }
     }
@@ -63,15 +67,24 @@ export class ImageService {
     async deletePostImages(postId: number){
         const images = await this.ImagesRepository.findBy({post: {id: postId}});
         for(const image of images ){
-            await fs.unlink(`${image.imgPath}`);
+            try{
+                await fs.unlink(`${image.imgPath}`);
+            }
+            catch{
+                console.log(`${image.imgPath} not found !`);
+            }
             await this.ImagesRepository.delete(image);
         }
         return {message: "Deleted !"};
     }
 
     async deleteUserProfilePicture(path: string){
-        if(path)
+        try{
             await fs.unlink(`${path}`);
+        }
+        catch{
+            console.log('File not found !');
+        }   
     }
 
     async deleteImages(files: Array<Express.Multer.File>){

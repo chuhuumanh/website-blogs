@@ -6,10 +6,10 @@ import { AuthGuard } from 'src/auth/auth.guard';
 import { Role, Roles } from 'src/role/role.decorator';
 
 @UseGuards(AuthGuard)
-@Roles(Role.Admin)
 @Controller('categories')
 export class CategoryController {
     constructor(private categoryService: CategoryService){}
+    @Roles(Role.Admin)
     @Post()
     async addCategory(@Body(new ValidationPipe()) category: CategoryDto){
         const options = {
@@ -35,11 +35,15 @@ export class CategoryController {
         }
         return await this.categoryService.findCategoryByName(options);
     }
+
+    @Roles(Role.Admin)
     @Patch(':id')
     async updateCategory(@Body(new ValidationPipe()) category: CategoryDto, @Param('id', ParseIntPipe) categoryId: number){
         await this.categoryService.findCategoryById(categoryId)
         return await this.categoryService.updateCategory(categoryId, category)
     }
+
+    @Roles(Role.Admin)
     @Delete(':id')
     async deleteCategory(@Param('id', ParseIntPipe) categoryId: number){
         await this.categoryService.findCategoryById(categoryId);

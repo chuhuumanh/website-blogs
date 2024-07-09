@@ -8,6 +8,7 @@ import { AuthGuard } from 'src/auth/auth.guard';
 @UseGuards(AuthGuard)
 export class NotificationController {
   constructor(private notificationService: NotificationService, private userService: UserService){}
+
   @Delete(':id')
   async deleteNotification(@Param('id', ParseIntPipe) id: number, @Request() req){
     const notification = await this.notificationService.getNotificationById(id);

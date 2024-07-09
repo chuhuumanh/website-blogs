@@ -25,7 +25,11 @@ export class UserController {
         private friendService: FriendService, private notificationService: NotificationService, private authService: AuthService){}
     @Get('profile')
     getUserProfile(@Request() req): any{
-        return JSON.parse(req.user.profile);
+        const payload = JSON.parse(req.user.profile);
+        const options = {
+            id: payload.id
+        };
+        return this.userService.findOne(options);
     }
 
     @Get(':id/profile')
@@ -88,32 +92,29 @@ export class UserController {
     }
 
     @Patch(':id')
-    async updateUserProfile(@Body(new ParseFormDataPipe, new ValidationPipe()) updateInfor: UserUpdateDto, 
-        @Param('id', ParseIntPipe) userId: number, @Request() req): Promise<any>{
+    async updateUserProfile(@Body(new ParseFormDataPipe, new ValidationPipe()) updateInfor: UserUpdateDto, @Request() req): Promise<any>{
         const currentUser = JSON.parse(req.user.profile);
-        this.userService.isIdMatch(currentUser.id, userId);
         const options = {
-            id: userId
+            id: currentUser.id
         }
-        await this.userService.findOne(options);
-        return this.userService.updateUserInfor(userId, updateInfor)
+        const user = await this.userService.findOne(options);
+        return this.userService.updateUserInfor(user.id, updateInfor);
     }
 
     @Delete(':id')
-    async deleteUser(@Param('id', ParseIntPipe) userId: number, @Request() req){
+    async deleteUser(@Request() req){
         const currentUser = JSON.parse(req.user.profile);
-        this.userService.isIdMatch(currentUser.id, userId);
         const options = {
-            id: userId
+            id: currentUser.id
         }
         const user = await this.userService.findOne(options);
         if(user.profilePicturePath)
             await this.imgService.deleteUserProfilePicture(user.profilePicturePath);
-        await this.activityService.deleteUserActivities(userId);
-        await this.friendService.deleteUserFriends(userId)
-        await this.postService.deleteUserPost(userId);
-        await this.notificationService.deleteUserNotifications(userId);
+        await this.activityService.deleteUserActivities(user.id);
+        await this.friendService.deleteUserFriends(user.id)
+        await this.postService.deleteUserPost(user.id);
+        await this.notificationService.deleteUserNotifications(user.id);
         await this.authService.logout(req.headers.authorization);
-        return await this.userService.deleteUser(userId);
+        return await this.userService.deleteUser(user.id);
     }
 }

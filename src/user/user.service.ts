@@ -61,9 +61,4 @@ export class UserService {
         return {message: "Deleted !"};
     }
 
-    isIdMatch(currentUserId: number, userId:number):Boolean{
-        if(currentUserId !== userId)
-            throw new ForbiddenException('UserId not match !');
-        return true;
-    }
 }

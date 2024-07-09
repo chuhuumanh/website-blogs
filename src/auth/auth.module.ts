@@ -10,8 +10,6 @@ import { ConfigModule, ConfigService } from "@nestjs/config";
 import { WsConnectionAuth } from "./ws.connection.auth.guard";
 import { RoleService } from "src/role/role.service";
 import { Roles } from "src/role/roles";
-import { Mapper } from "@automapper/core";
-import { InjectMapper } from "@automapper/nestjs";
 
 @Module({
   imports: [ TypeOrmModule.forFeature([Users, TokenBlackList, Roles]),
