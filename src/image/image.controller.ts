@@ -2,8 +2,6 @@ import { Controller, Get, Res, Req, UseGuards, Param, UseInterceptors, Post, Bod
 import { ImageService } from './image.service';
 import { Response } from 'express';
 import { StreamableFile } from '@nestjs/common';
-import { createReadStream } from 'fs';
-import { join } from 'path';
 import { UserService } from 'src/user/user.service';
 import { Role, Roles } from 'src/role/role.decorator';
 import { AuthGuard } from 'src/auth/auth.guard';
@@ -19,7 +17,7 @@ import { NotOwnerException } from 'src/filter/not.owner.exception.filter';
 @UseGuards(AuthGuard)
 @Roles(Role.Admin, Role.User)
 export class ImageController {
-    constructor(private imgService: ImageService, private userService: UserService, private postService: PostService){}
+    constructor(private imgService: ImageService){}
     
     @Get(':path(*)')
     async getImages(@Res({ passthrough: true }) res: Response, @Req() req: Request, @Param('path') imgPath: string){
@@ -38,10 +36,7 @@ export class ImageController {
     async uploadPostImages(@UploadedFiles(new ParseFilePipeBuilder().addMaxSizeValidator(null).build({fileIsRequired: false})) files: Array<Express.Multer.File>,
                            @Body(new ParseFormDataPipe, new ParseMessageBodyIntPipe('postId')) postId: number, @Request() req: any){
         const user = JSON.parse(req.user.profile);
-        const post = await this.postService.findOneById(postId);
-        this.postService.isOwner(user.id, post.user.id);
-        await this.imgService.deletePostImages(postId);
-        return await this.imgService.addPostImage(postId, files);
+        return await this.imgService.addPostImage(user.id, postId, files);
     }
 
     @UseFilters(new FileExceptionFilter(), new NotOwnerException())
@@ -49,12 +44,7 @@ export class ImageController {
     @UseInterceptors(FileInterceptor('file'))
     async uploadProfilePicture(@UploadedFile(new ParseFilePipeBuilder().build({fileIsRequired: false})) file: Express.Multer.File,
                                @Request() req: any){
-        const payload = JSON.parse(req.user.profile);
-        const options = {
-            id: payload.id
-        }
-        const user = await this.userService.findOne(options);
-        await this.imgService.deleteUserProfilePicture(user.profilePicturePath);
+        const user = JSON.parse(req.user.profile);
         return await this.imgService.addUserProfilePicture(user.id, file);
     }
 }

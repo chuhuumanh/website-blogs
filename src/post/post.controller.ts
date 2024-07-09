@@ -17,8 +17,7 @@ import { NotificationService } from 'src/notification/notification.service';
 @Roles(Role.User, Role.Admin)
 @Controller('posts')
 export class PostController {
-    constructor(private postService: PostService, private activityService: ActivityService, 
-                private imgService: ImageService, private actionService: ActionService, private notificationService: NotificationService){}
+    constructor(private postService: PostService){}
     @Post()
     async addPost(@Body(new ValidationPipe) postDto: PostDto, @Request() req){
         const user = JSON.parse(req.user.profile)
@@ -39,15 +38,12 @@ export class PostController {
 
     @Get(':id/activities')
     async getPostActivities(@Query('action') action: string, @Param('id', ParseIntPipe) postId: number){
-        await this.postService.findOneById(postId);
-        const actionPerformed = await this.actionService.findOneByName(action);
-        return await this.activityService.getPostActivities(postId, actionPerformed);
+        return await this.postService.getPostActivities(postId, action);
     }
 
     @Get(':id/images/path')
     async getPostImagesPath(@Param('id', ParseIntPipe) postId : number){
-        await this.postService.findOneById(postId);
-        return this.imgService.getPostImagesPath(postId);
+        return this.postService.getPostImagesPath(postId);
     }
     
     @Patch(':id')
@@ -61,11 +57,6 @@ export class PostController {
     @Delete(':id')
     async deletePost(@Param('id', ParseIntPipe) postId: number, @Request() req){
         const user = JSON.parse(req.user.profile);
-        const post = await this.postService.findOneById(postId);
-        this.postService.isOwner(user.id, post.user.id);
-        await this.imgService.deletePostImages(postId);
-        await this.activityService.deletePostActivities(postId);
-        await this.notificationService.deletePostNotifications(postId);
-        return await this.postService.deletePost(postId);
+        return await this.postService.deletePost(postId, user.id);
     }
 }

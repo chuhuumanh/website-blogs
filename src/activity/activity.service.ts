@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException, NotFoundException, ForbiddenException } from "@nestjs/common";
+import { Injectable, BadRequestException, NotFoundException, ForbiddenException, Inject, forwardRef } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Activity } from "./activity.entity";
 import { Repository } from "typeorm";
@@ -11,16 +11,17 @@ import { Actions } from "src/action/actions.entity";
 import { CommentUpdateDto } from "src/validation/comment.update.dto";
 import { NotificationService } from "src/notification/notification.service";
 import { Posts } from "src/post/posts.entity";
+import { ActionService } from "src/action/action.service";
 @Injectable()
 export class ActivityService {
     constructor(@InjectRepository(Activity)private activityRepository: Repository<Activity>,
-                @InjectRepository(Comments)private commentRepository: Repository<Comments>,
-                @InjectRepository(Posts) private postRepository: Repository<Posts>,
+                private actionService: ActionService,
                 private notificationService: NotificationService, 
                 private dateTime: DatetimeService,
-                private postService: PostService){}
+                @Inject(forwardRef(() => PostService))private postService: PostService){}
 
-    async performAction(action: Actions, activity: ActivityCreateDto): Promise<object|null>{
+    async performAction(activity: ActivityCreateDto): Promise<object|null>{
+        const action = await this.actionService.findOneByName(activity.action);
         const performedDate = this.dateTime.getDateTimeString();
         let isActionPerformed = undefined;
         if(action.name !== 'comment')
@@ -74,7 +75,7 @@ export class ActivityService {
                 shareCount: performedPost.sharedCount,
                 commentCount: performedPost.commentCount
             };
-            await this.postRepository.update(activity.postId, updatedPost);
+            await this.postService.updatePost(activity.postId, updatedPost);
             const postOwnerId = (await this.postService.findOneById(activity.postId)).user.id;
             let notification = {receiverId: -1};
             const isNotificationExist = await this.notificationService.getByPostIdAndUserId(activity.userId, activity.postId, action.id)
@@ -116,13 +117,13 @@ export class ActivityService {
                 saveCount: performedPost.savedCount,
                 shareCount: performedPost.sharedCount,
             };
-            await this.postRepository.update(activity.postId, updatedPost);
+            await this.postService.updatePost(activity.postId, updatedPost);
             return {message: 'Undo action successful !', notification: {receiverId: -1}};
         }
     }
 
     async findCommentById(id: number){
-        const isCommentExist =  await this.commentRepository.findOneBy({id});
+        const isCommentExist =  await this.activityRepository.findOneBy({id, action: {name: 'comment'}});
         if(!isCommentExist)
             throw new NotFoundException("Comment not found !");
         return isCommentExist;
@@ -156,7 +157,7 @@ export class ActivityService {
             commentCount: post.commentCount -= 1
         };
         
-        await this.postRepository.update(post.id, updatedPost);
+        await this.postService.updatePost(post.id, updatedPost);
         return {message: "Deleted !"};
     }
 
@@ -169,6 +170,7 @@ export class ActivityService {
     }
 
     async updateComment(id: number, updatedComment: CommentUpdateDto):Promise<object | any>{
+        await this.findCommentById(id);
         const comment = await this.activityRepository
             .findOne({
                 where: {id, action: {name: 'comment'}}, 
@@ -177,8 +179,8 @@ export class ActivityService {
         );
         if(comment.user.id !== updatedComment.userId)
             throw new ForbiddenException("Cannot edit other's comment !");
-        await this.commentRepository
-            .update({id}, {content: updatedComment.content});
+        await this.activityRepository
+            .update({id}, {comment: updatedComment.content});
         return{message: "Update comment Sucessful !"};
     }
 }

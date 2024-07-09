@@ -5,7 +5,6 @@ import { ActivityModule } from 'src/activity/activity.module';
 import { CategoryModule } from 'src/category/category.module';
 import { ImageModule } from 'src/image/image.module';
 import { UserModule } from 'src/user/user.module';
-import { MulterModule } from '@nestjs/platform-express';
 import { Posts } from './posts.entity';
 import { PostService } from './post.service';
 import { DatetimeService } from 'src/datetime/datetime.service';
@@ -18,8 +17,8 @@ import { AuthModule } from 'src/auth/auth.module';
 import { NotificationModule } from 'src/notification/notification.module';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Posts]), forwardRef(() => ActivityModule), 
-        forwardRef(() => ImageModule), CategoryModule, ActionModule, 
+    imports: [forwardRef(() => ImageModule), TypeOrmModule.forFeature([Posts]), forwardRef(() => ActivityModule), 
+            CategoryModule, ActionModule, 
             TagModule, forwardRef(() => UserModule), 
             RoleModule, AuthModule, NotificationModule],
     providers: [PostService, DatetimeService, {provide:APP_GUARD, useClass: RoleGuard}],

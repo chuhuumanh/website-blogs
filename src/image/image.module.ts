@@ -14,12 +14,12 @@ import { RoleModule } from 'src/role/role.module';
 import { AuthModule } from 'src/auth/auth.module';
 import { MulterModule } from '@nestjs/platform-express';
 import { BadRequestException } from '@nestjs/common';
-import { Users } from 'src/user/users.entity';
+import { JwtService } from '@nestjs/jwt';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Images, Users]), forwardRef(() => PostModule) , 
-        CategoryModule, TagModule, forwardRef(() => UserModule), 
-        RoleModule, AuthModule, MulterModule.register({
+    imports: [forwardRef(() => PostModule), TypeOrmModule.forFeature([Images]), 
+        forwardRef(() => UserModule), 
+        AuthModule, RoleModule, MulterModule.register({
             dest: 'public/images',
             fileFilter: (req, file, callback) => {
                 if (!file.mimetype.match(/^(image\/jpeg|image\/png|image\/gif|image\/bmp)$/i)) {

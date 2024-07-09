@@ -22,6 +22,7 @@ export class AuthGuardGateWay implements CanActivate {
             client['user'] = payload;
         }
         catch{
+            
             throw new UnauthorizedException();
         }
         return true;

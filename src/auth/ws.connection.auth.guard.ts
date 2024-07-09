@@ -31,7 +31,7 @@ export class WsConnectionAuth {
         return type === 'Bearer' ? token : undefined;
     }
     catch{
-      throw new BadRequestException('Token required !');
+      return null;
     }
   }
   async isTokenInBlackList(token: string){

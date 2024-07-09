@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Images } from './images.entity';
@@ -6,16 +6,19 @@ import { DatetimeService } from 'src/datetime/datetime.service';
 import { PostService } from 'src/post/post.service';
 import * as fs from 'fs/promises'
 import * as path from 'path'
-import { unlink } from 'fs';
 import { createReadStream } from 'fs';
-import { Users } from 'src/user/users.entity';
+import { UserService } from 'src/user/user.service';
+import { UserUpdateDto } from 'src/validation/user.update.dto';
 
 @Injectable()
 export class ImageService {
     constructor(@InjectRepository(Images) private ImagesRepository: Repository<Images>, private dateTimeService: DatetimeService,
-                private postService: PostService, @InjectRepository(Users) private userRepository: Repository<Users>){}
+                private postService: PostService, private userService: UserService){}
 
-    async addPostImage(postId: number, files: Array<Express.Multer.File>): Promise<any>{
+    async addPostImage(userId: number, postId: number, files: Array<Express.Multer.File>): Promise<any>{
+        const post = await this.postService.findOneById(postId);
+        this.postService.isOwner(userId, post.user.id);
+        await this.deletePostImages(postId);
         const uploadedDate = this.dateTimeService.getDateTimeString();
         let filePaths = []
         for(const file of files){
@@ -30,10 +33,25 @@ export class ImageService {
     }
 
     async addUserProfilePicture(userId: number, file: Express.Multer.File){
+        const options = {
+            id: userId
+        }
+        if(!file)
+            throw new BadRequestException('File required');
+        const user = await this.userService.findOne(options);
+        if(user.profilePicturePath)
+            await this.deleteUserProfilePicture(user.profilePicturePath);
         const fileType = file.mimetype.split('/')[1];
         const newFilePath = `${file.path}.${fileType}`;
         await fs.rename(file.path, newFilePath);
-        await this.userRepository.update({id: userId}, {profilePicturePath: newFilePath});
+        const userUpdateDto:UserUpdateDto = {
+            firstName: user.firstName, lastName: user.lastName, 
+            phoneNum: user.phoneNum, password: user.password, confirmPassword: user.password,
+            email: user.email, bio: user.bio,
+            profilePicturePath: newFilePath,
+            dateOfBirth: user.dateOfBirth, publishedPostCount: user.postPublishedCount
+        }
+        await this.userService.updateUserInfor(userId, userUpdateDto);
         return {filePath: newFilePath};
     }
 
@@ -47,7 +65,7 @@ export class ImageService {
             return img;
         }
         catch{
-            const img = await this.userRepository.findOneBy({profilePicturePath: imgPath});
+            const img = await this.userService.findOne({profilePicturePath: imgPath});
             if(!img)
                 return new NotFoundException('Image not found !');
             const fileType = img.profilePicturePath.split('.')[1];

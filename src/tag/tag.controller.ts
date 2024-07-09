@@ -12,9 +12,6 @@ export class TagController {
 
     @Post()
     async addTag(@Body(new ValidationPipe()) tag: TagDto){
-        const isTagExist = await this.tagService.getTagByName(tag.name);
-        if(isTagExist)
-            throw new ConflictException('Tag is already exist !');
         return this.tagService.add(tag);
     }
 
@@ -31,7 +28,6 @@ export class TagController {
     @Roles(Role.Admin)
     @Patch(':id')
     async updateTag(@Body(new ValidationPipe()) tag: TagDto, @Param('id', ParseIntPipe) tagId: number){
-        await this.tagService.findTagById(tagId);
         return await this.tagService.updateTag(tagId, tag)
     }
 

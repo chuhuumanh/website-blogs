@@ -10,6 +10,7 @@ export class FileExceptionFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
     const status = exception.getStatus();
     let message = {};
+    console.log(exception);
     if(request['file']){
       await fs.unlink(`${request['file'].path}`);
       message = {Error: 'User not found !'};

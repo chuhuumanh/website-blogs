@@ -7,17 +7,11 @@ import { AuthGuard } from 'src/auth/auth.guard';
 @Roles(Role.Admin, Role.User)
 @UseGuards(AuthGuard)
 export class NotificationController {
-  constructor(private notificationService: NotificationService, private userService: UserService){}
+  constructor(private notificationService: NotificationService){}
 
   @Delete(':id')
   async deleteNotification(@Param('id', ParseIntPipe) id: number, @Request() req){
-    const notification = await this.notificationService.getNotificationById(id);
     const user = JSON.parse(req.user.profile);
-    const options = {
-      userId: user.id,
-      id: notification.id,
-      receiverId: notification.receiverId
-    }
-    return await this.notificationService.delete(options);
+    return await this.notificationService.delete(id, user.id);
   }
 }

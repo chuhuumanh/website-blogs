@@ -49,10 +49,11 @@ export class NotificationService {
         return await this.notificationRepository.delete({post: {id: postId}});
     }
 
-    async delete(options: object){
-        if(options['receiverId'] !== options['userId'])
+    async delete(id: number, userId: number){
+        const notification = await this.getNotificationById(id);
+        if(notification.receiverId !== userId)
             throw new ForbiddenException("Cannot delete other's notification");
-        await this.notificationRepository.delete({id: options['id']});
+        await this.notificationRepository.delete({id});
         return {message: 'Deleted notification'};
     }
 }

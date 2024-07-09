@@ -1,4 +1,4 @@
-import {Injectable, NotFoundException } from '@nestjs/common';
+import {forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Posts } from './posts.entity';
 import { Repository, Like } from 'typeorm';
@@ -10,10 +10,17 @@ import { PostDto } from 'src/validation/post.dto';
 import { UserUpdateDto } from 'src/validation/user.update.dto';
 import { FindManyOptions } from 'typeorm';
 import { ForbiddenException } from '@nestjs/common';
+import { ActivityService } from 'src/activity/activity.service';
+import { ActionService } from 'src/action/action.service';
+import { ImageService } from 'src/image/image.service';
+import { NotificationService } from 'src/notification/notification.service';
 @Injectable()
 export class PostService {
     constructor(@InjectRepository(Posts) private postRepository: Repository<Posts>, private dateTime: DatetimeService,
-                private categoryService: CategoryService, private tagService: TagService, private userService: UserService){}
+                private categoryService: CategoryService, private tagService: TagService, private userService: UserService,
+                @Inject(forwardRef(() => ActivityService)) private activityService: ActivityService, private actionService: ActionService, 
+                @Inject(forwardRef(() => ImageService)) private imgService: ImageService,
+                private notificationService: NotificationService){}
 
     async add(post: PostDto): Promise<any>{
         const publishedDate = this.dateTime.getDateTimeString();
@@ -95,6 +102,16 @@ export class PostService {
         return {post: posts[0], count: posts[1]} ;
     }
 
+    async getPostActivities(postId: number, actionName: string){
+        const action = await this.actionService.findOneByName(actionName);
+        await this.activityService.getPostActivities(postId, action);
+    }
+
+    async getPostImagesPath(postId: number){
+        await this.findOneById(postId);
+        return await this.imgService.getPostImagesPath(postId);
+    }
+
     async updatePost(postId: number, updatePost: PostDto): Promise<object|any>{
         const categories = [];
         if(updatePost.categoriesId){
@@ -128,8 +145,13 @@ export class PostService {
         return true;
     }
 
-    async deletePost(id: number):Promise<object|any>{
+    async deletePost(id: number, userId: number):Promise<object|any>{
+
         const post = await this.findOneById(id);
+        this.isOwner(userId, post.user.id);
+        await this.imgService.deletePostImages(id);
+        await this.activityService.deletePostActivities(id);
+        await this.notificationService.deletePostNotifications(id);
         await this.postRepository.delete({id});
         const options = {
             id: post.user.id

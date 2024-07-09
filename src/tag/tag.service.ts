@@ -26,7 +26,9 @@ export class TagService {
     }
 
     async getTagByName(name: string): Promise<Tags| any>{
-        return await this.tagRepository.findOneBy({name});
+        const tag = await this.tagRepository.findOneBy({name});
+        if(!tag)
+            throw new NotFoundException('Tag not found !');
     }
 
     async findTagById(id: number): Promise<Tags| any>{

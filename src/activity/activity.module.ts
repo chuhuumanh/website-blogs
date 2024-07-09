@@ -11,15 +11,11 @@ import { APP_GUARD } from "@nestjs/core";
 import { RoleGuard } from "src/role/role.guard";
 import { ActivityController } from "./activity.controller";
 import { ActivityGateway } from './activity.gateway';
-import { AuthGuard } from "src/auth/auth.guard";
-import { ParseFormDataPipe } from "src/validation/parse.formdata.pipe";
-import { ValidationPipe } from "src/validation/validation.pipe";
 import { RoleModule } from "src/role/role.module";
 import { AuthModule } from "src/auth/auth.module";
-import { Posts } from "src/post/posts.entity";
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Activity, Comments, Posts]), forwardRef(() => PostModule), ActionModule, NotificationModule, RoleModule, AuthModule],
+    imports: [TypeOrmModule.forFeature([Activity]), ActionModule, NotificationModule, RoleModule, AuthModule, forwardRef(() => PostModule)],
     providers: [ActivityService, DatetimeService, {provide:APP_GUARD, useClass: RoleGuard}, ActivityGateway],
     controllers: [ActivityController],
     exports: [ActivityService]

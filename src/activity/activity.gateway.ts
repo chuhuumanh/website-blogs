@@ -17,8 +17,7 @@ import { WsConnectionAuth } from 'src/auth/ws.connection.auth.guard';
 @UseGuards(AuthGuardGateWay)
 @WebSocketGateway()
 export class ActivityGateway implements OnGatewayConnection{
-  constructor(private activityService: ActivityService, private actionService: ActionService, 
-    private notificationService: NotificationService, private postService: PostService, private wsConnectionAuth: WsConnectionAuth){}
+  constructor(private activityService: ActivityService, private wsConnectionAuth: WsConnectionAuth){}
   @WebSocketServer()
   server: Server
 
@@ -33,8 +32,7 @@ export class ActivityGateway implements OnGatewayConnection{
   @SubscribeMessage('activities')
   async actionPerform(@MessageBody(new ParseMessageBodyPipe, new ValidationPipe) activityDto: ActivityCreateDto, @ConnectedSocket() client: Socket){
     activityDto.userId = JSON.parse(client['user'].profile).id;
-    const actionPerformed = await this.actionService.findOneByName(activityDto.action);
-    let perform = await this.activityService.performAction(actionPerformed, activityDto);
+    let perform = await this.activityService.performAction(activityDto);
     this.server.emit(perform['notification'].receiverId, perform['notification']);
     return perform;
   }

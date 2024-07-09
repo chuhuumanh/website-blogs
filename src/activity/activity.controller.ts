@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Query, Delete, ParseIntPipe, Param, Patch, Sse, Request, UseGuards, NotFoundException } from '@nestjs/common';
+import { Body, Controller, Delete, ParseIntPipe, Param, Patch, Request, UseGuards } from '@nestjs/common';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { ValidationPipe } from 'src/validation/validation.pipe';
 import { Roles, Role } from 'src/role/role.decorator';
@@ -13,7 +13,6 @@ export class ActivityController {
     
     @Patch('comments/:id/')
     async updateComment(@Param('id', ParseIntPipe)commentId, @Body(new ValidationPipe())updatedComment : CommentUpdateDto, @Request() req){
-        await this.activityService.findCommentById(commentId);
         const user = JSON.parse(req.user.profile);
         updatedComment.userId = user.id;
         return await this.activityService.updateComment(commentId, updatedComment)
