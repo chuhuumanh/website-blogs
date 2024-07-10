@@ -26,6 +26,7 @@ export class PostService {
         const publishedDate = this.dateTime.getDateTimeString();
         const categories = [];
         for (const id of post.categoriesId) {
+            // improvate code để không dùng query trong forloop 
             const category = await this.categoryService.findCategoryById(id);
             categories.push(category);
         }

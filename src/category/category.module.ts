@@ -9,6 +9,7 @@ import { RoleModule } from 'src/role/role.module';
 import { APP_GUARD } from '@nestjs/core';
 import { RoleGuard } from 'src/role/role.guard';
 @Module({
+    // Hiện tại đang thấy dùng jwtService , roleGuard ở nhiều các module , e tìm hiểu thêm về global module để chỉ khai báo 1 chỗ mà các module khác vẫn có thể sử dụn đc hé 
     imports: [TypeOrmModule.forFeature([Category]), forwardRef(() => AuthModule)],
     providers: [CategoryService, JwtService, {provide: APP_GUARD, useClass: RoleGuard}],
     controllers: [CategoryController],

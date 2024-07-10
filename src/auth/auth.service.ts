@@ -31,6 +31,30 @@ export class AuthService {
     }
 
     async signUp(newUser: UserRegisterDto): Promise<any>{
+        // cần sửa lại logic ở đây cho ngắn gọn hơn ,k nên lạm dụng try catch bừa bãi 1 service nên chỉ có 1 trycatch
+        // k nên dùng throw error trong khi query giống như function .FindOne hiện tại nên trả ra null để service ngoài check null hoặc ko  
+
+        // example  improvate code: 
+        // const {username,email} = newUser
+
+        // const detailByEmail = await this.userSerivce.findOne({
+        //     where : {
+        //         email
+        //     }
+        // }) 
+        // const detailByUsername = await this.userSerivce.findOne({
+        //     where : {
+        //         username
+        //     }
+        // }) 
+
+        // if(detailByEmail){
+        //     throw new ConflictException('Email has been used by another account !');
+        // }
+        // if(detailByUsername){
+        //     throw new ConflictException("Username has been taken already !");
+        // }
+
         const usernameOption = {
             username: newUser.username
         }
