@@ -1,13 +1,13 @@
 import { BadRequestException, ConflictException, forwardRef, Inject, Injectable, NotAcceptableException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
+import * as bcrypt from 'bcrypt';
+import { RoleService } from 'src/role/role.service';
 import { UserService } from 'src/user/user.service';
 import { UserRegisterDto } from 'src/validation/user.register.dto';
 import { UserSignInDto } from 'src/validation/user.signin.dto';
-import { TokenBlackList } from './token.blacklist.entity';
 import { Repository } from 'typeorm';
-import { RoleService } from 'src/role/role.service';
-import * as bcrypt from 'bcrypt'
+import { TokenBlackList } from './token.blacklist.entity';
 @Injectable()
 export class AuthService {
     constructor(@Inject(forwardRef(() => UserService)) private userSerivce: UserService, private jwtService: JwtService, 

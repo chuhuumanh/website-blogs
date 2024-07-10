@@ -1,8 +1,8 @@
 import { BadRequestException, ConflictException, Injectable, NotAcceptableException, NotFoundException } from '@nestjs/common';
-import { Tags } from './tags.entity';
-import { Like, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { TagDto } from 'src/validation/tag.dto';
+import { In, Like, Repository } from 'typeorm';
+import { Tags } from './tags.entity';
 
 @Injectable()
 export class TagService {
@@ -33,6 +33,13 @@ export class TagService {
 
     async findTagById(id: number): Promise<Tags| any>{
         const tag =  await this.tagRepository.findOneBy({id})
+        if(!tag)
+            throw new NotFoundException("Tag not found !");
+        return tag;
+    }
+
+    async findTagsById(id: Array<number>): Promise<Tags| any>{
+        const tag =  await this.tagRepository.findOneBy({id: In(id)})
         if(!tag)
             throw new NotFoundException("Tag not found !");
         return tag;

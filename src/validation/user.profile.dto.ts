@@ -1,6 +1,5 @@
-import {IsAlpha, IsBoolean, IsEmail, IsPhoneNumber, IsString, IsNotEmpty, IsNumber, IsOptional, IsDateString } from "@nestjs/class-validator";
+import { IsAlpha, IsBoolean, IsDateString, IsEmail, IsNotEmpty, IsNumber, IsOptional, IsPhoneNumber, IsString } from "@nestjs/class-validator";
 import { Exclude } from "class-transformer";
-import { IsDate } from "class-validator";
 
 export class UserProfileDto{
 

@@ -1,9 +1,9 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany} from "typeorm";
+import { Activity } from "src/activity/activity.entity";
+import { Friends } from "src/friend/friends.entity";
 import { Notifications } from "src/notification/notifications.entity";
 import { Posts } from "src/post/posts.entity";
-import { Activity } from "src/activity/activity.entity";
 import { Roles } from "src/role/roles.entity";
-import { Friends } from "src/friend/friends.entity";
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 @Entity()
 export class Users{
     

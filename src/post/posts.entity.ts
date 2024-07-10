@@ -1,11 +1,11 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, JoinTable, ManyToOne, OneToMany} from "typeorm";
-import { Activity } from "src/activity/activity.entity";
 import { Access } from "src/access/access.entity";
-import { Images } from "src/image/images.entity";
-import { Tags } from "src/tag/tags.entity";
+import { Activity } from "src/activity/activity.entity";
 import { Category } from "src/category/category.entity";
+import { Images } from "src/image/images.entity";
 import { Notifications } from "src/notification/notifications.entity";
+import { Tags } from "src/tag/tags.entity";
 import { Users } from "src/user/users.entity";
+import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 @Entity()
 export class Posts{
     @PrimaryGeneratedColumn()

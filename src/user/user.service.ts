@@ -1,18 +1,16 @@
-import {forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Users } from './users.entity';
-import { Repository } from 'typeorm';
-import { UserRegisterDto } from 'src/validation/user.register.dto';
-import { UserUpdateDto } from 'src/validation/user.update.dto';
-import { ForbiddenException } from '@nestjs/common';
-import { PostService } from 'src/post/post.service';
-import { FriendService } from 'src/friend/friend.service';
-import { NotificationService } from 'src/notification/notification.service';
-import { ImageService } from 'src/image/image.service';
+import * as bcrypt from 'bcrypt';
 import { ActivityService } from 'src/activity/activity.service';
 import { AuthService } from 'src/auth/auth.service';
-import * as bcrypt from 'bcrypt'
-import { userInfo } from 'os';
+import { FriendService } from 'src/friend/friend.service';
+import { ImageService } from 'src/image/image.service';
+import { NotificationService } from 'src/notification/notification.service';
+import { PostService } from 'src/post/post.service';
+import { UserRegisterDto } from 'src/validation/user.register.dto';
+import { UserUpdateDto } from 'src/validation/user.update.dto';
+import { Repository } from 'typeorm';
+import { Users } from './users.entity';
 @Injectable()
 export class UserService {
 

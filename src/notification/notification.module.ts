@@ -1,16 +1,11 @@
-import { Module, forwardRef } from '@nestjs/common';
-import { Notifications } from './notifications.entity';
+import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { NotificationService } from './notification.service';
-import { DatetimeService } from 'src/datetime/datetime.service';
 import { NotificationController } from './notification.controller';
-import { AuthModule } from 'src/auth/auth.module';
-import { JwtService } from '@nestjs/jwt';
-import { APP_GUARD } from '@nestjs/core';
-import { RoleGuard } from 'src/role/role.guard';
+import { NotificationService } from './notification.service';
+import { Notifications } from './notifications.entity';
 @Module({
-    imports: [TypeOrmModule.forFeature([Notifications]), forwardRef(() => AuthModule)],
-    providers: [NotificationService, DatetimeService, JwtService, {provide: APP_GUARD, useClass: RoleGuard}],
+    imports: [TypeOrmModule.forFeature([Notifications])],
+    providers: [NotificationService],
     controllers: [NotificationController],
     exports: [NotificationService]
 })

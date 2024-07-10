@@ -1,4 +1,4 @@
-import { PipeTransform, ArgumentMetadata, BadRequestException } from '@nestjs/common';
+import { ArgumentMetadata, BadRequestException, PipeTransform } from '@nestjs/common';
 
 export class ParsePaginatePipe implements PipeTransform {
   transform(value: any, { type }: ArgumentMetadata) {

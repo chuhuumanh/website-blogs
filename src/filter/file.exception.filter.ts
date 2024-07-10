@@ -1,6 +1,6 @@
-import { ArgumentsHost, Catch, ExceptionFilter, ForbiddenException, HttpCode, HttpException, HttpStatus, NotFoundException } from '@nestjs/common';
+import { ArgumentsHost, Catch, ExceptionFilter, HttpException, NotFoundException } from '@nestjs/common';
 import { Response } from 'express';
-import * as fs from 'fs/promises'
+import * as fs from 'fs/promises';
 
 @Catch(NotFoundException)
 export class FileExceptionFilter implements ExceptionFilter {

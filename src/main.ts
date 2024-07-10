@@ -1,7 +1,7 @@
-import { LazyModuleLoader, NestFactory } from '@nestjs/core';
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { NestFactory } from '@nestjs/core';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import * as dotenv from 'dotenv';
 import { AppModule } from './app.module';
-import * as dotenv from 'dotenv'
 
 declare const module: any;
 async function bootstrap() {

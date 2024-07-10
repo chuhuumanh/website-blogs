@@ -1,18 +1,13 @@
-import { ConnectedSocket, OnGatewayConnection, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
-import { MessageBody } from '@nestjs/websockets';
-import { ParseIntPipe, ParseBoolPipe, Param, UseGuards, UseFilters, NotFoundException } from '@nestjs/common';
+import { UseFilters } from '@nestjs/common';
+import { ConnectedSocket, MessageBody, OnGatewayConnection, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { Socket } from 'dgram';
 import { Server } from 'http';
-import { FriendService } from './friend.service';
-import { UserService } from 'src/user/user.service';
 import { Role, Roles } from 'src/role/role.decorator';
-import { NotificationService } from 'src/notification/notification.service';
-import { ActionService } from 'src/action/action.service';
 import { GateWayFilter } from 'src/validation/gateway.filter';
-import { ParseMessageBodyPipe } from 'src/validation/parse.message.body.pipe';
-import { ParseMessageBodyIntPipe } from 'src/validation/parse.message.body.int.pipe';
 import { ParseMessageBodyBoolPipe } from 'src/validation/parse.message.body.bool.pipe';
-import { WsConnectionAuth } from 'src/auth/ws.connection.auth.guard';
+import { ParseMessageBodyIntPipe } from 'src/validation/parse.message.body.int.pipe';
+import { ParseMessageBodyPipe } from 'src/validation/parse.message.body.pipe';
+import { FriendService } from './friend.service';
 @WebSocketGateway()
 @Roles(Role.Admin, Role.User)
 @UseFilters(new GateWayFilter())

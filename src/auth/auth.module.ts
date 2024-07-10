@@ -1,4 +1,4 @@
-import { forwardRef, Module } from "@nestjs/common";
+import { forwardRef, Global, Module } from "@nestjs/common";
 import { JwtModule, JwtService} from "@nestjs/jwt";
 import { AuthService} from "./auth.service";
 import { AuthController } from "./auth.controller";
@@ -7,11 +7,10 @@ import { TokenBlackList } from "./token.blacklist.entity";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { WsConnectionAuth } from "./ws.connection.auth.guard";
 import { UserModule } from "src/user/user.module";
+import { AuthGuard } from "./auth.guard";
 import { RoleModule } from "src/role/role.module";
-import { CategoryModule } from "src/category/category.module";
-import { TagModule } from "src/tag/tag.module";
-import { PostModule } from "src/post/post.module";
 
+@Global()
 @Module({
   imports: [TypeOrmModule.forFeature([TokenBlackList]),
             JwtModule.registerAsync({
@@ -20,9 +19,9 @@ import { PostModule } from "src/post/post.module";
                 global: true,
                 secret: configService.get<string>('JWTCONSTANT')
               }), inject: [ConfigService]  
-    }), forwardRef(() => UserModule), forwardRef(() => PostModule), forwardRef(() => RoleModule)],
-  providers: [AuthService, WsConnectionAuth],
+    }), forwardRef(() => UserModule), RoleModule],
+  providers: [AuthService, WsConnectionAuth, JwtModule],
   controllers: [AuthController],
-  exports: [AuthService, WsConnectionAuth]
+  exports: [AuthService, WsConnectionAuth, JwtModule]
 })
 export class AuthModule {}

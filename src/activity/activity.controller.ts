@@ -1,9 +1,9 @@
-import { Body, Controller, Delete, ParseIntPipe, Param, Patch, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Param, ParseIntPipe, Patch, Request, UseGuards } from '@nestjs/common';
 import { AuthGuard } from 'src/auth/auth.guard';
-import { ValidationPipe } from 'src/validation/validation.pipe';
-import { Roles, Role } from 'src/role/role.decorator';
-import { ActivityService } from './activity.service';
+import { Role, Roles } from 'src/role/role.decorator';
 import { CommentUpdateDto } from 'src/validation/comment.update.dto';
+import { ValidationPipe } from 'src/validation/validation.pipe';
+import { ActivityService } from './activity.service';
 
 @Roles(Role.Admin, Role.User)
 @UseGuards(AuthGuard)

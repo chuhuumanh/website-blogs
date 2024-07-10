@@ -1,9 +1,8 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { Injectable, NotAcceptableException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Category } from './category.entity';
 import { CategoryDto } from 'src/validation/category.dto';
-import { Repository, Like } from 'typeorm';
-import { NotAcceptableException, NotFoundException } from '@nestjs/common';
+import { In, Like, Repository } from 'typeorm';
+import { Category } from './category.entity';
 @Injectable()
 export class CategoryService {
     constructor(@InjectRepository(Category) private categoryRepository: Repository<Category>){}
@@ -18,6 +17,13 @@ export class CategoryService {
 
     async findCategoryById(id: number): Promise<Category | any>{
         const category = await this.categoryRepository.findOneBy({id});
+        if(!category)
+            throw new NotFoundException('Category not found');
+        return category;
+    }
+
+    async findCategoriesById(id: Array<number>): Promise<Category | any>{
+        const category = await this.categoryRepository.findBy({id: In(id)});
         if(!category)
             throw new NotFoundException('Category not found');
         return category;

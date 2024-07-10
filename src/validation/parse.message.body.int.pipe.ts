@@ -1,5 +1,4 @@
 import { ArgumentMetadata, BadRequestException, Injectable, PipeTransform } from '@nestjs/common';
-import { WsException } from '@nestjs/websockets';
 
 @Injectable()
 export class ParseMessageBodyIntPipe implements PipeTransform {

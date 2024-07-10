@@ -1,9 +1,9 @@
-import { Controller, Post, Get, Patch, Delete, Body, Query, Param, ParseIntPipe, UseGuards, NotAcceptableException, ConflictException } from '@nestjs/common';
-import { CategoryService } from './category.service';
-import { ValidationPipe } from 'src/validation/validation.pipe';
-import { CategoryDto } from 'src/validation/category.dto';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { Role, Roles } from 'src/role/role.decorator';
+import { CategoryDto } from 'src/validation/category.dto';
+import { ValidationPipe } from 'src/validation/validation.pipe';
+import { CategoryService } from './category.service';
 
 @UseGuards(AuthGuard)
 @Controller('categories')

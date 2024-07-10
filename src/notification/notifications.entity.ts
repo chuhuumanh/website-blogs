@@ -1,7 +1,7 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, JoinTable, ManyToOne} from "typeorm";
 import { Actions } from "src/action/actions.entity";
 import { Posts } from "src/post/posts.entity";
 import { Users } from "src/user/users.entity";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class Notifications{

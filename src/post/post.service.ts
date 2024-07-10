@@ -1,19 +1,17 @@
-import {forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Posts } from './posts.entity';
-import { Repository, Like } from 'typeorm';
-import { DatetimeService } from 'src/datetime/datetime.service';
+import { ActionService } from 'src/action/action.service';
+import { ActivityService } from 'src/activity/activity.service';
 import { CategoryService } from 'src/category/category.service';
+import { DatetimeService } from 'src/datetime/datetime.service';
+import { ImageService } from 'src/image/image.service';
+import { NotificationService } from 'src/notification/notification.service';
 import { TagService } from 'src/tag/tag.service';
 import { UserService } from 'src/user/user.service';
 import { PostDto } from 'src/validation/post.dto';
 import { UserUpdateDto } from 'src/validation/user.update.dto';
-import { FindManyOptions } from 'typeorm';
-import { ForbiddenException } from '@nestjs/common';
-import { ActivityService } from 'src/activity/activity.service';
-import { ActionService } from 'src/action/action.service';
-import { ImageService } from 'src/image/image.service';
-import { NotificationService } from 'src/notification/notification.service';
+import { FindManyOptions, Like, Repository } from 'typeorm';
+import { Posts } from './posts.entity';
 @Injectable()
 export class PostService {
     constructor(@InjectRepository(Posts) private postRepository: Repository<Posts>, private dateTime: DatetimeService,
@@ -24,18 +22,12 @@ export class PostService {
 
     async add(post: PostDto): Promise<any>{
         const publishedDate = this.dateTime.getDateTimeString();
-        const categories = [];
-        for (const id of post.categoriesId) {
-            const category = await this.categoryService.findCategoryById(id);
-            categories.push(category);
-        }
-        const tags = []
-        if(post.tagsId){
-            for (const id of post.tagsId) {
-                const tag = await this.tagService.findTagById(id);
-                tags.push(tag);
-            }
-        }
+        const categories = await this.categoryService.findCategoriesById(post.categoriesId);
+
+        let tags = []
+        if(post.tagsId)
+            tags = await this.tagService.findTagsById(post.tagsId);
+        console.log(tags, categories);
         const newPost = await this.postRepository.save({title: post.title, content: post.content, 
                                         likedCount: 0, sharedCount: 0, savedCount: 0, 
                                         commentCount: 0, publishedDate:publishedDate,
@@ -59,11 +51,11 @@ export class PostService {
             confirmPassword: user.password
         }
         await this.userService.updateUserInfor(user.id, updatedUser);
-        return newPost
+        return newPost;
     }
 
     async findOneById(id: number): Promise<Posts>{
-        const post = await this.postRepository.findOne({where: {id}, relations:['user', 'access']});
+        const post = await this.postRepository.findOne({where: {id}, relations:['user', 'access', 'tags', 'categories', 'images']});
         if(!post)
             throw new NotFoundException("Post not found !");
         return post;

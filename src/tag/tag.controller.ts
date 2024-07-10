@@ -1,9 +1,8 @@
-import { Body, ConflictException, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import { AuthGuard } from 'src/auth/auth.guard';
-import { Role, Roles } from 'src/role/role.decorator';
-import { TagService } from './tag.service';
 import { TagDto } from 'src/validation/tag.dto';
 import { ValidationPipe } from 'src/validation/validation.pipe';
+import { TagService } from './tag.service';
 
 @Controller('tags')
 @UseGuards(AuthGuard)

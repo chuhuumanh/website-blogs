@@ -1,4 +1,4 @@
-import { IsOptional, IsString, IsNotEmpty } from "@nestjs/class-validator"
+import { IsNotEmpty, IsOptional, IsString } from "@nestjs/class-validator"
 export class ActivityUpdateDto{
     @IsOptional()
     @IsNotEmpty()

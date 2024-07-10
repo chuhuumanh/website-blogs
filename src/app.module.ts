@@ -1,17 +1,13 @@
-import { forwardRef, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { APP_GUARD } from '@nestjs/core';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { join } from 'path';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
-import { TagModule } from './tag/tag.module';
-import { FriendModule } from './friend/friend.module';
-import { CategoryModule } from './category/category.module';
-import { PostModule } from './post/post.module';
-import { ActivityModule } from './activity/activity.module';
-import { ImageModule } from './image/image.module';
-import { UserModule } from './user/user.module';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { join } from 'path';
+import { DatetimeModule } from './datetime/datetime.module';
+import { RoleGuard } from './role/role.guard';
 @Module({
   imports: [ ConfigModule.forRoot({isGlobal: true}),
     TypeOrmModule.forRootAsync({
@@ -29,8 +25,8 @@ import { join } from 'path';
         trustServerCertificate: true
       },
       synchronize: true
-    }), inject: [ConfigService]}), AuthModule],
+    }), inject: [ConfigService]}), AuthModule, DatetimeModule],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, {provide: APP_GUARD, useClass: RoleGuard}],
 })
 export class AppModule {}

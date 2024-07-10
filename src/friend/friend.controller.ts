@@ -1,8 +1,7 @@
-import { Body, Controller, Delete, Get, Param, ParseBoolPipe, ParseIntPipe, Patch, Post, Request, UseGuards } from '@nestjs/common';
+import { Controller, Delete, Param, ParseIntPipe, Request, UseGuards } from '@nestjs/common';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { Role, Roles } from 'src/role/role.decorator';
 import { FriendService } from './friend.service';
-import { UserService } from 'src/user/user.service';
 
 @Controller('friends')
 @UseGuards(AuthGuard)

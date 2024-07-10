@@ -1,14 +1,14 @@
 import { BadRequestException, forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Images } from './images.entity';
+import { createReadStream } from 'fs';
+import * as fs from 'fs/promises';
+import * as path from 'path';
 import { DatetimeService } from 'src/datetime/datetime.service';
 import { PostService } from 'src/post/post.service';
-import * as fs from 'fs/promises'
-import * as path from 'path'
-import { createReadStream } from 'fs';
 import { UserService } from 'src/user/user.service';
 import { UserUpdateDto } from 'src/validation/user.update.dto';
+import { Repository } from 'typeorm';
+import { Images } from './images.entity';
 
 @Injectable()
 export class ImageService {

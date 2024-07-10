@@ -1,4 +1,4 @@
-import { IsEmpty, IsString } from "@nestjs/class-validator";
+import { IsString } from "@nestjs/class-validator";
 import { IsNotEmpty } from "class-validator";
 
 export class TagDto{

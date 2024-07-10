@@ -1,4 +1,4 @@
-import { ArrayMinSize, IsArray, IsOptional, IsString} from "@nestjs/class-validator";
+import { ArrayMinSize, IsArray, IsOptional, IsString } from "@nestjs/class-validator";
 import { IsNotEmpty, IsNumber } from "class-validator";
 
 export class PostDto{

@@ -1,19 +1,21 @@
-import { Controller, Get, Patch, Request, UseGuards, Body, Param, 
-    ParseIntPipe, Delete,Query} from '@nestjs/common';
+import {
+    Body,
+    Controller,
+    Delete,
+    Get,
+    Param,
+    ParseIntPipe,
+    Patch,
+    Query,
+    Request, UseGuards
+} from '@nestjs/common';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { Role, Roles } from 'src/role/role.decorator';
-import { UserService } from './user.service';
-import { PostService } from 'src/post/post.service';
-import { ImageService } from 'src/image/image.service';
-import { ActivityService } from 'src/activity/activity.service';
-import { FriendService } from 'src/friend/friend.service';
-import { NotificationService } from 'src/notification/notification.service';
-import { ParseFormDataPipe } from 'src/validation/parse.formdata.pipe';
-import { ValidationPipe } from 'src/validation/validation.pipe';
-import { UserUpdateDto } from 'src/validation/user.update.dto';
-import { AuthService } from 'src/auth/auth.service';
 import { PaginateDto } from 'src/validation/paginate.dto';
 import { ParsePaginatePipe } from 'src/validation/parse.paginate.pipe';
+import { UserUpdateDto } from 'src/validation/user.update.dto';
+import { ValidationPipe } from 'src/validation/validation.pipe';
+import { UserService } from './user.service';
 
 
 @Controller('users')

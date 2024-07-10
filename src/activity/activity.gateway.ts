@@ -1,16 +1,12 @@
-import { ConnectedSocket, MessageBody, OnGatewayConnection, OnGatewayDisconnect, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
-import { Body, UnauthorizedException, UseFilters, UseGuards, UsePipes } from '@nestjs/common';
-import { ActivityCreateDto } from 'src/validation/activity.create.dto';
-import { ActionService } from 'src/action/action.service';
-import { ActivityService } from './activity.service';
-import { PostService } from 'src/post/post.service';
-import { NotificationService } from 'src/notification/notification.service';
-import { ValidationPipe } from 'src/validation/validation.pipe';
-import { ParseMessageBodyPipe } from 'src/validation/parse.message.body.pipe';
+import { UseFilters } from '@nestjs/common';
+import { ConnectedSocket, MessageBody, OnGatewayConnection, SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { Socket } from 'dgram';
 import { Server } from 'http';
+import { ActivityCreateDto } from 'src/validation/activity.create.dto';
 import { GateWayFilter } from 'src/validation/gateway.filter';
-import { WsConnectionAuth } from 'src/auth/ws.connection.auth.guard';
+import { ParseMessageBodyPipe } from 'src/validation/parse.message.body.pipe';
+import { ValidationPipe } from 'src/validation/validation.pipe';
+import { ActivityService } from './activity.service';
 
 @UseFilters(new GateWayFilter())
 @WebSocketGateway()

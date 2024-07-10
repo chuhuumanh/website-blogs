@@ -1,5 +1,4 @@
-import { ArgumentMetadata, Injectable, PipeTransform } from '@nestjs/common';
-import { BadRequestException } from '@nestjs/common';
+import { ArgumentMetadata, BadRequestException, Injectable, PipeTransform } from '@nestjs/common';
 @Injectable()
 export class ParseMessageBodyPipe implements PipeTransform {
   transform(value: any, metadata: ArgumentMetadata) {

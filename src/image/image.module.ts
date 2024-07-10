@@ -1,20 +1,11 @@
-import { Module, forwardRef } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { ImageController } from './image.controller';
-import { PostModule } from 'src/post/post.module';
-import { CategoryModule } from 'src/category/category.module';
-import { TagModule } from 'src/tag/tag.module';
-import { UserModule } from 'src/user/user.module';
-import { ImageService } from './image.service';
-import { APP_GUARD } from '@nestjs/core';
-import { RoleGuard } from 'src/role/role.guard';
-import { Images } from './images.entity';
-import { DatetimeService } from 'src/datetime/datetime.service';
-import { RoleModule } from 'src/role/role.module';
-import { AuthModule } from 'src/auth/auth.module';
+import { BadRequestException, Module, forwardRef } from '@nestjs/common';
 import { MulterModule } from '@nestjs/platform-express';
-import { BadRequestException } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { PostModule } from 'src/post/post.module';
+import { UserModule } from 'src/user/user.module';
+import { ImageController } from './image.controller';
+import { ImageService } from './image.service';
+import { Images } from './images.entity';
 
 @Module({
     imports: [TypeOrmModule.forFeature([Images]),  
@@ -27,8 +18,8 @@ import { JwtService } from '@nestjs/jwt';
                 else callback(null, true)
             },
         }
-    ), forwardRef(() => PostModule), forwardRef(() => UserModule), forwardRef(() => AuthModule)],
-    providers: [ImageService, DatetimeService, JwtService, {provide: APP_GUARD, useClass: RoleGuard}],
+    ), forwardRef(() => PostModule), forwardRef(() => UserModule)],
+    providers: [ImageService],
     controllers: [ImageController],
     exports: [ImageService]
 })
