@@ -22,7 +22,6 @@ export class AuthService {
             throw new NotAcceptableException("Incorrect username!");
         const userPassword = await this.userSerivce.findPassword(user.username);
         const isUserInforMatch = await bcrypt.compare(user.password, userPassword);
-        console.log(isUserInforMatch)
         if(!isUserInforMatch)
             throw new NotAcceptableException('Incorrect password');
         const payload = {profile: JSON.stringify({id:userInfor.id, username: userInfor.username, role: userInfor.role})};
@@ -38,8 +37,16 @@ export class AuthService {
         const emailOption = {
             email: newUser.email
         }
-        const isUsernameExist = await this.userSerivce.findOne(usernameOption)?true:false;
-        const isEmailExist = await this.userSerivce.findOne(emailOption)?true:false;
+        let isUsernameExist = null;
+        let isEmailExist = null;
+        try{
+            isUsernameExist = await this.userSerivce.findOne(usernameOption)?true:false;
+            isEmailExist = await this.userSerivce.findOne(emailOption)?true:false;
+        }
+        catch{
+            isUsernameExist = null;
+            isEmailExist = null;
+        }
         const isPasswordMatch = newUser.password === newUser.confirmPassword;
         if(isEmailExist)
             throw new ConflictException('Email has been used by another account !');

@@ -1,17 +1,11 @@
-import { Controller, Post, Get, Patch, Delete, Body, Param, Query, ParseIntPipe, UseGuards, 
-    UseInterceptors, ParseFilePipeBuilder, UploadedFiles, Request, ForbiddenException,
-    BadRequestException} from '@nestjs/common';
+import { Controller, Post, Get, Patch, Delete, Body, Param, Query, ParseIntPipe, UseGuards,  Request} from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { AuthGuard } from 'src/auth/auth.guard';
-import { ActivityService } from 'src/activity/activity.service';
-import { ParseFormDataPipe } from 'src/validation/parse.formdata.pipe';
 import { PostDto } from 'src/validation/post.dto';
 import { ValidationPipe } from 'src/validation/validation.pipe';
 import { Role, Roles } from 'src/role/role.decorator';
 import { PostService } from './post.service';
-import { ImageService } from 'src/image/image.service';
-import { ActionService } from 'src/action/action.service';
-import { NotificationService } from 'src/notification/notification.service';
+
 
 @UseGuards(AuthGuard)
 @Roles(Role.User, Role.Admin)

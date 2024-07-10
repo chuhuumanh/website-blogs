@@ -2,7 +2,6 @@ import { Injectable, BadRequestException, NotFoundException, ForbiddenException,
 import { InjectRepository } from "@nestjs/typeorm";
 import { Activity } from "./activity.entity";
 import { Repository } from "typeorm";
-import { Comments } from "./comments.entity";
 import { DatetimeService } from "src/datetime/datetime.service";
 import { PostService } from "src/post/post.service";
 import { PostDto } from "src/validation/post.dto";
@@ -156,6 +155,7 @@ export class ActivityService {
     }
 
     async deleteComment(id: number, userId: number):Promise<object | any>{
+        await this.findCommentById(id);
         const comment = await this.activityRepository
             .findOne({
                 where: {id, action: {name: 'comment'}}, 
@@ -168,7 +168,7 @@ export class ActivityService {
         const updatedPost: PostDto = {
             commentCount: post.commentCount -= 1
         };
-        
+        await this.activityRepository.delete(comment);
         await this.postService.updatePost(post.id, updatedPost);
         return {message: "Deleted !"};
     }

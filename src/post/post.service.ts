@@ -45,12 +45,13 @@ export class PostService {
             id: post.userId
         }
         const user = await this.userService.findOne(options);
+        const userPassword = await this.userService.findPassword(user.username);
         const updatedUser: UserUpdateDto = {
             publishedPostCount: user.postPublishedCount += 1,
             firstName: user.firstName, 
             lastName: user.lastName, 
             phoneNum: user.phoneNum, 
-            password: user.password,
+            password: userPassword,
             email: user.email, 
             bio: user.bio,
             profilePicturePath: user.profilePicturePath,
@@ -69,6 +70,7 @@ export class PostService {
     }
 
     async getUserPost(options: object): Promise<[Posts[], number] | any>{
+        console.log(options);
         const post = await this.postRepository
         .findAndCount({
             where: {user: {id: options['id']}}, 
@@ -157,18 +159,20 @@ export class PostService {
             id: post.user.id
         }
         const user = await this.userService.findOne(options)
+        const userPassword = await this.userService.findPassword(user.username);
         const updatedUser: UserUpdateDto = {
             publishedPostCount: user.postPublishedCount -= 1,
             firstName: user.firstName, 
             lastName: user.lastName, 
             phoneNum: user.phoneNum, 
-            password: user.password,
+            password: userPassword,
             email: user.email, 
             bio: user.bio,
             profilePicturePath: user.profilePicturePath,
             dateOfBirth: user.dateOfBirth,
             confirmPassword: user.password
         }
+        updatedUser['hash'] = false;
         await this.userService.updateUserInfor(user.id, updatedUser);
         return {message: "Deleted !"};
     }

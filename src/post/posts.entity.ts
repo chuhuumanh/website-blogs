@@ -1,6 +1,5 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, JoinTable, ManyToOne, OneToMany} from "typeorm";
 import { Activity } from "src/activity/activity.entity";
-import { Comments } from "src/activity/comments.entity";
 import { Access } from "src/access/access.entity";
 import { Images } from "src/image/images.entity";
 import { Tags } from "src/tag/tags.entity";
@@ -38,9 +37,6 @@ export class Posts{
 
     @OneToMany(() => Activity, (activity) => activity.post)
     activities: Activity[]
-
-    @OneToMany(() => Comments, (comment) => comment.post)
-    comments: Comments[]
 
     @ManyToOne(() => Access, (access) => access.posts)
     access: Access

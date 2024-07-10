@@ -20,7 +20,7 @@ import { PostModule } from "src/post/post.module";
                 global: true,
                 secret: configService.get<string>('JWTCONSTANT')
               }), inject: [ConfigService]  
-    }), forwardRef(() => UserModule), forwardRef(() => PostModule), RoleModule],
+    }), forwardRef(() => UserModule), forwardRef(() => PostModule), forwardRef(() => RoleModule)],
   providers: [AuthService, WsConnectionAuth],
   controllers: [AuthController],
   exports: [AuthService, WsConnectionAuth]

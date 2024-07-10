@@ -28,7 +28,7 @@ import { JwtService } from '@nestjs/jwt';
             },
         }
     ), forwardRef(() => PostModule), forwardRef(() => UserModule), forwardRef(() => AuthModule)],
-    providers: [ImageService, DatetimeService, JwtService],
+    providers: [ImageService, DatetimeService, JwtService, {provide: APP_GUARD, useClass: RoleGuard}],
     controllers: [ImageController],
     exports: [ImageService]
 })

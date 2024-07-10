@@ -1,9 +1,11 @@
 import { IsString, IsNotEmpty, IsAlpha, IsPhoneNumber, IsEmail, IsDateString, IsOptional } from "@nestjs/class-validator"
 export class UserUpdateDto{
+    @IsOptional()
     @IsString()
     @IsNotEmpty()
     password: string
 
+    @IsOptional()
     @IsString()
     @IsNotEmpty()
     confirmPassword: string

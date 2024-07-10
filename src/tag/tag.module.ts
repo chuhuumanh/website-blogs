@@ -9,7 +9,7 @@ import { AuthModule } from 'src/auth/auth.module';
 import { JwtService } from '@nestjs/jwt';
 @Module({
     imports: [TypeOrmModule.forFeature([Tags]), forwardRef(() => AuthModule)],
-    providers: [TagService, JwtService],
+    providers: [TagService, JwtService, {provide: APP_GUARD, useClass: RoleGuard}],
     controllers: [TagController],
     exports: [TagService]
 })

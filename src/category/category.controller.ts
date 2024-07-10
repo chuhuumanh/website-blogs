@@ -12,11 +12,6 @@ export class CategoryController {
     @Roles(Role.Admin)
     @Post()
     async addCategory(@Body(new ValidationPipe()) category: CategoryDto){
-        const options = {
-            name: category.name,
-            isExist: true
-        }
-        await this.categoryService.findCategoryByName(options);
         return await this.categoryService.add(category);
     }
 
@@ -31,7 +26,6 @@ export class CategoryController {
     async getCategory(@Query() keyword: {name?:string} ){
         const options = {
             name: keyword.name,
-            isExist: false
         }
         return await this.categoryService.findCategoryByName(options);
     }

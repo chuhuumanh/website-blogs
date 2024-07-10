@@ -13,11 +13,12 @@ import { TagModule } from 'src/tag/tag.module';
 import { NotificationModule } from 'src/notification/notification.module';
 import { AuthModule } from 'src/auth/auth.module';
 import { JwtService } from '@nestjs/jwt';
-
+import { APP_GUARD } from '@nestjs/core';
+import { RoleGuard } from 'src/role/role.guard';
 @Module({
     imports: [TypeOrmModule.forFeature([Posts]), forwardRef(() => AuthModule), CategoryModule, TagModule, forwardRef(() => UserModule), forwardRef(() => ActivityModule), ActionModule,
         forwardRef(() => ImageModule), NotificationModule],
-    providers: [PostService, DatetimeService, JwtService],
+    providers: [PostService, DatetimeService, JwtService, {provide: APP_GUARD, useClass: RoleGuard}],
     controllers: [PostController],
     exports: [PostService]
 })

@@ -40,11 +40,8 @@ export class UserController {
 
     @Get(':id/posts')
     async getOtherUserPosts(@Param('id', ParseIntPipe) userId :number, @Query(new ParsePaginatePipe, new ValidationPipe) paginate: PaginateDto){
-        const options = {
-            id: userId
-        }
         paginate['id'] = userId;
-        return await this.userService.getUserPost(options);
+        return await this.userService.getUserPost(paginate);
     }
 
     @Get('posts')
@@ -56,11 +53,8 @@ export class UserController {
 
     @Get(':id/friends')
     async getOtherUserFriends(@Param('id', ParseIntPipe) userId: number, @Query(new ParsePaginatePipe, new ValidationPipe) paginate: PaginateDto){
-        const options = {
-            id: userId
-        }
         paginate['isAccept'] = true;
-        paginate['userId'] = options.id;
+        paginate['userId'] = userId;
         return await this.userService.getUserFriends(paginate);
     }
 
@@ -87,8 +81,8 @@ export class UserController {
         return await this.userService.getUserNotifications(paginate);
     }
 
-    @Patch(':id')
-    async updateUserProfile(@Body(new ParseFormDataPipe, new ValidationPipe()) updateInfor: UserUpdateDto, @Request() req): Promise<any>{
+    @Patch()
+    async updateUserProfile(@Body(new ValidationPipe()) updateInfor: UserUpdateDto, @Request() req): Promise<any>{
         const currentUser = JSON.parse(req.user.profile);
         const options = {
             id: currentUser.id
@@ -97,7 +91,7 @@ export class UserController {
         return this.userService.updateUserInfor(user.id, updateInfor);
     }
 
-    @Delete(':id')
+    @Delete()
     async deleteUser(@Request() req: any){
         return await this.userService.deleteUser(req);
     }

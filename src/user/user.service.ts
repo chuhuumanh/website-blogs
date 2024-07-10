@@ -11,6 +11,8 @@ import { NotificationService } from 'src/notification/notification.service';
 import { ImageService } from 'src/image/image.service';
 import { ActivityService } from 'src/activity/activity.service';
 import { AuthService } from 'src/auth/auth.service';
+import * as bcrypt from 'bcrypt'
+import { userInfo } from 'os';
 @Injectable()
 export class UserService {
 
@@ -50,12 +52,12 @@ export class UserService {
     }
 
     async getUserPost(options: object){
-        await this.findOne(options);
+        await this.findOne(options['id']);
         return await this.postService.getUserPost(options);
     }
 
     async getUserFriends(options: object){
-        await this.findOne(options);
+        await this.findOne(options['userId']);
         return await this.friendService.getUserFriends(options);
     }
 
@@ -68,9 +70,15 @@ export class UserService {
     }
 
     async updateUserInfor(id: number, updateInfor: UserUpdateDto): Promise<any>{
+        let userPassword = updateInfor.password;
+        if(updateInfor['hash']){
+            const salt = await bcrypt.genSalt()
+            userPassword = await bcrypt.hash(updateInfor.password, salt);
+        }
+        
         const action = await this.userRepository.update({id}, 
                         {firstName: updateInfor.firstName, lastName: updateInfor.lastName, 
-                        phoneNum: updateInfor.phoneNum, password: updateInfor.password,
+                        phoneNum: updateInfor.phoneNum, password: userPassword,
                         email: updateInfor.email, bio: updateInfor.bio,
                         profilePicturePath: updateInfor.profilePicturePath,
                         dateOfBirth: updateInfor.dateOfBirth, postPublishedCount: updateInfor.publishedPostCount
@@ -87,6 +95,7 @@ export class UserService {
             id: payload.id
         }
         const user = await this.findOne(options);
+        console.log(user);
         if(user.profilePicturePath)
             await this.imgService.deleteUserProfilePicture(user.profilePicturePath);
         await this.activityService.deleteUserActivities(user.id);

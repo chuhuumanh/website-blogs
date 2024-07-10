@@ -21,7 +21,6 @@ export class ActivityController {
     @Delete('comments/:id')
     async deleteComent(@Param('id', ParseIntPipe) commentId: number, @Request() req){
         const user = JSON.parse(req.user.profile);
-        await this.activityService.findCommentById(commentId);
         return await this.activityService.deleteComment(commentId, user.id);
     }
 }

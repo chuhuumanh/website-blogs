@@ -31,9 +31,9 @@ export class CategoryService {
     }
 
     async findCategoryByName(options: object): Promise<Category| any>{
-        const category = await this.categoryRepository.findOneBy({name: options['name']});
-        if(options['isExist'] && category)
-            throw new ConflictException('Category is already Exist !');
+        const category = await this.categoryRepository.findAndCount({where: {name: Like('%' + options['name'] + '%')}});
+        console.log(options['name']);
+        return category;
     }
 
     async getPostCategories(postId: number): Promise<[Category[], number]| any>{

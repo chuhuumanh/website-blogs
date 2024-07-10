@@ -1,7 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany} from "typeorm";
 import { Notifications } from "src/notification/notifications.entity";
 import { Posts } from "src/post/posts.entity";
-import { Comments } from "src/activity/comments.entity";
 import { Activity } from "src/activity/activity.entity";
 import { Roles } from "src/role/roles.entity";
 import { Friends } from "src/friend/friends.entity";
@@ -49,9 +48,6 @@ export class Users{
 
     @OneToMany(() => Notifications, (notification) => notification.user)
     notifications: Notifications[]
-
-    @OneToMany(() => Comments, (comment) => comment.post)
-    comments: Comments[]
 
     @OneToMany(() => Activity, (activity) => activity.user)
     activities: Activity[];
