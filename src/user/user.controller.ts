@@ -20,9 +20,7 @@ import { ParsePaginatePipe } from 'src/validation/parse.paginate.pipe';
 @UseGuards(AuthGuard)
 @Roles(Role.User, Role.Admin)
 export class UserController {
-    constructor(private userService: UserService, private postService: PostService, 
-        private imgService: ImageService, private activityService: ActivityService, 
-        private friendService: FriendService, private notificationService: NotificationService, private authService: AuthService){}
+    constructor(private userService: UserService){}
     @Get('profile')
     getUserProfile(@Request() req): any{
         const payload = JSON.parse(req.user.profile);
@@ -46,15 +44,14 @@ export class UserController {
             id: userId
         }
         paginate['id'] = userId;
-        await this.userService.findOne(options);
-        return await this.postService.getUserPost(options);
+        return await this.userService.getUserPost(options);
     }
 
     @Get('posts')
     async getUserPost(@Request() req, @Query() @Query(new ParsePaginatePipe, new ValidationPipe) paginate: PaginateDto){
         const user = JSON.parse(req.user.profile);
         paginate['id'] = user.id;
-        return await this.postService.getUserPost(paginate);
+        return await this.userService.getUserPost(paginate);
     }
 
     @Get(':id/friends')
@@ -62,10 +59,9 @@ export class UserController {
         const options = {
             id: userId
         }
-        await this.userService.findOne(options);
         paginate['isAccept'] = true;
         paginate['userId'] = options.id;
-        return await this.friendService.getUserFriends(paginate);
+        return await this.userService.getUserFriends(paginate);
     }
 
     @Get('friends')
@@ -73,22 +69,22 @@ export class UserController {
         const user = JSON.parse(req.user.profile);
         paginate['isAccept'] = true;
         paginate['userId'] = user.id;
-        return await this.friendService.getUserFriends(paginate);
+        return await this.userService.getUserFriends(paginate);
     }
 
     @Get('friends/requests')
     async getUserFriendRequests(@Request() req, @Query(new ParsePaginatePipe , new ValidationPipe) paginate: PaginateDto){
         const user = JSON.parse(req.user.profile);
-        paginate['isAccept'] = true;
+        paginate['isAccept'] = false;
         paginate['userId'] = user.id
-        return await this.friendService.getUserFriends(paginate)
+        return await this.userService.getUserFriends(paginate);
     }
 
     @Get('notifications')
     async getUserNotifications(@Request() req: any, @Query(new ParsePaginatePipe, new ValidationPipe) paginate: PaginateDto){
         const user = JSON.parse(req.user.profile);
         paginate['userId'] = user.id;
-        return await this.notificationService.getUserNotifications(paginate);
+        return await this.userService.getUserNotifications(paginate);
     }
 
     @Patch(':id')
@@ -102,19 +98,7 @@ export class UserController {
     }
 
     @Delete(':id')
-    async deleteUser(@Request() req){
-        const currentUser = JSON.parse(req.user.profile);
-        const options = {
-            id: currentUser.id
-        }
-        const user = await this.userService.findOne(options);
-        if(user.profilePicturePath)
-            await this.imgService.deleteUserProfilePicture(user.profilePicturePath);
-        await this.activityService.deleteUserActivities(user.id);
-        await this.friendService.deleteUserFriends(user.id)
-        await this.postService.deleteUserPost(user.id);
-        await this.notificationService.deleteUserNotifications(user.id);
-        await this.authService.logout(req.headers.authorization);
-        return await this.userService.deleteUser(user.id);
+    async deleteUser(@Request() req: any){
+        return await this.userService.deleteUser(req);
     }
 }

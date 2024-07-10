@@ -29,8 +29,7 @@ import { join } from 'path';
         trustServerCertificate: true
       },
       synchronize: true
-    }), inject: [ConfigService]}), AuthModule, TagModule ,CategoryModule, PostModule,
-    ActivityModule , ImageModule, FriendModule, UserModule],
+    }), inject: [ConfigService]}), AuthModule],
   controllers: [AppController],
   providers: [AppService],
 })

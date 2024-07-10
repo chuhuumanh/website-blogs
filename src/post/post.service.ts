@@ -17,7 +17,7 @@ import { NotificationService } from 'src/notification/notification.service';
 @Injectable()
 export class PostService {
     constructor(@InjectRepository(Posts) private postRepository: Repository<Posts>, private dateTime: DatetimeService,
-                private categoryService: CategoryService, private tagService: TagService, private userService: UserService,
+                private categoryService: CategoryService, private tagService: TagService, @Inject(forwardRef(() => UserService)) private userService: UserService,
                 @Inject(forwardRef(() => ActivityService)) private activityService: ActivityService, private actionService: ActionService, 
                 @Inject(forwardRef(() => ImageService)) private imgService: ImageService,
                 private notificationService: NotificationService){}

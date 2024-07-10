@@ -8,25 +8,19 @@ import { NotificationService } from 'src/notification/notification.service';
 import { ValidationPipe } from 'src/validation/validation.pipe';
 import { ParseMessageBodyPipe } from 'src/validation/parse.message.body.pipe';
 import { Socket } from 'dgram';
-import { AuthGuardGateWay } from 'src/auth/auth.gateway.guard.guard';
 import { Server } from 'http';
 import { GateWayFilter } from 'src/validation/gateway.filter';
 import { WsConnectionAuth } from 'src/auth/ws.connection.auth.guard';
 
 @UseFilters(new GateWayFilter())
-@UseGuards(AuthGuardGateWay)
 @WebSocketGateway()
 export class ActivityGateway implements OnGatewayConnection{
-  constructor(private activityService: ActivityService, private wsConnectionAuth: WsConnectionAuth){}
+  constructor(private activityService: ActivityService){}
   @WebSocketServer()
   server: Server
 
   async handleConnection(client: Socket, ...args: any[]) {
-    const canActivate = await this.wsConnectionAuth.canActivate(client);
-    if(!canActivate){
-      this.server.emit('connection', 'Unauthorize !')
-      client.disconnect();
-    }     
+   await this.activityService.handleConnection(client, this.server);
   }
 
   @SubscribeMessage('activities')

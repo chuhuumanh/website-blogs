@@ -13,4 +13,5 @@ select * from friends;
 select * from notifications
 select * from roles
 select * from token_black_list
-update users set profilePicturePath = null where id = 44
+
+update users set profilePicturePath = null where id = 46

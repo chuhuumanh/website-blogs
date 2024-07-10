@@ -12,12 +12,16 @@ import { CommentUpdateDto } from "src/validation/comment.update.dto";
 import { NotificationService } from "src/notification/notification.service";
 import { Posts } from "src/post/posts.entity";
 import { ActionService } from "src/action/action.service";
+import { Socket } from "dgram";
+import { Server } from "http";
+import { WsConnectionAuth } from "src/auth/ws.connection.auth.guard";
 @Injectable()
 export class ActivityService {
     constructor(@InjectRepository(Activity)private activityRepository: Repository<Activity>,
                 private actionService: ActionService,
                 private notificationService: NotificationService, 
                 private dateTime: DatetimeService,
+                private wsConnectionAuth: WsConnectionAuth,
                 @Inject(forwardRef(() => PostService))private postService: PostService){}
 
     async performAction(activity: ActivityCreateDto): Promise<object|null>{
@@ -141,6 +145,14 @@ export class ActivityService {
                 relations: ['user']
             }
         );
+    }
+
+    async handleConnection(client: Socket, server: Server){
+        const canActivate = await this.wsConnectionAuth.canActivate(client);
+        if(!canActivate){
+          server.emit('connection', 'Unauthorize !')
+          client.disconnect();
+        }     
     }
 
     async deleteComment(id: number, userId: number):Promise<object | any>{

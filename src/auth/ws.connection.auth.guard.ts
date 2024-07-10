@@ -1,4 +1,4 @@
-import { BadRequestException, CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, CanActivate, ExecutionContext, forwardRef, Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Socket } from 'dgram';
@@ -6,7 +6,7 @@ import { AuthService } from './auth.service';
 
 @Injectable()
 export class WsConnectionAuth {
-  constructor(private jwtService: JwtService, private configService: ConfigService, private authService: AuthService){}
+  constructor(private jwtService: JwtService, private configService: ConfigService, @Inject(forwardRef(() => AuthService)) private authService: AuthService){}
 
   async canActivate(client: Socket): Promise<boolean> {
         const token = this.extractTokenFromHeader(client);

@@ -17,9 +17,8 @@ import { BadRequestException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
 @Module({
-    imports: [forwardRef(() => PostModule), TypeOrmModule.forFeature([Images]), 
-        forwardRef(() => UserModule), 
-        AuthModule, RoleModule, MulterModule.register({
+    imports: [TypeOrmModule.forFeature([Images]),  
+        MulterModule.register({
             dest: 'public/images',
             fileFilter: (req, file, callback) => {
                 if (!file.mimetype.match(/^(image\/jpeg|image\/png|image\/gif|image\/bmp)$/i)) {
@@ -28,8 +27,8 @@ import { JwtService } from '@nestjs/jwt';
                 else callback(null, true)
             },
         }
-    )],
-    providers: [ImageService, DatetimeService, {provide:APP_GUARD, useClass: RoleGuard}],
+    ), forwardRef(() => PostModule), forwardRef(() => UserModule), forwardRef(() => AuthModule)],
+    providers: [ImageService, DatetimeService, JwtService],
     controllers: [ImageController],
     exports: [ImageService]
 })

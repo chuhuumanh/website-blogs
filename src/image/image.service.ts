@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Images } from './images.entity';
@@ -13,7 +13,8 @@ import { UserUpdateDto } from 'src/validation/user.update.dto';
 @Injectable()
 export class ImageService {
     constructor(@InjectRepository(Images) private ImagesRepository: Repository<Images>, private dateTimeService: DatetimeService,
-                private postService: PostService, private userService: UserService){}
+                @Inject(forwardRef(() => PostService)) private postService: PostService, 
+                @Inject(forwardRef(() => UserService)) private userService: UserService){}
 
     async addPostImage(userId: number, postId: number, files: Array<Express.Multer.File>): Promise<any>{
         const post = await this.postService.findOneById(postId);

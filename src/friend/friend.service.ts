@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Friends } from './friends.entity';
 import { Repository } from 'typeorm';
@@ -13,7 +13,7 @@ import { Server } from 'http';
 @Injectable()
 export class FriendService {
     constructor(@InjectRepository(Friends)private friendRepository: Repository<Friends>, private dateTimeService: DatetimeService,
-                private userService: UserService, private actionService: ActionService, private notificationService: NotificationService,
+                @Inject(forwardRef(() => UserService)) private userService: UserService, private actionService: ActionService, private notificationService: NotificationService,
                 private wsConnectionAuth: WsConnectionAuth){}
 
     async canActivate(client: Socket, server: Server){
@@ -28,7 +28,6 @@ export class FriendService {
         const conditions: FindManyOptions<Friends> = {
             where: [
               { userReceiveRequestId: options['userId']},
-              { userReceiveRequestId: options['userId'] },
               { isAccept: options['isAccept']}
             ],
           };

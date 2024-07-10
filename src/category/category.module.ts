@@ -1,15 +1,13 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Category } from './category.entity';
 import { CategoryService } from './category.service';
-import { APP_GUARD } from '@nestjs/core';
-import { RoleGuard } from 'src/role/role.guard';
 import { CategoryController } from './category.controller';
-import { RoleModule } from 'src/role/role.module';
 import { AuthModule } from 'src/auth/auth.module';
+import { JwtService } from '@nestjs/jwt';
 @Module({
-    imports: [TypeOrmModule.forFeature([Category]), RoleModule, AuthModule],
-    providers: [CategoryService, {provide:APP_GUARD, useClass: RoleGuard}],
+    imports: [TypeOrmModule.forFeature([Category]), forwardRef(() => AuthModule)],
+    providers: [CategoryService, JwtService],
     controllers: [CategoryController],
     exports: [CategoryService]
 })

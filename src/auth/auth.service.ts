@@ -1,4 +1,4 @@
-import { BadRequestException, ConflictException, Injectable, NotAcceptableException } from '@nestjs/common';
+import { BadRequestException, ConflictException, forwardRef, Inject, Injectable, NotAcceptableException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserService } from 'src/user/user.service';
@@ -10,7 +10,7 @@ import { RoleService } from 'src/role/role.service';
 import * as bcrypt from 'bcrypt'
 @Injectable()
 export class AuthService {
-    constructor(private userSerivce: UserService, private jwtService: JwtService, 
+    constructor(@Inject(forwardRef(() => UserService)) private userSerivce: UserService, private jwtService: JwtService, 
         @InjectRepository(TokenBlackList) private tokenBlackListRepository: Repository<TokenBlackList>, private roleService: RoleService){}
 
     async signIn(user: UserSignInDto): Promise<any>{
@@ -22,6 +22,7 @@ export class AuthService {
             throw new NotAcceptableException("Incorrect username!");
         const userPassword = await this.userSerivce.findPassword(user.username);
         const isUserInforMatch = await bcrypt.compare(user.password, userPassword);
+        console.log(isUserInforMatch)
         if(!isUserInforMatch)
             throw new NotAcceptableException('Incorrect password');
         const payload = {profile: JSON.stringify({id:userInfor.id, username: userInfor.username, role: userInfor.role})};

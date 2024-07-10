@@ -6,21 +6,17 @@ import { FriendModule } from 'src/friend/friend.module';
 import { ImageModule } from 'src/image/image.module';
 import { NotificationModule } from 'src/notification/notification.module';
 import { PostModule } from 'src/post/post.module';
-import { TagModule } from 'src/tag/tag.module';
 import { Users } from './users.entity';
 import { DatetimeService } from 'src/datetime/datetime.service';
 import { UserService } from './user.service';
-import { APP_GUARD } from '@nestjs/core';
-import { RoleGuard } from 'src/role/role.guard';
 import { UserController } from './user.controller';
-import { RoleModule } from 'src/role/role.module';
 import { AuthModule } from 'src/auth/auth.module';
+import { JwtService } from '@nestjs/jwt';
 @Module({
-    imports: [TypeOrmModule.forFeature([Users]), PostModule, CategoryModule, TagModule, forwardRef(() => ImageModule), 
-    ActivityModule, forwardRef(() => FriendModule) ,
-    NotificationModule, RoleModule, AuthModule],
+    imports: [TypeOrmModule.forFeature([Users]), forwardRef(() => AuthModule), forwardRef(() => PostModule), forwardRef(() => FriendModule), 
+        forwardRef(() => NotificationModule), forwardRef(() => ActivityModule), forwardRef(() => ImageModule)],
     exports: [UserService],
-    providers: [UserService, DatetimeService, {provide:APP_GUARD, useClass: RoleGuard}],
+    providers: [UserService, DatetimeService, JwtService],
     controllers: [UserController]
 })
 export class UserModule {}

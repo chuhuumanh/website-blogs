@@ -25,13 +25,13 @@ export class TagController {
         return await this.tagService.findTagById(id);
     }
 
-    @Roles(Role.Admin)
+    //@Roles(Role.Admin)
     @Patch(':id')
     async updateTag(@Body(new ValidationPipe()) tag: TagDto, @Param('id', ParseIntPipe) tagId: number){
         return await this.tagService.updateTag(tagId, tag)
     }
 
-    @Roles(Role.Admin)
+    //@Roles(Role.Admin)
     @Delete(':id')
     async deleteTag(@Param('id', ParseIntPipe) tagId: number){
         return await this.tagService.deleteTag(tagId);

@@ -6,7 +6,6 @@ import { Server } from 'http';
 import { FriendService } from './friend.service';
 import { UserService } from 'src/user/user.service';
 import { Role, Roles } from 'src/role/role.decorator';
-import { AuthGuardGateWay } from 'src/auth/auth.gateway.guard.guard';
 import { NotificationService } from 'src/notification/notification.service';
 import { ActionService } from 'src/action/action.service';
 import { GateWayFilter } from 'src/validation/gateway.filter';
