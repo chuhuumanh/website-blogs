@@ -13,7 +13,7 @@ export class AuthService {
     constructor(@Inject(forwardRef(() => UserService)) private userSerivce: UserService, private jwtService: JwtService, 
         @InjectRepository(TokenBlackList) private tokenBlackListRepository: Repository<TokenBlackList>, private roleService: RoleService){}
 
-    async signIn(user: UserSignInDto): Promise<any>{
+    async signIn(user: UserSignInDto): Promise<object>{
         const options = {
             username: user.username,
         }
@@ -30,54 +30,49 @@ export class AuthService {
         };
     }
 
-    async signUp(newUser: UserRegisterDto): Promise<any>{
-        const usernameOption = {
+    async signUp(newUser: UserRegisterDto): Promise<object>{
+        
+        const username = {
             username: newUser.username
         }
-        const emailOption = {
+        const email = {
             email: newUser.email
         }
-        let isUsernameExist = null;
-        let isEmailExist = null;
-        try{
-            isUsernameExist = await this.userSerivce.findOne(usernameOption)?true:false;
-            isEmailExist = await this.userSerivce.findOne(emailOption)?true:false;
+        const phone = {
+            phoneNum: newUser.phoneNum
         }
-        catch{
-            isUsernameExist = null;
-            isEmailExist = null;
-        }
+        const detailByUsername = await this.userSerivce.findOne(username);
+        const detailByEmail = await this.userSerivce.findOne(email);
+        const detailByPhoneNum = await this.userSerivce.findOne(phone);
         const isPasswordMatch = newUser.password === newUser.confirmPassword;
-        if(isEmailExist)
+        if(detailByEmail)
             throw new ConflictException('Email has been used by another account !');
-        if(isUsernameExist)
-            throw new ConflictException("Username has been taken already !");
+        if(detailByUsername)
+            throw new ConflictException('Username has been taken already !');
+        if(detailByPhoneNum)
+            throw new ConflictException('Phone number has been used by another account !');
         if(!isPasswordMatch)
             throw new NotAcceptableException("Password and confirm password doesn't match !");
-        try{
-            const role = 'user';
-            const salt = await bcrypt.genSalt()
-            const hashPassword = await bcrypt.hash(newUser.password, salt);
-            newUser.password = hashPassword;
-            newUser['role'] = await this.roleService.findOne(role);
-            const user = await this.userSerivce.add(newUser);
-            const payload = {profile: JSON.stringify({id: user.id, username: user.username, role: user.role.name})}
-            return {
-                access_token: await this.jwtService.signAsync(payload)
-            };
-        }
-        catch(error){
-            console.log(error)
-            throw new BadRequestException();
-        }
+        
+        const role = 'user';
+        const salt = await bcrypt.genSalt()
+        const hashPassword = await bcrypt.hash(newUser.password, salt);
+        newUser.password = hashPassword;
+        newUser['role'] = await this.roleService.findOne(role);
+        const user = await this.userSerivce.add(newUser);
+        const payload = {profile: JSON.stringify({id: user.id, username: user.username, role: user.role.name})}
+        return {
+            access_token: await this.jwtService.signAsync(payload)
+        };
     }
 
-    async logout(token: string){
+    async logout(token: string): Promise<object>{
         const expiredToken = token.split(' ')[1];
         await this.tokenBlackListRepository.save({token: expiredToken});
+        return {message: "Log out"}
     }
 
-    async findTokenBlackList(token: string){
+    async findTokenBlackList(token: string): Promise<TokenBlackList>{
         return await this.tokenBlackListRepository.findOneBy({token});
     }
 }

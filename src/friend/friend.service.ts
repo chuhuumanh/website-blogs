@@ -1,4 +1,4 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Friends } from './friends.entity';
 import { Repository } from 'typeorm';
@@ -44,7 +44,9 @@ export class FriendService {
         const options = {
             id: friendId
         }
-        await this.userService.findOne(options)
+        const isUserExist = await this.userService.findOne(options);
+        if(!isUserExist)
+            throw new NotFoundException('User not found !');
         const action = await this.actionService.findOneByName('friendRequest');
         const isRequestSent = await this.getFriendRequest(currentUserId, friendId);
         let notification = null;
@@ -64,7 +66,9 @@ export class FriendService {
         const options = {
             id: friendId
         }
-        await this.userService.findOne(options);
+        const isUserExist = await this.userService.findOne(options);
+        if(!isUserExist)
+            throw new NotFoundException('User not found !');
         let notification = null;
         if(isAccept){
             const action = await this.actionService.findOneByName('accept friend request');
@@ -80,7 +84,9 @@ export class FriendService {
         const options = {
             id: friendId
         }
-        await this.userService.findOne(options);
+        const isUserExist = await this.userService.findOne(options);
+        if(!isUserExist)
+            throw new NotFoundException('User not found !');
         await this.friendRepository.delete({userSentRequest: {id: friendId || userId}, userReceiveRequestId: userId || friendId});
     }
 

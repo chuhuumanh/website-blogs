@@ -40,6 +40,8 @@ export class ImageService {
         if(!file)
             throw new BadRequestException('File required');
         const user = await this.userService.findOne(options);
+        if(!user)
+            throw new NotFoundException('User not found !');
         if(user.profilePicturePath)
             await this.deleteUserProfilePicture(user.profilePicturePath);
         const fileType = file.mimetype.split('/')[1];

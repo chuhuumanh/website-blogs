@@ -29,10 +29,7 @@ export class UserService {
     }
 
     async findOne(options: object): Promise<Users| null>{
-        const user = await this.userRepository.findOne({where: options, relations: ['role']})
-        if(!user)
-            throw new NotFoundException('User not found !');
-        return user;
+        return await this.userRepository.findOne({where: options, relations: ['role']})
     }
 
     async findPassword(username: string): Promise<string| null>{

@@ -8,7 +8,7 @@ import { Tags } from './tags.entity';
 export class TagService {
     constructor(@InjectRepository(Tags) private tagRepository: Repository<Tags>){}
 
-    async add(tag: TagDto): Promise<any>{
+    async add(tag: TagDto): Promise<object>{
         const isTagExist = await this.tagRepository.findOne({where: {name: tag.name}});
         if(isTagExist)
             throw new NotAcceptableException("This tag is already Exist !");
@@ -18,7 +18,7 @@ export class TagService {
         return {message: "Successful !"};
     }
 
-    async findTag(name?: string): Promise<[Tags[], number] | undefined>{
+    async findTag(name?: string): Promise<[Tags[], number] | null>{
         const tag = await this.tagRepository.findAndCount({where: {name: Like('%' + name + '%')}});
         if(!tag)
             throw new NotFoundException("Tag not found");
@@ -38,8 +38,8 @@ export class TagService {
         return tag;
     }
 
-    async findTagsById(id: Array<number>): Promise<Tags| any>{
-        const tag =  await this.tagRepository.findOneBy({id: In(id)})
+    async findTagsById(id: Array<number>): Promise<Tags[]| any>{
+        const tag =  await this.tagRepository.findBy({id: In(id)})
         if(!tag)
             throw new NotFoundException("Tag not found !");
         return tag;
