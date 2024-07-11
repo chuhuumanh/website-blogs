@@ -13,6 +13,7 @@ import { CommentUpdateDto } from "src/validation/comment.update.dto";
 import { PostDto } from "src/validation/post.dto";
 import { Repository } from "typeorm";
 import { Activity } from "./activity.entity";
+import { Posts } from "src/post/posts.entity";
 @Injectable()
 export class ActivityService {
     constructor(@InjectRepository(Activity)private activityRepository: Repository<Activity>,
@@ -71,10 +72,10 @@ export class ActivityService {
                 default:
                     throw new BadRequestException("Action invalid !");
             }
-            const updatedPost: PostDto = {
-                likeCount: performedPost.likedCount,
-                saveCount: performedPost.savedCount,
-                shareCount: performedPost.sharedCount,
+            const updatedPost: Partial<Posts> = {
+                likedCount: performedPost.likedCount,
+                savedCount: performedPost.savedCount,
+                sharedCount: performedPost.sharedCount,
                 commentCount: performedPost.commentCount
             };
             await this.postService.updatePost(activity.postId, updatedPost);
@@ -114,10 +115,10 @@ export class ActivityService {
                     throw new BadRequestException("Action invalid !");
             }
             
-            const updatedPost: PostDto = {
-                likeCount: performedPost.likedCount,
-                saveCount: performedPost.savedCount,
-                shareCount: performedPost.sharedCount,
+            const updatedPost: Partial<Posts> = {
+                likedCount: performedPost.likedCount,
+                savedCount: performedPost.savedCount,
+                sharedCount: performedPost.sharedCount,
             };
             await this.postService.updatePost(activity.postId, updatedPost);
             return {message: 'Undo action successful !', notification: {receiverId: -1}};

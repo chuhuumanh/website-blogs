@@ -64,7 +64,7 @@ export class UserService {
         return await this.notificationService.getUserNotifications(options);
     }
 
-    async updateUserInfor(id: number, updateInfor: UserUpdateDto): Promise<any>{
+    async updateUserInfor(id: number, updateInfor: Partial<Users>): Promise<any>{
         let userPassword = updateInfor.password;
         if(updateInfor['hash']){
             const salt = await bcrypt.genSalt()
@@ -76,7 +76,7 @@ export class UserService {
                         phoneNum: updateInfor.phoneNum, password: userPassword,
                         email: updateInfor.email, bio: updateInfor.bio,
                         profilePicturePath: updateInfor.profilePicturePath,
-                        dateOfBirth: updateInfor.dateOfBirth, postPublishedCount: updateInfor.publishedPostCount
+                        dateOfBirth: updateInfor.dateOfBirth, postPublishedCount: updateInfor.postPublishedCount
                         });
         
         if(action.affected === 0)

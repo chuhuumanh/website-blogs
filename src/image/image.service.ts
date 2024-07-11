@@ -6,7 +6,7 @@ import * as path from 'path';
 import { DatetimeService } from 'src/datetime/datetime.service';
 import { PostService } from 'src/post/post.service';
 import { UserService } from 'src/user/user.service';
-import { UserUpdateDto } from 'src/validation/user.update.dto';
+import { Users } from 'src/user/users.entity';
 import { Repository } from 'typeorm';
 import { Images } from './images.entity';
 
@@ -47,12 +47,8 @@ export class ImageService {
         const fileType = file.mimetype.split('/')[1];
         const newFilePath = `${file.path}.${fileType}`;
         await fs.rename(file.path, newFilePath);
-        const userUpdateDto:UserUpdateDto = {
-            firstName: user.firstName, lastName: user.lastName, 
-            phoneNum: user.phoneNum, password: user.password, confirmPassword: user.password,
-            email: user.email, bio: user.bio,
-            profilePicturePath: newFilePath,
-            dateOfBirth: user.dateOfBirth, publishedPostCount: user.postPublishedCount
+        const userUpdateDto: Partial<Users> = {
+            profilePicturePath: newFilePath
         }
         await this.userService.updateUserInfor(userId, userUpdateDto);
         return {filePath: newFilePath};

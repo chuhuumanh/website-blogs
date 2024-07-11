@@ -9,9 +9,9 @@ import { NotificationService } from 'src/notification/notification.service';
 import { TagService } from 'src/tag/tag.service';
 import { UserService } from 'src/user/user.service';
 import { PostDto } from 'src/validation/post.dto';
-import { UserUpdateDto } from 'src/validation/user.update.dto';
 import { FindManyOptions, Like, Repository } from 'typeorm';
 import { Posts } from './posts.entity';
+import { Users } from 'src/user/users.entity';
 @Injectable()
 export class PostService {
     constructor(@InjectRepository(Posts) private postRepository: Repository<Posts>, private dateTime: DatetimeService,
@@ -35,18 +35,8 @@ export class PostService {
             id: post.userId
         }
         const user = await this.userService.findOne(options);
-        const userPassword = await this.userService.findPassword(user.username);
-        const updatedUser: UserUpdateDto = {
-            publishedPostCount: user.postPublishedCount += 1,
-            firstName: user.firstName, 
-            lastName: user.lastName, 
-            phoneNum: user.phoneNum, 
-            password: userPassword,
-            email: user.email, 
-            bio: user.bio,
-            profilePicturePath: user.profilePicturePath,
-            dateOfBirth: user.dateOfBirth,
-            confirmPassword: user.password
+        const updatedUser: Partial<Users> = {
+            postPublishedCount: user.postPublishedCount + 1
         }
         await this.userService.updateUserInfor(user.id, updatedUser);
         return newPost;
@@ -139,18 +129,8 @@ export class PostService {
             id: post.user.id
         }
         const user = await this.userService.findOne(options)
-        const userPassword = await this.userService.findPassword(user.username);
-        const updatedUser: UserUpdateDto = {
-            publishedPostCount: user.postPublishedCount -= 1,
-            firstName: user.firstName, 
-            lastName: user.lastName, 
-            phoneNum: user.phoneNum, 
-            password: userPassword,
-            email: user.email, 
-            bio: user.bio,
-            profilePicturePath: user.profilePicturePath,
-            dateOfBirth: user.dateOfBirth,
-            confirmPassword: user.password
+        const updatedUser: Partial<Users> = {
+            postPublishedCount: user.postPublishedCount - 1
         }
         updatedUser['hash'] = false;
         await this.userService.updateUserInfor(user.id, updatedUser);
