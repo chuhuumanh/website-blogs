@@ -27,6 +27,6 @@ import { RoleGuard } from './role/role.guard';
       synchronize: true
     }), inject: [ConfigService]}), AuthModule, DatetimeModule],
   controllers: [AppController],
-  providers: [AppService, {provide: APP_GUARD, useClass: RoleGuard}],
+  providers: [AppService, {provide: APP_GUARD, useClass: RoleGuard}]
 })
 export class AppModule {}

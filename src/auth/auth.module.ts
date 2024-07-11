@@ -1,14 +1,13 @@
 import { forwardRef, Global, Module } from "@nestjs/common";
-import { JwtModule, JwtService} from "@nestjs/jwt";
-import { AuthService} from "./auth.service";
-import { AuthController } from "./auth.controller";
-import { TypeOrmModule } from "@nestjs/typeorm";
-import { TokenBlackList } from "./token.blacklist.entity";
 import { ConfigModule, ConfigService } from "@nestjs/config";
-import { WsConnectionAuth } from "./ws.connection.auth.guard";
-import { UserModule } from "src/user/user.module";
-import { AuthGuard } from "./auth.guard";
+import { JwtModule } from "@nestjs/jwt";
+import { TypeOrmModule } from "@nestjs/typeorm";
 import { RoleModule } from "src/role/role.module";
+import { UserModule } from "src/user/user.module";
+import { AuthController } from "./auth.controller";
+import { AuthService } from "./auth.service";
+import { TokenBlackList } from "./token.blacklist.entity";
+import { WsConnectionAuth } from "./ws.connection.auth.guard";
 
 @Global()
 @Module({
