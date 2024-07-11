@@ -69,10 +69,9 @@ export class FriendService {
         const isUserExist = await this.userService.findOne(options);
         if(!isUserExist)
             throw new NotFoundException('User not found !');
-        let notification = null;
         if(isAccept){
             const action = await this.actionService.findOneByName('accept friend request');
-            notification = await this.notificationService.add(action.id, currentUserId, friendId, null);
+            var notification = await this.notificationService.add(action.id, currentUserId, friendId, null);
         }
         else await this.deleteFriend(currentUserId, friendId);
         const friendRequest = await this.friendRepository.findOneBy({userReceiveRequestId: currentUserId, userSentRequest: {id: friendId}});
