@@ -23,11 +23,9 @@ export class PostService {
     async add(post: PostDto): Promise<any>{
         const publishedDate = this.dateTime.getDateTimeString();
         const categories = await this.categoryService.findCategoriesById(post.categoriesId);
-
-        let tags = []
+        
         if(post.tagsId)
-            tags = await this.tagService.findTagsById(post.tagsId);
-        console.log(tags, categories);
+            var tags = await this.tagService.findTagsById(post.tagsId);
         const newPost = await this.postRepository.save({title: post.title, content: post.content, 
                                         likedCount: 0, sharedCount: 0, savedCount: 0, 
                                         commentCount: 0, publishedDate:publishedDate,
@@ -62,7 +60,6 @@ export class PostService {
     }
 
     async getUserPost(options: object): Promise<[Posts[], number] | any>{
-        console.log(options);
         const post = await this.postRepository
         .findAndCount({
             where: {user: {id: options['id']}}, 
@@ -107,20 +104,11 @@ export class PostService {
     }
 
     async updatePost(postId: number, updatePost: PostDto): Promise<object|any>{
-        const categories = [];
-        if(updatePost.categoriesId){
-            for (const id of updatePost.categoriesId) {
-                const category = await this.categoryService.findCategoryById(id);
-                categories.push(category);
-            }
-        }
-        const tags = []
-        if(updatePost.tagsId){
-            for (const id of updatePost.tagsId) {
-                const tag = await this.tagService.findTagById(id);
-                tags.push(tag);
-            }
-        }
+        if(updatePost.categoriesId)
+                var categories = await this.categoryService.findCategoriesById(updatePost.categoriesId);
+            
+        if(updatePost.tagsId)
+                var tags = await this.tagService.findTagsById(updatePost.tagsId);
         
         await this.postRepository.save({id: postId, title: updatePost.title, content: updatePost.content,
             likedCount: updatePost.likeCount, sharedCount: updatePost.shareCount,

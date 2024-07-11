@@ -2,7 +2,6 @@ use WebBlog
 select * from users;
 select * from posts
 select * from images;
-select * from comments
 select * from activity;
 select * from actions;
 select * from category
@@ -14,4 +13,4 @@ select * from notifications
 select * from roles
 select * from token_black_list
 
-update users set profilePicturePath = null where id = 46
+update users set password = '$2a$10$B5AExrBZV7tKPEmqIMiC2er0qJWzhz6No7k/AmHEtvxOY0FWvNxau' where id = 55
