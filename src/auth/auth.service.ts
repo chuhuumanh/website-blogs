@@ -27,7 +27,7 @@ export class AuthService {
         const payload = {profile: JSON.stringify({id:userInfor.id, username: userInfor.username, role: userInfor.role})};
         return {
             access_token: await this.jwtService.signAsync(payload)
-        };
+        }
     }
 
     async signUp(newUser: UserRegisterDto): Promise<object>{

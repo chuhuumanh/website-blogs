@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -8,6 +8,7 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { DatetimeModule } from './datetime/datetime.module';
 import { RoleGuard } from './role/role.guard';
+import { CacheMiddleware } from './middleware/cache.middleware.middleware';
 @Module({
   imports: [ ConfigModule.forRoot({isGlobal: true}),
     TypeOrmModule.forRootAsync({
@@ -29,4 +30,8 @@ import { RoleGuard } from './role/role.guard';
   controllers: [AppController],
   providers: [AppService, {provide: APP_GUARD, useClass: RoleGuard}]
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(CacheMiddleware).forRoutes('*')
+  }
+}

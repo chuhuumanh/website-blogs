@@ -22,6 +22,7 @@
   "dependencies": {
     "@automapper/core": "^8.8.1",
     "@automapper/nestjs": "^8.8.1",
+    "@nestjs/cache-manager": "^2.2.2",
     "@nestjs/class-validator": "^0.13.4",
     "@nestjs/common": "^10.0.0",
     "@nestjs/config": "^3.2.3",
@@ -33,6 +34,7 @@
     "@nestjs/typeorm": "^10.0.2",
     "@nestjs/websockets": "^10.3.10",
     "bcrypt": "^5.1.1",
+    "cache-manager": "^5.7.3",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
     "dotenv": "^16.4.5",

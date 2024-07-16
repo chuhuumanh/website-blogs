@@ -1,3 +1,4 @@
+import { CacheKey } from '@nestjs/cache-manager';
 import {
     Body,
     Controller,
@@ -23,11 +24,13 @@ import { UserService } from './user.service';
 @Roles(Role.User, Role.Admin)
 export class UserController {
     constructor(private userService: UserService){}
+    @CacheKey('profile')
     @Get('profile')
     getUserProfile(@Request() req): any{
         const payload = JSON.parse(req.user.profile);
         const options = {
-            id: payload.id
+            id: payload.id,
+            username: payload.username
         };
         return this.userService.findOne(options);
     }
@@ -47,7 +50,7 @@ export class UserController {
     }
 
     @Get('posts')
-    async getUserPost(@Request() req, @Query() @Query(new ParsePaginatePipe, new ValidationPipe) paginate: PaginateDto){
+    async getUserPost(@Request() req, @Query(new ParsePaginatePipe, new ValidationPipe) paginate: PaginateDto){
         const user = JSON.parse(req.user.profile);
         paginate['id'] = user.id;
         return await this.userService.getUserPost(paginate);
