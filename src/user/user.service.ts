@@ -21,6 +21,7 @@ export class UserService {
                 private imgService: ImageService, private activityService: ActivityService, 
                 @Inject(forwardRef(() => AuthService))private authService: AuthService,
                 @InjectQueue('webBlog') private webBlogQueue: Queue){}
+              
 
     async add(newUser: UserRegisterDto): Promise<Users>{
         const user = await this.userRepository.save(newUser);
