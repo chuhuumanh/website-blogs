@@ -8,6 +8,8 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { DatetimeModule } from './datetime/datetime.module';
 import { RoleGuard } from './role/role.guard';
+import { LoggerService } from './logger/logger.service';
+import { LoggerModule } from './logger/logger.module';
 @Module({
   imports: [ ConfigModule.forRoot({isGlobal: true}),
     TypeOrmModule.forRootAsync({
@@ -25,8 +27,8 @@ import { RoleGuard } from './role/role.guard';
         trustServerCertificate: true
       },
       synchronize: true
-    }), inject: [ConfigService]}), AuthModule, DatetimeModule],
+    }), inject: [ConfigService]}), AuthModule, DatetimeModule, LoggerModule],
   controllers: [AppController],
-  providers: [AppService, {provide: APP_GUARD, useClass: RoleGuard}]
+  providers: [AppService, {provide: APP_GUARD, useClass: RoleGuard}, LoggerService]
 })
 export class AppModule {}

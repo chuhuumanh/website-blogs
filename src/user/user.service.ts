@@ -11,13 +11,17 @@ import { UserRegisterDto } from 'src/validation/user.register.dto';
 import { UserUpdateDto } from 'src/validation/user.update.dto';
 import { Repository } from 'typeorm';
 import { Users } from './users.entity';
+import { LoggerService } from 'src/logger/logger.service';
 @Injectable()
 export class UserService {
 
     constructor(@InjectRepository(Users) private userRepository: Repository<Users>, @Inject(forwardRef(() => PostService))private postService: PostService,
                 private friendService: FriendService, private notificationService: NotificationService,
                 private imgService: ImageService, private activityService: ActivityService, 
-                @Inject(forwardRef(() => AuthService))private authService: AuthService){}
+                @Inject(forwardRef(() => AuthService))private authService: AuthService,
+                private loggerService: LoggerService){
+                    this.loggerService.setContext('UserService');
+                }
 
     async add(newUser: UserRegisterDto): Promise<Users>{
         const user = await this.userRepository.save(newUser);
@@ -29,7 +33,9 @@ export class UserService {
     }
 
     async findOne(options: object): Promise<Users| null>{
-        return await this.userRepository.findOne({where: options, relations: ['role']})
+        const user =  await this.userRepository.findOne({where: options, relations: ['role']});
+        this.loggerService.read(user, 'user');
+        return user;
     }
 
     async findPassword(username: string): Promise<string| null>{

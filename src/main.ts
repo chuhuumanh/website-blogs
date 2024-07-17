@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as dotenv from 'dotenv';
 import { AppModule } from './app.module';
+import { LoggerService } from './logger/logger.service';
 
 declare const module: any;
 async function bootstrap() {
@@ -10,7 +11,11 @@ async function bootstrap() {
     console.error('Error loading .env file:', result.error);
     throw result.error;
   }
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    logger: ['error', 'warn', 'log'],
+    bufferLogs: true,
+  });
+  app.useLogger(new LoggerService())
   app.enableCors({origin: '*', allowedHeaders: '*', methods: ["GET", "POST", "PUT", "DELETE"]})
   const config = new DocumentBuilder()
     .setTitle('Website Blogs API')
