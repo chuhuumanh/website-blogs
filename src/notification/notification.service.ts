@@ -1,13 +1,19 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { SchedulerRegistry } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
+import { CronJob } from 'cron';
 import { DatetimeService } from 'src/datetime/datetime.service';
 import { Repository } from 'typeorm';
 import { Notifications } from './notifications.entity';
+import { time } from 'console';
+import { number } from 'zod';
 
 @Injectable()
 export class NotificationService {
     constructor(@InjectRepository(Notifications) private notificationRepository: Repository<Notifications>, 
-    private dateTimService: DatetimeService){}
+    private dateTimService: DatetimeService, private schedulerRegistry: SchedulerRegistry){}
+
+    private readonly logger = new Logger(NotificationService.name)
 
     async add(actionId: number, userId: number, receiverId: number, postId?: number): Promise<Notifications>{
         const activatedDate = this.dateTimService.getDateTimeString();
@@ -55,4 +61,36 @@ export class NotificationService {
         await this.notificationRepository.delete({id});
         return {message: 'Deleted notification'};
     }
+
+    addCronJob(name: string){
+        try{
+            this.schedulerRegistry.getCronJob(name);
+        }
+        catch{
+            const job = new CronJob('* * 8 * * 1-7', () =>{
+                this.logger.warn(`Added user's daily notification`);
+            });
+    
+            this.schedulerRegistry.addCronJob(name, job);
+            job.start();
+            this.logger.warn('Daily notifications');
+        }
+    }
+
+    addInterval(name: string, seconds: number){
+        const callback = () =>{
+            this.logger.warn(`Interval ${name} active per ${seconds} seconds`);
+        }
+        const interval = setInterval(callback, seconds);
+        this.schedulerRegistry.addInterval(name, interval);
+    }
+
+    addTimeout(name: string, seconds: number){
+        const callback = () => {
+            this.logger.warn(`Timeout ${name} execute after ${seconds} seconds !`);
+        }
+        const timeout = setTimeout(callback, seconds)
+        this.schedulerRegistry.addTimeout(name, timeout);
+    }
+
 }
