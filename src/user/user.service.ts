@@ -55,7 +55,8 @@ export class UserService {
             user: options
         })
         //return await this.postService.getUserPost(options);
-        return await this.webBlogQueue.getCompleted(-1, -1);
+        const lastCompleted = await this.webBlogQueue.getCompletedCount() - 2;
+        return await this.webBlogQueue.getJob(lastCompleted);
     }
 
     async getUserFriends(options: object){
