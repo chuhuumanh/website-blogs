@@ -1,3 +1,4 @@
+import { BullModule } from '@nestjs/bull';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
@@ -8,6 +9,7 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { DatetimeModule } from './datetime/datetime.module';
 import { RoleGuard } from './role/role.guard';
+import { ConsumerModule } from './consumer/consumer.module';
 @Module({
   imports: [ ConfigModule.forRoot({isGlobal: true}),
     TypeOrmModule.forRootAsync({
@@ -25,7 +27,18 @@ import { RoleGuard } from './role/role.guard';
         trustServerCertificate: true
       },
       synchronize: true
-    }), inject: [ConfigService]}), AuthModule, DatetimeModule],
+    }), inject: [ConfigService]}),
+    BullModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        redis: {
+          host: configService.get<string>('HOST'),
+          port: +configService.get<number>('R_PORT'),
+          
+        }
+      }), inject: [ConfigService]
+    }),
+     AuthModule, DatetimeModule, ConsumerModule],
   controllers: [AppController],
   providers: [AppService, {provide: APP_GUARD, useClass: RoleGuard}]
 })

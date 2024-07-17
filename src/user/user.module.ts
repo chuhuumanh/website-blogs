@@ -1,3 +1,4 @@
+import { BullModule } from '@nestjs/bull';
 import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ActivityModule } from 'src/activity/activity.module';
@@ -10,7 +11,10 @@ import { UserService } from './user.service';
 import { Users } from './users.entity';
 @Module({
     imports: [TypeOrmModule.forFeature([Users]), forwardRef(() => PostModule), forwardRef(() => FriendModule), 
-        forwardRef(() => NotificationModule), forwardRef(() => ActivityModule), forwardRef(() => ImageModule)],
+        forwardRef(() => NotificationModule), forwardRef(() => ActivityModule), forwardRef(() => ImageModule),
+        BullModule.registerQueue({
+            name: 'webBlog'
+          })],
     exports: [UserService],
     providers: [UserService],
     controllers: [UserController]

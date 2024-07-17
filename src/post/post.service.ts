@@ -8,10 +8,10 @@ import { ImageService } from 'src/image/image.service';
 import { NotificationService } from 'src/notification/notification.service';
 import { TagService } from 'src/tag/tag.service';
 import { UserService } from 'src/user/user.service';
+import { Users } from 'src/user/users.entity';
 import { PostDto } from 'src/validation/post.dto';
 import { FindManyOptions, Like, Repository } from 'typeorm';
 import { Posts } from './posts.entity';
-import { Users } from 'src/user/users.entity';
 @Injectable()
 export class PostService {
     constructor(@InjectRepository(Posts) private postRepository: Repository<Posts>, private dateTime: DatetimeService,
@@ -50,16 +50,16 @@ export class PostService {
     }
 
     async getUserPost(options: object): Promise<[Posts[], number] | any>{
-        const post = await this.postRepository
+        const posts = await this.postRepository
         .findAndCount({
             where: {user: {id: options['id']}}, 
             relations: ['user', 'access'],
             skip: options['page'] - 1,
             take: options['take']
         })
-        if(!post)
+        if(!posts)
             throw new NotFoundException('Post not found !');
-        return post;
+        return posts;
     }
 
     async searchPosts(options?: object): Promise<[Posts[], number] | Posts | any>{

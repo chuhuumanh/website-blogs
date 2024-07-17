@@ -11,13 +11,16 @@ import { UserRegisterDto } from 'src/validation/user.register.dto';
 import { UserUpdateDto } from 'src/validation/user.update.dto';
 import { Repository } from 'typeorm';
 import { Users } from './users.entity';
+import { InjectQueue } from '@nestjs/bull';
+import Bull, { Queue } from 'bull';
 @Injectable()
 export class UserService {
 
     constructor(@InjectRepository(Users) private userRepository: Repository<Users>, @Inject(forwardRef(() => PostService))private postService: PostService,
                 private friendService: FriendService, private notificationService: NotificationService,
                 private imgService: ImageService, private activityService: ActivityService, 
-                @Inject(forwardRef(() => AuthService))private authService: AuthService){}
+                @Inject(forwardRef(() => AuthService))private authService: AuthService,
+                @InjectQueue('webBlog') private webBlogQueue: Queue){}
 
     async add(newUser: UserRegisterDto): Promise<Users>{
         const user = await this.userRepository.save(newUser);
@@ -48,7 +51,11 @@ export class UserService {
 
     async getUserPost(options: object){
         await this.findOne(options['id']);
-        return await this.postService.getUserPost(options);
+        const job = await this.webBlogQueue.add('findUserPosts',{
+            user: options
+        })
+        //return await this.postService.getUserPost(options);
+        return await this.webBlogQueue.getCompleted(-1, -1);
     }
 
     async getUserFriends(options: object){
