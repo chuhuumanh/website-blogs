@@ -8,7 +8,6 @@ import { ImageService } from 'src/image/image.service';
 import { NotificationService } from 'src/notification/notification.service';
 import { PostService } from 'src/post/post.service';
 import { UserRegisterDto } from 'src/validation/user.register.dto';
-import { UserUpdateDto } from 'src/validation/user.update.dto';
 import { Repository } from 'typeorm';
 import { Users } from './users.entity';
 @Injectable()

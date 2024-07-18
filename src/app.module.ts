@@ -8,6 +8,9 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { DatetimeModule } from './datetime/datetime.module';
 import { RoleGuard } from './role/role.guard';
+import { EventEmitterModule } from '@nestjs/event-emitter';
+import { EventService } from './event/event.service';
+import { EventModule } from './event/event.module';
 @Module({
   imports: [ ConfigModule.forRoot({isGlobal: true}),
     TypeOrmModule.forRootAsync({
@@ -25,8 +28,8 @@ import { RoleGuard } from './role/role.guard';
         trustServerCertificate: true
       },
       synchronize: true
-    }), inject: [ConfigService]}), AuthModule, DatetimeModule],
+    }), inject: [ConfigService]}), AuthModule, DatetimeModule, EventEmitterModule.forRoot(), EventModule],
   controllers: [AppController],
-  providers: [AppService, {provide: APP_GUARD, useClass: RoleGuard}]
+  providers: [AppService, {provide: APP_GUARD, useClass: RoleGuard}, EventService]
 })
 export class AppModule {}
